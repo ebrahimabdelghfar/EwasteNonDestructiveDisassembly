@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<launch>
+    <node pkg="ft_sensor_driver" type="ft_sensor_driver.py" name="ft_sensor_driver" output="screen"/>
+    <node pkg="ft_sensor_driver" type="lp_filter.py" name="lp_filter" output="screen"/>
+    <node pkg="ft_sensor_driver" type="res_pub.py" name="res_pub" output="screen"/>
+</launch>

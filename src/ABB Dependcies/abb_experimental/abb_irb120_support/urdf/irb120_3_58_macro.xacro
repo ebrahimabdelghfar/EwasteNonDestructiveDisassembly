@@ -1,0 +1,659 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:include filename="$(find abb_resources)/urdf/common_materials.xacro"/>
+
+  <xacro:macro name="abb_irb120_3_58" params="prefix">
+    <!-- link list -->
+    <link name="${prefix}base_link">
+      <inertial>
+        <mass value="6.215"/>
+        <origin xyz="-0.04204 8.01E-05 0.07964" rpy="0 0 0"/>
+        <inertia ixx="0.0247272" ixy="-8.0784E-05" ixz="0.00130902" iyy="0.0491285" iyz="-8.0419E-06" izz="0.0472376"/>
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://abb_irb120_support/meshes/irb120_3_58/visual/base_link.stl"/>
+        </geometry>
+        <xacro:material_abb_orange />
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://abb_irb120_support/meshes/irb120_3_58/collision/base_link.stl"/>
+        </geometry>
+        <xacro:material_abb_yellow />
+      </collision>
+    </link>
+    <link name="${prefix}link_1">
+      <inertial>
+        <mass value="3.067" />
+        <origin xyz="9.77E-05 -0.00012 0.23841" rpy="0 0 0"/>
+        <inertia ixx="0.0142175" ixy="-1.28579E-05" ixz="-2.31364E-05" iyy="0.0144041" iyz="1.93404E-05" izz="0.0104533"/>
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://abb_irb120_support/meshes/irb120_3_58/visual/link_1.stl"/>
+        </geometry>
+        <xacro:material_abb_orange />
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://abb_irb120_support/meshes/irb120_3_58/collision/link_1.stl"/>
+        </geometry>
+        <xacro:material_abb_yellow />
+      </collision>
+    </link>
+    <link name="${prefix}link_2">
+      <inertial>
+        <mass value="3.909"/>
+        <origin xyz="0.00078 -0.00212 0.10124" rpy="0 0 0"/>
+        <inertia ixx="0.0603111" ixy="9.83431E-06" ixz="5.72407E-05" iyy="0.041569" iyz="-0.00050497" izz="0.0259548"/>
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://abb_irb120_support/meshes/irb120_3_58/visual/link_2.stl"/>
+        </geometry>
+        <xacro:material_abb_orange />
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://abb_irb120_support/meshes/irb120_3_58/collision/link_2.stl"/>
+        </geometry>
+        <xacro:material_abb_yellow />
+      </collision>
+    </link>
+    <link name="${prefix}link_3">
+      <inertial>
+        <mass value="2.944"/>
+        <origin xyz="0.02281 0.00106 0.05791" rpy="0 0 0"/>
+        <inertia ixx="0.00835606" ixy="-8.01545E-05" ixz="0.00142884" iyy="0.016713" iyz="-0.000182227" izz="0.0126984"/>
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://abb_irb120_support/meshes/irb120_3_58/visual/link_3.stl"/>
+        </geometry>
+        <xacro:material_abb_orange />
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://abb_irb120_support/meshes/irb120_3_58/collision/link_3.stl"/>
+        </geometry>
+        <xacro:material_abb_yellow />
+      </collision>
+    </link>
+    <link name="${prefix}link_4">
+      <inertial>
+        <mass value="1.328"/>
+        <origin xyz="0.2247 0.00015 0.00041" rpy="0 0 0"/>
+        <inertia ixx="0.00284661" ixy="-2.12765E-05" ixz="-1.6435E-05" iyy="0.00401346" iyz="1.31336E-05" izz="0.0052535"/>
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://abb_irb120_support/meshes/irb120_3_58/visual/link_4.stl"/>
+        </geometry>
+        <xacro:material_abb_orange />
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://abb_irb120_support/meshes/irb120_3_58/collision/link_4.stl"/>
+        </geometry>
+        <xacro:material_abb_yellow />
+      </collision>
+    </link>
+    <link name="${prefix}link_5">
+      <inertial>
+        <mass value="0.546"/>
+        <origin xyz="-0.00109 3.68E-05 6.22E-05" rpy="0 0 0"/>
+        <inertia ixx="0.000404891" ixy="1.61943E-06" ixz="8.46805E-07" iyy="0.000892825" iyz="-1.51792E-08" izz="0.000815468"/>
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://abb_irb120_support/meshes/irb120_3_58/visual/link_5.stl"/>
+        </geometry>
+        <xacro:material_abb_orange />
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://abb_irb120_support/meshes/irb120_3_58/collision/link_5.stl"/>
+        </geometry>
+        <xacro:material_abb_yellow />
+      </collision>
+    </link>
+    <link name="${prefix}link_6">
+      <inertial>
+        <mass value="0.137"/>
+        <origin xyz="-0.00706 -0.00017 -1.32E-06" rpy="0 0 0"/>
+        <inertia ixx="0.001" ixy="0" ixz="0" iyy="0.001" iyz="0" izz="0.001"/>
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://abb_irb120_support/meshes/irb120_3_58/visual/link_6.stl"/>
+        </geometry>
+        <xacro:material_abb_black />
+      </visual>
+    </link>
+    <!-- end of link list -->
+    
+    
+    <!-- Add new environment -->
+  <link name="${prefix}table">
+      <inertial>
+        <mass value="24.6491122987326"/>
+        <origin xyz="0.330209553036689 -8.42430587266011E-05 -0.0479262935109589" rpy="0 0 0" />
+        <inertia ixx="2.57628423836073" ixy="8.13699054919165E-05" ixz="0.00725272692223183" iyy="4.59185501090763" iyz="3.56667371872007E-05" izz="5.73680477192526" />
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://abb_irb120_support/meshes/irb120_3_58/visual/Table.stl"/>
+        </geometry>
+        <xacro:material_abb_white />
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://abb_irb120_support/meshes/irb120_3_58/collision/Table.stl"/>
+        </geometry>
+      </collision>
+    </link>
+
+  <link name="${prefix}ToolessHead">
+    <inertial>
+      <origin
+        xyz="0.0188307758254835 0.0327397659998684 -0.00835420015412347"
+        rpy="0 0 0" />
+      <mass
+        value="0.43451032471764" />
+      <inertia
+        ixx="0.000626367772117082"
+        ixy="0.000195139217723876"
+        ixz="1.14673259632522E-05"
+        iyy="0.000670102195408599"
+        iyz="-2.00391094404303E-05"
+        izz="0.000915490864670041" />
+    </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://abb_irb120_support/meshes/irb120_3_58/visual/ToolessHead.stl"/>
+        </geometry>
+              <material
+        name="">
+        <color
+          rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://abb_irb120_support/meshes/irb120_3_58/collision/ToolessHead.stl"/>
+        </geometry>
+      </collision>
+    </link>
+
+<link
+    name="${prefix}camera">
+    <inertial>
+      <origin
+        xyz="-2.81570396675201E-05 -0.00146357732203691 -0.0133675668661716"
+        rpy="0 0 0" />
+      <mass
+        value="0.0365922423164478" />
+      <inertia
+        ixx="2.3659927184153E-05"
+        ixy="-4.57948193952834E-09"
+        ixz="1.07550343489257E-08"
+        iyy="3.51170527225997E-06"
+        iyz="-2.05856199541612E-07"
+        izz="2.34485328248936E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://abb_irb120_support/meshes/irb120_3_58/visual/camera.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.749019607843137 0.749019607843137 0.749019607843137 1" />
+      </material>
+    </visual>
+  </link>
+
+<link
+    name="${prefix}NoToolDummy">
+    <inertial>
+      <origin
+        xyz="2.22044604925031E-16 6.08953796622662E-14 -0.00249999999991823"
+        rpy="0 0 0" />
+      <mass
+        value="0.000392699081698725" />
+      <inertia
+        ixx="3.27249234748937E-09"
+        ixy="6.51620144003362E-25"
+        ixz="-6.8357365303155E-26"
+        iyy="3.27249234748937E-09"
+        iyz="1.94035817210307E-27"
+        izz="4.90873852123406E-09" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://abb_irb120_support/meshes/irb120_3_58/visual/NoToolDummy.stl" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+
+  </link>
+
+
+<link
+    name="${prefix}ScrewDriverTip">
+    <inertial>
+      <origin
+        xyz="1.11022302462516E-16 6.08958810372532E-14 0.00249999999989869"
+        rpy="0 0 0" />
+      <mass
+        value="0.000392699081698725" />
+      <inertia
+        ixx="3.27249234748937E-09"
+        ixy="-1.99359556242972E-39"
+        ixz="-7.19628256197809E-40"
+        iyy="3.27249234748937E-09"
+        iyz="-2.0015798692299E-25"
+        izz="4.90873852123406E-09" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://abb_irb120_support/meshes/irb120_3_58/visual/ScrewDriverTip.stl" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+  </link>
+
+
+<link
+    name="${prefix}MillingTipDummy">
+    <inertial>
+      <origin
+        xyz="-1.11022302462516E-16 2.77555756156289E-17 0.0025"
+        rpy="0 0 0" />
+      <mass
+        value="0.000392699081698723" />
+      <inertia
+        ixx="3.27249234748936E-09"
+        ixy="6.20385459414771E-25"
+        ixz="3.92910790962688E-24"
+        iyy="3.27249234748936E-09"
+        iyz="-4.75628852217991E-24"
+        izz="4.90873852123404E-09" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://abb_irb120_support/meshes/irb120_3_58/visual/MillingTipDummy.stl" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+  </link>
+
+<link
+    name="${prefix}BottomRightPos">
+    <inertial>
+      <origin
+        xyz="1.38777878078145E-17 0 -0.00249999999999997"
+        rpy="0 0 0" />
+      <mass
+        value="0.000392699081698725" />
+      <inertia
+        ixx="3.27249234748937E-09"
+        ixy="3.44658588563762E-25"
+        ixz="4.0337032111932E-25"
+        iyy="3.27249234748937E-09"
+        iyz="2.28831160655211E-24"
+        izz="4.90873852123406E-09" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://abb_irb120_support/meshes/irb120_3_58/visual/BottomRightPos.stl" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+  </link>
+
+<link
+    name="${prefix}TopRightPos">
+    <inertial>
+      <origin
+        xyz="2.77555756156289E-17 0 -0.0025"
+        rpy="0 0 0" />
+      <mass
+        value="0.000392699081698725" />
+      <inertia
+        ixx="3.27249234748937E-09"
+        ixy="4.39466550179074E-40"
+        ixz="-3.2212919816096E-25"
+        iyy="3.27249234748937E-09"
+        iyz="-2.30267491779332E-24"
+        izz="4.90873852123406E-09" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://abb_irb120_support/meshes/irb120_3_58/visual/TopRightPos.stl" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+  </link>
+  
+  <joint
+    name="${prefix}TopRightPos_j"
+    type="fixed">
+    <origin
+      xyz="0.223739944671796 -0.421500055581209 0.192500000000002"
+      rpy="-3.14159265358979 0 3.14159265358979" />
+    <parent
+      link="${prefix}table" />
+    <child
+      link="${prefix}TopRightPos" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+
+
+<joint
+    name="${prefix}BottomRightPos_j"
+    type="fixed">
+    <origin
+      xyz="-0.0962600500776012 -0.381500011985923 0.192500000000001"
+      rpy="3.14159265358979 0 0" />
+    <parent
+      link="${prefix}table" />
+    <child
+      link="${prefix}BottomRightPos" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+
+<link
+    name="${prefix}BottomLeftPos">
+    <inertial>
+      <origin
+        xyz="-1.38777878078145E-17 -5.55111512312578E-17 -0.00249999999999997"
+        rpy="0 0 0" />
+      <mass
+        value="0.000392699081698725" />
+      <inertia
+        ixx="3.27249234748937E-09"
+        ixy="1.91736372960642E-40"
+        ixz="5.825588426289E-25"
+        iyy="3.27249234748937E-09"
+        iyz="2.07348816083404E-24"
+        izz="4.90873852123406E-09" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://abb_irb120_support/meshes/irb120_3_58/visual/BottomLeftPos.stl" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+  </link>
+<joint
+    name="${prefix}BottomLeftPos_j"
+    type="fixed">
+    <origin
+      xyz="-0.0962599999999996 0.38149999426518 0.1925"
+      rpy="3.14159265358979 0 0" />
+    <parent
+      link="${prefix}table" />
+    <child
+      link="${prefix}BottomLeftPos" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+
+<link
+    name="${prefix}TopLeftPos">
+    <inertial>
+      <origin
+        xyz="-1.38777878078145E-16 3.33066907387547E-16 -0.0025"
+        rpy="0 0 0" />
+      <mass
+        value="0.000392699081698725" />
+      <inertia
+        ixx="3.27249234748937E-09"
+        ixy="5.06217301953025E-25"
+        ixz="-5.41233756544824E-25"
+        iyy="3.27249234748937E-09"
+        iyz="-2.39170918312123E-24"
+        izz="4.90873852123406E-09" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://abb_irb120_support/meshes/irb120_3_58/visual/TopLeftPos.stl" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+  </link>
+  <joint
+    name="${prefix}TopLeftPos_j"
+    type="fixed">
+    <origin
+      xyz="0.223740055328227 0.421500174624786 0.192499999999999"
+      rpy="-3.14159265358979 0 3.14159265358979" />
+    <parent
+      link="${prefix}table" />
+    <child
+      link="${prefix}TopLeftPos" />
+  </joint>
+
+
+
+    <!-- joint list -->
+    <joint name="${prefix}joint_1" type="revolute">
+      <origin xyz="0 0 0.155" rpy="0 0 0" />
+      <parent link="${prefix}base_link"/>
+      <child link="${prefix}link_1"/>
+      <limit effort="0" lower="-2.87979" upper="2.87979" velocity="4.36332"/>
+      <axis xyz="0 0 1"/>
+      <dynamics damping="0.0" friction="0.0"/>
+    </joint>
+    <joint name="${prefix}joint_2" type="revolute">
+      <origin xyz="0 0 0.135" rpy="0 0 0" />
+      <parent link="${prefix}link_1"/>
+      <child link="${prefix}link_2"/>
+      <limit effort="0" lower="-1.91986" upper="1.91986" velocity="4.36332"/>
+      <axis xyz="0 1 0"/>
+      <dynamics damping="0.0" friction="0.0"/>
+    </joint>
+    <joint name="${prefix}joint_3" type="revolute">
+      <origin xyz="0 0 0.27" rpy="0 0 0" />
+      <parent link="${prefix}link_2"/>
+      <child link="${prefix}link_3"/>
+      <limit effort="0" lower="-1.91986" upper="1.22173" velocity="4.36332"/>
+      <axis xyz="0 1 0"/>
+      <dynamics damping="0.0" friction="0.0"/>
+    </joint>
+    <joint name="${prefix}joint_4" type="revolute">
+      <origin xyz="0.14853048744225 0 0.0700000000000001" rpy="0 0 0" />
+      <parent link="${prefix}link_3"/>
+      <child link="${prefix}link_4"/>
+      <limit effort="0" lower="-2.79253" upper="2.79253" velocity="5.58505"/>
+      <axis xyz="1 0 0"/>
+      <dynamics damping="0.0" friction="0.0"/>
+    </joint>
+    <joint name="${prefix}joint_5" type="revolute">
+    <origin xyz="0.153469512557041 0 0" rpy="0 0 0" />
+      <parent link="${prefix}link_4"/>
+      <child link="${prefix}link_5"/>
+      <limit effort="0" lower="-2.094395" upper="2.094395" velocity="5.58505"/>
+      <axis xyz="0 1 0"/>
+      <dynamics damping="0.0" friction="0.0"/>
+    </joint>
+    <joint name="${prefix}joint_6" type="revolute">
+    <origin xyz="0.0590000000007134 0 0" rpy="0 0 0" />
+      <parent link="${prefix}link_5"/>
+      <child link="${prefix}link_6"/>
+      <limit effort="0" lower="-6.98132" upper="6.98132" velocity="7.33038"/>
+      <axis xyz="1 0 0"/>
+      <dynamics damping="0.0" friction="0.0"/>
+    </joint>
+    <!-- end of joint list -->
+
+    <!-- ROS-Industrial 'base' frame: base_link to ABB World Coordinates transform -->
+    <link name="${prefix}base" />
+    <joint name="${prefix}base_link-base" type="fixed">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <parent link="${prefix}base_link"/>
+      <child link="${prefix}base"/>
+    </joint>
+
+    <!-- ROS-Industrial 'flange' frame: attachment point for EEF models -->
+    <link name="${prefix}flange"/>
+    <joint type="fixed" name="${prefix}joint_6-flange">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <parent link="${prefix}link_6"/>
+      <child link="${prefix}flange"/>
+    </joint>
+
+    <!-- ROS-Industrial 'tool0' frame: all-zeros tool frame -->
+    <link name="${prefix}tool0" />
+    <joint name="${prefix}link_6-tool0" type="fixed">
+      <origin xyz="0 0 0" rpy="0 ${radians(90)} 0" />
+      <parent link="${prefix}flange" />
+      <child link="${prefix}tool0" />
+    </joint>
+    
+      <joint name="${prefix}Table_j" type="fixed">
+      <origin xyz="0 0 0.0" rpy="0 0 0" />
+      <parent link="${prefix}base_link"/>
+      <child link="${prefix}table"/>
+    </joint>
+    
+      <joint name="${prefix}ToolessHeadJ" type="fixed">
+      <origin xyz="0.095324 -0.0092422 -0.0038185" rpy="1.5708 -1.5708 0" />
+      <parent link="${prefix}link_6"/>
+      <child link="${prefix}ToolessHead"/>
+    </joint>
+    
+    
+    <joint
+    name="${prefix}camera_joint" type="fixed">
+    <origin xyz="0.0925434812707526 -0.0625715276364717 -0.00134924592730214" rpy="1.5707963267949 0 0" />
+    <parent
+      link="ToolessHead" />
+    <child
+      link="camera" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  
+  <joint
+    name="${prefix}NoToolDummy_j"
+    type="fixed">
+    <origin
+      xyz="0.00381849318686567 0 -0.00924224592736303"
+      rpy="1.5707963267949 0 0" />
+    <parent
+      link="ToolessHead" />
+    <child
+      link="NoToolDummy" />
+    <axis
+      xyz="0 0 1" />
+  </joint>
+  
+  <joint
+    name="${prefix}ScrewDriverTip_j"
+    type="fixed">
+    <origin
+      xyz="0 0 0.165000000000183"
+      rpy="0 0 0" />
+    <parent
+      link="NoToolDummy" />
+    <child
+      link="ScrewDriverTip" />
+  </joint>
+  
+  <joint
+    name="${prefix}MillingTipDummy_j"
+    type="fixed">
+    <origin
+      xyz="0.035000000000002 -0.0606217782648769 0.0800000000001457"
+      rpy="1.5707963267949 -1.04719755119657 0.523598775598319" />
+    <parent
+      link="NoToolDummy" />
+    <child
+      link="MillingTipDummy" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  </xacro:macro>
+</robot>

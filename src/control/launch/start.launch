@@ -1,0 +1,6 @@
+<launch>
+	<include file="$(find abb_irb120_moveit_config)/launch/demo.launch" />
+	<node name="motors_on" pkg="egm_config" type="start_robot.bash"/>
+	<node name="rt_egm_config" pkg="egm_config" type="egm_config_rt.py" />
+	<include file="$(find ft_sensor_driver)/launch/force_filtered.launch" />
+</launch>
