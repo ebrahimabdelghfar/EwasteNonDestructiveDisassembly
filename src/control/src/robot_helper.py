@@ -404,8 +404,10 @@ if __name__=="__main__":
    EwasteTooless=EwasteRobot(group_name_1="NoTool")
 #    EwasteTooless.Homing()
    #EwasteTooless.SpiralSearch()
-   
+   TransformationCalculator=frames_transformations()
+   TransformationCalculator.put_frame_static_frame(parent_frame_name="base_link",child_frame_name="toolss",frame_coordinate=[0.63,0.17,0,0,0,0])
+   print(TransformationCalculator.transform(parent_id="base_link",child_frame_id="toolss"))
    #EwasteTooless.ReturnScrew()
-   EwasteTooless.GetScrewTool()
+#    EwasteTooless.GetScrewTool()
    
    #EwasteTooless.Homing()
