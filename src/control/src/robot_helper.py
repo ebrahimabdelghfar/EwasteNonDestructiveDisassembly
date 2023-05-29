@@ -34,9 +34,14 @@ class RobotControl:
 
         # define the group of joints to be controlled by moveit
         self.move_group = MoveGroupCommander(group_name)
-        self.move_group.set_planner_id("PRM")
-        self.move_group.set_planning_time(10)
+        self.move_group.set_planner_id("RRTConnect")
+        self.move_group.set_planning_time(50)
         self.move_group.allow_replanning(True)
+        self.move_group.allow_looking(True)
+        #adjust tolerance of the joint 
+        self.move_group.set_goal_joint_tolerance(0.0001)
+        self.move_group.set_goal_position_tolerance(0.0001)
+        self.move_group.set_goal_orientation_tolerance(0.0001)
         pass
     def go_by_joint_angle(self, joint_goal_list,velocity=0.1,acceleration=0.1):
         '''
@@ -53,7 +58,7 @@ class RobotControl:
         # set the acceleration of the robot
         self.move_group.set_max_acceleration_scaling_factor(acceleration)
         # set the goal joint state
-        self.move_group.go(joint_goal_list,wait=True)
+        self.move_group.go(joint_goal_list,wait=True,)
         # stop any residual movement
         self.move_group.stop()
         pass
@@ -401,13 +406,11 @@ class EwasteRobot:
         self.RobotController.go_to_pose_goal_cartesian_waypoints(pose,1,1,list_type=True)
 
 if __name__=="__main__":
-   EwasteTooless=EwasteRobot(group_name_1="NoTool")
-#    EwasteTooless.Homing()
+   RobotController = RobotControl(group_name="manipulator")
+   RobotController.go_by_joint_angle([0,0,0,0,0,0],1.0,0.5)
+   RobotController.go_by_joint_angle([1.57,0,0,0,0,0],1.0,0.1)
+   #EwasteTooless.Homing()
    #EwasteTooless.SpiralSearch()
-   TransformationCalculator=frames_transformations()
-   TransformationCalculator.put_frame_static_frame(parent_frame_name="base_link",child_frame_name="toolss",frame_coordinate=[0.63,0.17,0,0,0,0])
-   print(TransformationCalculator.transform(parent_id="base_link",child_frame_id="toolss"))
    #EwasteTooless.ReturnScrew()
-#    EwasteTooless.GetScrewTool()
-   
+   #EwasteTooless.GetScrewTool()
    #EwasteTooless.Homing()
