@@ -12,7 +12,7 @@ class RobotControl:
     '''
     This class contain module that facilitate the controll of the robot using moveit 
     '''
-    def __init__(self,node_name="robot_control",group_name="joint_group"):
+    def __init__(self,node_name="robot_control",group_name="joint_group",PlanningId="RRTConnect",JointTolerance=0.0001,PositionTolerance=0.0001,OrientationTolerance=0.0001):
         '''
         constructor arguments:
             node_name: name of the node
@@ -34,16 +34,68 @@ class RobotControl:
 
         # define the group of joints to be controlled by moveit
         self.move_group = MoveGroupCommander(group_name)
-        self.move_group.set_planner_id("RRTConnect")
-        self.move_group.set_planning_time(50)
+        self.move_group.set_planner_id(PlanningId)
+        # set the planning time and flags
+        self.move_group.set_planning_time(10)
         self.move_group.allow_replanning(True)
         self.move_group.allow_looking(True)
         #adjust tolerance of the joint 
-        self.move_group.set_goal_joint_tolerance(0.0001)
-        self.move_group.set_goal_position_tolerance(0.0001)
-        self.move_group.set_goal_orientation_tolerance(0.0001)
+        self.move_group.set_goal_joint_tolerance(JointTolerance)
+        self.move_group.set_goal_position_tolerance(PositionTolerance)
+        self.move_group.set_goal_orientation_tolerance(OrientationTolerance)
         pass
-    def go_by_joint_angle(self, joint_goal_list,velocity=0.1,acceleration=0.1):
+
+    def Stop(self)->None:
+        '''
+        functionality:
+            This function is used to stop the robot
+        --------------------
+        arguments:
+            no arguments
+        --------------------
+        '''
+        # stop the robot
+        self.move_group.clear_pose_targets()
+        self.move_group.stop()
+        pass
+
+    def get_joint_state(self)->list:
+        '''
+        fuctionality:
+            This function is used to get the robot's joints state
+        --------------------
+        arguments:
+            no arguments
+        --------------------
+        This function is used to get the current joint state of the robot
+        --------------------
+        return:
+            joint_state: list of joint angles in radians
+        --------------------
+        '''
+        # get the current joint state
+        joint_state = self.move_group.get_current_joint_values()
+        return joint_state
+    def get_pose(self)->list:
+        '''
+        fuctionality:
+            This function is used to get the robot's or the end effector W.R.T the base_link frame
+        --------------------
+        arguments:
+            no arguments
+        --------------------
+        This function is used to get the current pose of the robot
+        --------------------
+        return:
+            pose: list of pose [x,y,z,roll,pitch,yaw]
+        --------------------
+        '''
+        # get the current pose
+        pose = self.move_group.get_current_pose().pose
+        EulerAngles = tf.transformations.euler_from_quaternion([pose.orientation.x,pose.orientation.y,pose.orientation.z,pose.orientation.w])
+        EndEffectorPose = [pose.position.x,pose.position.y,pose.position.z,EulerAngles[0],EulerAngles[1],EulerAngles[2]]
+        return EndEffectorPose
+    def go_by_joint_angle(self, joint_goal_list,velocity=0.1,acceleration=0.1,Replanning=True,WaitFlag=True)->None:
         '''
         --------------------
         This function is used to move the robot to the desired joint state
@@ -52,17 +104,33 @@ class RobotControl:
             joint_goal: list of joint angles in radians
             velocity: velocity of the robot
             acceleration: acceleration of the robot
+            replan: if True, the robot will re-execute the path if it doesn't reach the goal under certain tolerance
+            WaitFlag: if True, the robot will wait until it reaches the goal and will not execute any other commands
         '''
         # set the velocity of the robot
         self.move_group.set_max_velocity_scaling_factor(velocity)
         # set the acceleration of the robot
         self.move_group.set_max_acceleration_scaling_factor(acceleration)
-        # set the goal joint state
-        self.move_group.go(joint_goal_list,wait=True,)
-        # stop any residual movement
-        self.move_group.stop()
-        pass
-    def go_to_pose_goal_cartesian(self, pose_goal,velocity=0.1,acceleration=0.1):
+        #re-execute if doesn't reach the goal
+        if Replanning==True:
+            state=self.move_group.go(joint_goal_list,wait=False)
+            while not rospy.is_shutdown() and state==True:
+                # stop any residual movement
+                current_joints = self.get_joint_state()
+                if all(abs(current_joints[i]-joint_goal_list[i])<0.0001 for i in range(len(current_joints))):
+                    self.Stop()
+                    print ("reached")
+                    break
+                print ("execute")
+            pass
+        else:
+            if WaitFlag==True:
+                self.move_group.go(joint_goal_list,wait=WaitFlag)
+                self.Stop()
+            else:
+                self.move_group.go(joint_goal_list,wait=WaitFlag)
+            pass
+    def go_to_pose_goal_cartesian(self, pose_goal,velocity=0.1,acceleration=0.1,replan=False,WaitFlag=False)->None:
         '''
         --------------------
         This function is used to move the robot to the desired pose by cartesian path
@@ -71,20 +139,33 @@ class RobotControl:
             pose_goal: geometry_msgs.msg.Pose
             velocity: velocity of the robot
             acceleration: acceleration of the robot
+            replan: if True, the robot will re-execute the path if it doesn't reach the goal under certain tolerance
+            WaitFlag: if True, the robot will wait until it reaches the goal and will not execute any other commands
         '''
         # set the velocity of the robot
         self.move_group.set_max_velocity_scaling_factor(velocity)
         # set the acceleration of the robot
         self.move_group.set_max_acceleration_scaling_factor(acceleration)
-        # set the goal pose
+        #re-execute if doesn't reach the goal
         self.move_group.set_pose_target(pose_goal)
-        # plan the motion
-        plan = self.move_group.go(wait=True)
-        self.move_group.stop()
-        # clear the targets
-        self.move_group.clear_pose_targets()
-        pass
-    def go_to_pose_goal_cartesian_waypoints(self, waypoints,velocity=0.1,acceleration=0.1,list_type=False):
+        if replan==True:
+            plan = self.move_group.go(wait=False)
+            while not rospy.is_shutdown() and plan==True:
+                current_pose = self.get_pose()
+                if all(abs(current_pose[i]-pose_goal[i])<0.0001 for i in range(len(current_pose))):
+                    self.Stop()
+                    print ("reached")
+                    break
+                print ("re-execute")
+            pass
+        else:
+            if WaitFlag==True:
+                self.move_group.go(wait=WaitFlag)
+                self.Stop()
+            else:
+                self.move_group.go(wait=WaitFlag)
+            pass
+    def go_to_pose_goal_cartesian_waypoints(self, waypoints,velocity=0.1,acceleration=0.1,list_type=False)->None:
         '''
         --------------------
         This function is used to move the robot to the desired pose by cartesian path
@@ -101,39 +182,41 @@ class RobotControl:
         
             acceleration: acceleration of the robot
 
-            list_type indicatie if the given waypoints is geometry_msgs.msg.Pose or list
+            list_type indicatie if the given waypoints is geometry_msgs.msg.Pose or list of waypoints [[x,y,z,roll,pitch,yaw],...]
         '''
         geo_pose=geometry_msgs.msg.Pose() #create a geometry_msgs.msg.Pose() object
         list_of_poses = []
-        for ways in waypoints:
-            #set the position of the pose
-            geo_pose.position.x = ways[0]
-            geo_pose.position.y = ways[1]
-            geo_pose.position.z = ways[2]
-            #set the orientation of the pose
-            quantrion = tf.transformations.quaternion_from_euler(ways[3],ways[4],ways[5])
-            geo_pose.orientation.x = quantrion[0]
-            geo_pose.orientation.y = quantrion[1]
-            geo_pose.orientation.z = quantrion[2]
-            geo_pose.orientation.w = quantrion[3]
-            #append the pose to the list
-            list_of_poses.append(copy.deepcopy(geo_pose))
-
+        #start with appending the initial starting
+        list_of_poses.append(copy.deepcopy(self.move_group.get_current_pose().pose))
+        if list_type==True:
+            for ways in waypoints:
+                #set the position of the pose
+                geo_pose.position.x = ways[0]
+                geo_pose.position.y = ways[1]
+                geo_pose.position.z = ways[2]
+                #set the orientation of the pose
+                quantrion = tf.transformations.quaternion_from_euler(ways[3],ways[4],ways[5])
+                geo_pose.orientation.x = quantrion[0]
+                geo_pose.orientation.y = quantrion[1]
+                geo_pose.orientation.z = quantrion[2]
+                geo_pose.orientation.w = quantrion[3]
+                #append the pose to the list
+                list_of_poses.append(copy.deepcopy(geo_pose))
+        else:
+            for ways in waypoints:
+                list_of_poses.append(copy.deepcopy(ways))
         # set the goal pose
         (plan, fraction) = self.move_group.compute_cartesian_path(
                                     list_of_poses,   # waypoints to follow
                                     0.01,        # eef_step
                                     0.0)         # jump_threshold
-        # plan the motion
 
         # generate a new plan with the new velocity and acceleration by retiming the trajectory
         new_plan=self.move_group.retime_trajectory(self.robot.get_current_state(),plan,velocity_scaling_factor=velocity,acceleration_scaling_factor=acceleration)
-        
         # execute the plan
-        self.move_group.execute(new_plan,wait=True)
-
+        state=self.move_group.execute(new_plan,wait=True)
         pass
-    def generate_spiral_waypoints(self,starting_pose,angle,step):
+    def generate_spiral_waypoints(self,starting_pose,angle,step)->list:
         '''
         --------------------
         This function is used to generate a list of waypoints for a spiral path
@@ -153,43 +236,7 @@ class RobotControl:
         for i in range(angle):
             list_poses.append([starting_pose.position.x+step*i*math.cos(i/5),starting_pose.position.y+step*i*math.sin(i/5),starting_pose.position.z,0,-math.pi,0])
         return list_poses
-    def get_joint_state(self):
-        '''
-        fuctionality:
-            This function is used to get the robot's joints state
-        --------------------
-        arguments:
-            no arguments
-        --------------------
-        This function is used to get the current joint state of the robot
-        --------------------
-        return:
-            joint_state: list of joint angles in radians
-        --------------------
-        '''
-        # get the current joint state
-        joint_state = self.move_group.get_current_joint_values()
-        return joint_state
-    def get_pose(self):
-        '''
-        fuctionality:
-            This function is used to get the robot's or the end effector W.R.T the base_link frame
-        --------------------
-        arguments:
-            no arguments
-        --------------------
-        This function is used to get the current pose of the robot
-        --------------------
-        return:
-            pose: list of pose [x,y,z,roll,pitch,yaw]
-        --------------------
-        '''
-        # get the current pose
-        pose = self.move_group.get_current_pose().pose
-        EulerAngles = tf.transformations.euler_from_quaternion([pose.orientation.x,pose.orientation.y,pose.orientation.z,pose.orientation.w])
-        EndEffectorPose = [pose.position.x,pose.position.y,pose.position.z,EulerAngles[0],EulerAngles[1],EulerAngles[2]]
-        return EndEffectorPose
-    def get_joints_velocity(self):
+    def get_joints_velocity(self)->geometry_msgs.msg.Twist:
         '''
         fucntionality:
             This function is used to get the current joint velocity of the robot
@@ -206,7 +253,7 @@ class RobotControl:
         # get the current joint velocity
         joint_velocity = self.move_group.get_current_joint_velocity()
         return joint_velocity
-    def get_end_effector_velocity(self):
+    def get_end_effector_velocity(self)->geometry_msgs.msg.Twist:
         '''
         functionality:
             This function is used to get the current end effector velocity of the robot
@@ -221,7 +268,7 @@ class RobotControl:
         # get the current end effector velocity
         end_effector_velocity = self.move_group.get_current_velocity()
         return end_effector_velocity
-
+    pass
 class frames_transformations:
     '''
     this class is used to put and tarnsform frames in the tf tree
@@ -249,7 +296,7 @@ class frames_transformations:
 
         pass
 
-    def transform(self, parent_id, child_frame_id):
+    def transform(self, parent_id, child_frame_id)->list:
         '''
         functioninality:
             This function is used get the transform between two frames and return the pose of the child frame
@@ -265,7 +312,7 @@ class frames_transformations:
 
         transform_msg = geometry_msgs.msg.TransformStamped()
         pose=geometry_msgs.msg.Pose()
-
+        Pose2List=[]
         transform_msg = self.tfBuffer.lookup_transform(parent_id,child_frame_id,rospy.Time.now())
         #transfer from TransformStamped() to PoseStamped()
         pose.position.x=transform_msg.transform.translation.x
@@ -275,10 +322,12 @@ class frames_transformations:
         pose.orientation.y=transform_msg.transform.rotation.y
         pose.orientation.z=transform_msg.transform.rotation.z
         pose.orientation.w=transform_msg.transform.rotation.w
-        
-        return pose
+        #convert the it to 6d list
+        angles=tf.transformations.euler_from_quaternion([pose.orientation.x,pose.orientation.y,pose.orientation.z,pose.orientation.w])
+        Pose2List=[pose.position.x,pose.position.y,pose.position.z,angles[0],angles[1],angles[2]]
+        return Pose2List
 
-    def put_frame_static_frame(self,parent_frame_name="base_link",child_frame_name="tool0",frame_coordinate=[0,0,0,0,0,0]):
+    def put_frame_static_frame(self,parent_frame_name="base_link",child_frame_name="tool0",frame_coordinate=[0,0,0,0,0,0])->None:
         '''
         --------------------
         This function is used to put the frame in the tf tree
@@ -308,109 +357,9 @@ class frames_transformations:
         # put the frame in the tf tree
         self.static_broadcaster.sendTransform(frames_msg)
         rospy.sleep(0.5)
-    def Convert(self,angles):
-        (x_or,y_or,z_or)=tf.transformations.quaternion_from_euler(angles[0],angles[1],angles[2],angles[3])
-        return [x_or,y_or,z_or]
+        pass
 
-class EwasteRobot:
-    def __init__(self,group_name_1="NoTool"):
-        self.RobotController = RobotControl(group_name=group_name_1)
-        self.TransformationCalculator=frames_transformations()
-        #list of the last pose of the robot after getting the tool
-        self.LastPose=[]
-        #toelrance value to get the tool 
-        self.XtoleranceOutHolder=0.09
-        self.XtoleranceInHolder=0.093
-        self.ZtoleranceToGetDown=0.0006
-        self.ZtoleranceAboveTheHolder=0.05
-    def ChangeGroupName(self,groupname_1="NoTool"):
-    	self.RobotController = RobotControl(group_name=groupname_1)
-        
-    def GetScrewTool(self):
-        '''
-        --------------------
-        This function is used get tool 
-        --------------------
-        arguments:
-            null 
-        functionality:
-            This function is used to move the robot and get the tool
-        --------------------
-        '''
-        #rotate the robot by 90o for safely get the tool 
-        self.RobotController.go_by_joint_angle([-1.57,0.0,0.0,0.0,1.57,0.0],0.1,0.1)
-        #go above the tool
-        self.TransformationCalculator.put_frame_static_frame(parent_frame_name="base_link",child_frame_name="tool0",frame_coordinate=[-0.09801404568477788,-0.3760770949075972,0.19738717727263178+self.ZtoleranceAboveTheHolder,3.1357148366265943, 0.0025491386875668, -0.22123945166312356])
-        pose=self.TransformationCalculator.transform(parent_id="base_link",child_frame_id="tool0")
-        self.RobotController.go_to_pose_goal_cartesian(pose,0.1,0.1)
-
-     	# #go to Holder 
-        self.TransformationCalculator.put_frame_static_frame(parent_frame_name="base_link",child_frame_name="tool0",frame_coordinate=[-0.09801404568477788,-0.3760770949075972,0.19738717727263178+self.ZtoleranceToGetDown,3.1357148366265943, 0.0025491386875668, -0.22123945166312356])
-        pose=self.TransformationCalculator.transform(parent_id="base_link",child_frame_id="tool0")
-        self.RobotController.go_to_pose_goal_cartesian(pose,0.01,0.01)
-        
-    	#lock the tool
-        joints=self.RobotController.get_joint_state()
-        self.RobotController.go_by_joint_angle([joints[0],joints[1],joints[2],joints[3],joints[4],math.radians(-68)],0.01,0.01)
-        
-        #get the tool out of the holder
-        NowPose=self.RobotController.get_pose()#pose after griping to conserve the ring position 
-        self.TransformationCalculator.put_frame_static_frame(parent_frame_name="base_link",child_frame_name="tool0",frame_coordinate=[NowPose[0]+self.XtoleranceOutHolder,NowPose[1],NowPose[2],NowPose[3],NowPose[4], NowPose[5]])
-        pose=self.TransformationCalculator.transform(parent_id="base_link",child_frame_id="tool0")
-        self.RobotController.go_to_pose_goal_cartesian(pose,0.10,0.10)
-
-        self.LastPose=self.RobotController.get_pose()
-        #releasec
-        self.RobotController.go_by_joint_angle([-1.57,0.0,0.0,0.0,1.57,0.0],0.1,0.1)
-
-    def ReturnScrew(self):
-        '''
-        --------------------
-        This function is used get tool 
-        --------------------
-        arguments:
-        
-            null 
-        functionality:
-            This function is used to move the robot and get the tool
-        --------------------
-        '''
-
-        #go to the tool of before the tool
-        self.RobotController.go_by_joint_angle([-1.57,0.0,0.0,0.0,1.57,0.0],0.5,0.2)
-        self.TransformationCalculator.put_frame_static_frame(parent_frame_name="base_link",child_frame_name="tool0",frame_coordinate=[-0.007926887356337653, -0.37607745548092686, 0.19805928144388488, 3.133940171073178, 5.769876402243904e-05, -0.6326096198336734])
-        pose=self.TransformationCalculator.transform(parent_id="base_link",child_frame_id="tool0")
-        self.RobotController.go_to_pose_goal_cartesian(pose,0.10,0.10)
-
-        #go inside the holder
-        self.TransformationCalculator.put_frame_static_frame(parent_frame_name="base_link",child_frame_name="tool0",frame_coordinate=[-0.007926887356337653-self.XtoleranceInHolder, -0.37607745548092686, 0.19805928144388488, 3.133940171073178, 5.769876402243904e-05, -0.6326096198336734])
-        pose=self.TransformationCalculator.transform(parent_id="base_link",child_frame_id="tool0")
-        self.RobotController.go_to_pose_goal_cartesian(pose,0.10,0.10)
-
-        #unlock
-        joints=self.RobotController.get_joint_state()
-        self.RobotController.go_by_joint_angle([joints[0],joints[1],joints[2],joints[3],joints[4],math.radians(-93.3)],0.01,0.005)
-        
-        #go up
-
-        NowPose=self.RobotController.get_pose()#pose after griping to conserve the ring position 
-        self.TransformationCalculator.put_frame_static_frame(parent_frame_name="base_link",child_frame_name="tool0",frame_coordinate=[NowPose[0],NowPose[1],NowPose[2]+self.ZtoleranceAboveTheHolder,NowPose[3],NowPose[4], NowPose[5]])
-        pose=self.TransformationCalculator.transform(parent_id="base_link",child_frame_id="tool0")
-        self.RobotController.go_to_pose_goal_cartesian(pose,0.1,0.1)
-
-        
-    def Homing(self):
-        self.RobotController.go_by_joint_angle([0.0,0.0,0.0,0.0,1.57,0.0],0.1,0.1)
-    def SpiralSearch(self):
-        pose=self.RobotController.generate_spiral_waypoints(self.RobotController.get_pose(),10000,0.0001)
-        self.RobotController.go_to_pose_goal_cartesian_waypoints(pose,1,1,list_type=True)
-
-if __name__=="__main__":
-   RobotController = RobotControl(group_name="manipulator")
-   RobotController.go_by_joint_angle([0,0,0,0,0,0],1.0,0.5)
-   RobotController.go_by_joint_angle([1.57,0,0,0,0,0],1.0,0.1)
-   #EwasteTooless.Homing()
-   #EwasteTooless.SpiralSearch()
-   #EwasteTooless.ReturnScrew()
-   #EwasteTooless.GetScrewTool()
-   #EwasteTooless.Homing()
+if __name__ == "__main__":
+    test = RobotControl(group_name="manipulator")
+    test.go_by_joint_angle([1.57,0,0,0,0,0],velocity=0.1,acceleration=0.1,Replanning=False,WaitFlag=True)
+    test.go_by_joint_angle([0,0,0,0,0,0],velocity=0.1,acceleration=0.1,WaitFlag=True,Replanning=False)
