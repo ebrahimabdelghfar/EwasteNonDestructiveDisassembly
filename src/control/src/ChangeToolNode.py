@@ -5,17 +5,20 @@ from geometry_msgs.msg import WrenchStamped
 
 
 class GetToolNode:
-    def __init__(self, group_name_1="NoTool"):
+    def __init__(self, group_name_1="NoTool", StopTourqeThershold1=0.5):
         self.RobotController = RobotControl(group_name=group_name_1)
         self.TransformationCalculator = frames_transformations()
         # list of the last pose of the robot after getting the tool
         self.LastPose = []
+
         # toelrance value to get the tool
         self.XtoleranceOutHolder = 0.09
         self.XtoleranceInHolder = 0.093
         self.ZtoleranceToGetDown = 0.0006
         self.ZtoleranceAboveTheHolder = 0.05
-        self.OperationNo = 0
+        #end
+
+        self.OperationNo =rospy.get_param("/OrdersOfOperation/GettingToolNode")
         # define the Topic that being used
         rospy.Subscriber("/NodeToOperate", Int32, self.OperationCallBack)
         self.ToolGettingPub = rospy.Publisher(
@@ -23,18 +26,13 @@ class GetToolNode:
         self.TorqueReadingPub = rospy.Subscriber(
             "/TorqueZ", WrenchStamped, self.TorqueReadingCallBack)
         self.TorqueReading = 0.0
+        self.StopTourqeThershold = StopTourqeThershold1
 
     def TorqueReadingCallBack(self, data: WrenchStamped) -> None:
         '''
         objective: this function is used to get the torque reading from the sensor
         '''
         self.TorqueReading = data.wrench.torque.z
-
-    def OperationCallBack(self, data: Int32) -> None:
-        '''
-        objective: this function is used to get the operation number from the CentralNode
-        '''
-        self.OperationNo = data.data
 
     def ChangeGroupName(self, groupname_1="NoTool") -> None:
         self.RobotController = RobotControl(group_name=groupname_1)
@@ -78,9 +76,9 @@ class GetToolNode:
         self.RobotController.go_by_joint_angle(
             [joints[0], joints[1], joints[2], joints[3], joints[4], math.radians(-68)], 0.01, 0.01, Replanning=False, WaitFlag=False)
 
-        # wait until the torque is more than 0.5 n.m the stop the robot
+        # wait until the torque is more than 0.5 N.m the stop the robot
         while not rospy.is_shutdown():
-            if self.TorqueReading > 0.5:
+            if self.TorqueReading > self.StopTourqeThershold:
                 self.RobotController.Stop()
                 break
 
@@ -141,6 +139,14 @@ class GetToolNode:
         pose = self.TransformationCalculator.transform(
             parent_id="base_link", child_frame_id="tool0")
         self.RobotController.go_to_pose_goal_cartesian(pose, 0.1, 0.1)
-
-
-# define subscribers that will receive the number of the operation Mode
+    def StartOperation(self):
+        while not rospy.is_shutdown():
+            RecievedOpertaion:Int32 =rospy.wait_for_message("/NodeToOperate", Int32)
+            if self.OperationMode == RecievedOpertaion.data:
+                self.GetScrewTool()
+                self.OperationMode = 0
+            elif self.OperationMode == 2:
+                self.ReturnScrew()
+                self.OperationMode = 0
+            else:
+                pass
