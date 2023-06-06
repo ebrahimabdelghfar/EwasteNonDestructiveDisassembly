@@ -7,8 +7,8 @@ import geometry_msgs.msg
 import tf2_ros
 import tf.transformations
 import math
-from std_msgs.msg import Bool,Float32MultiArray, MultiArrayLayout, MultiArrayDimension
-
+from std_msgs.msg import Bool,Float64MultiArray, MultiArrayLayout, MultiArrayDimension,String
+import json
 import torch
 
 #from PIL import Image
@@ -38,7 +38,7 @@ model = TracedModel(model,"cpu",640)
 
 
 perceptionNode=rospy.init_node("Perception")
-perceptionPublisher=rospy.Publisher('screwlist' ,Float32MultiArray,queue_size=50)
+perceptionPublisher=rospy.Publisher('ListOfScrews' ,String,queue_size=50)
 rate=rospy.Rate(50)
 # Configure camera streams
 pipeline = rs.pipeline()
@@ -98,25 +98,27 @@ while not rospy.is_shutdown():
     predresults = pred[0]
     #predresults format: (xtl,ytl,xbr,ybr,conf,class)
     predresults[:, :4] = scale_coords(img.shape[2:], predresults[:, :4], img0.shape).round()
-    rectangles=[]
+    
+   
+
+    ## pixel to world coordinates transformation
+
+    #print('shape of verts is {}',verts.shape)
     for predresult in predresults:
         list()
         # Blue color in BGR
         color = (255, 0, 0)
-        print('predres value is {}'.format(predresult))
+        #print('predres value is {}'.format(predresult))
+        centerx = int((predresult[0]+predresult[2]))//2
+        centery = int((predresult[1]+predresult[3]))//2
+        print('center val is  {},{}',centerx,centery)
+        xyz_position = verts[centery][centerx]
+        xyz_position = [float(xyz_position[0]),float(xyz_position[1]),float(xyz_position[2])]
+        #print(xyz_position)
+        screwlist.append(xyz_position)
         rc=cv2.rectangle(color_image,(int(predresult[0]),int(predresult[1])),(int(predresult[2]),int(predresult[3])),color,2)
-        rectangles.append(rc)
     cv2.imshow('myimg',color_image)
     cv2.waitKey(1)
-    print(predresults)
-    ## pixel to world coordinates transformation
-
-    for screw in screwlist:
-        ## assuming we got the center x,y
-        #screw=verts[screw[0],screw[1]]
-        pass
-
-
     
 
     ## converting detections to rosmsg
@@ -125,9 +127,11 @@ while not rospy.is_shutdown():
     ##screwlist=Float32MultiArray(screwlist)
     
     ##publishing the screwlist
-
+    my_msg = String()
+    my_msg.data = json.dumps(screwlist)
     
-    #perceptionPublisher.publish(screwlist)
+    
+    perceptionPublisher.publish(my_msg)
 
 
     rate.sleep()
