@@ -36,13 +36,14 @@ class RobotControl:
         self.move_group = MoveGroupCommander(group_name)
         self.move_group.set_planner_id(PlanningId)
         # set the planning time and flags
-        self.move_group.set_planning_time(10)
+        self.move_group.set_planning_time(50)
         self.move_group.allow_replanning(True)
         self.move_group.allow_looking(True)
         #adjust tolerance of the joint 
         self.move_group.set_goal_joint_tolerance(JointTolerance)
         self.move_group.set_goal_position_tolerance(PositionTolerance)
         self.move_group.set_goal_orientation_tolerance(OrientationTolerance)
+        self.PostionTolerance=0.0001 
         pass
 
     def Stop(self)->None:
@@ -117,11 +118,11 @@ class RobotControl:
             while not rospy.is_shutdown() and state==True:
                 # stop any residual movement
                 current_joints = self.get_joint_state()
-                if all(abs(current_joints[i]-joint_goal_list[i])<0.0001 for i in range(len(current_joints))):
+                if all(abs(current_joints[i]-joint_goal_list[i])<self.PostionTolerance for i in range(len(current_joints))):
                     self.Stop()
                     print ("reached")
                     break
-                print ("execute")
+                # print ("execute")
             pass
         else:
             if WaitFlag==True:
@@ -130,7 +131,7 @@ class RobotControl:
             else:
                 self.move_group.go(joint_goal_list,wait=WaitFlag)
             pass
-    def go_to_pose_goal_cartesian(self, pose_goal,velocity=0.1,acceleration=0.1,replan=False,WaitFlag=False)->None:
+    def go_to_pose_goal_cartesian(self, pose_goal,velocity=0.1,acceleration=0.1,Replanning=False,WaitFlag=False)->None:
         '''
         --------------------
         This function is used to move the robot to the desired pose by cartesian path
@@ -148,11 +149,11 @@ class RobotControl:
         self.move_group.set_max_acceleration_scaling_factor(acceleration)
         #re-execute if doesn't reach the goal
         self.move_group.set_pose_target(pose_goal)
-        if replan==True:
+        if Replanning==True:
             plan = self.move_group.go(wait=False)
             while not rospy.is_shutdown() and plan==True:
                 current_pose = self.get_pose()
-                if all(abs(current_pose[i]-pose_goal[i])<0.0001 for i in range(len(current_pose))):
+                if all(abs(current_pose[i]-pose_goal[i])<self.PostionTolerance for i in range(len(current_pose))):
                     self.Stop()
                     print ("reached")
                     break
@@ -360,6 +361,13 @@ class frames_transformations:
         pass
 
 if __name__ == "__main__":
-    test = RobotControl(group_name="manipulator")
-    test.go_by_joint_angle([1.57,0,0,0,0,0],velocity=0.1,acceleration=0.1,Replanning=False,WaitFlag=True)
-    test.go_by_joint_angle([0,0,0,0,0,0],velocity=0.1,acceleration=0.1,WaitFlag=True,Replanning=False)
+    test = RobotControl(group_name="NoTool")
+    tftest=frames_transformations()
+    print(test.get_pose())
+    tftest.put_frame_static_frame(parent_frame_name="base_link",child_frame_name="tool0",frame_coordinate=test.get_pose())
+
+
+
+
+
+

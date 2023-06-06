@@ -57,7 +57,7 @@ with nidaqmx.Task() as task:
             wrench_msg.wrench.force.z = wrench[2]
             wrench_msg.wrench.torque.x = wrench[3]
             wrench_msg.wrench.torque.y = wrench[4]
-            wrench_msg.wrench.torque.z = wrench[5]
+            wrench_msg.wrench.torque.z = wrench[5] 
             wrench_pub.publish(wrench_msg)
             # print the force data
             # print (wrench_msg)
