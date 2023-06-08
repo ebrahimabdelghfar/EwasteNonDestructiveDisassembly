@@ -1,6 +1,6 @@
 import sys
-sys.path.append("../../control/")
-from src.robot_helper import RobotControl, frames_transformations
+sys.path.append("../../control/src/")
+from robot_helper import RobotControl, frames_transformations
 import numpy as np
 import tf.transformations
 
