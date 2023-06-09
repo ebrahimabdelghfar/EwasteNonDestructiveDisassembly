@@ -8,16 +8,3 @@ OrdersOfOperation:
     GettingMillingNode: 6,
     ReturnMillingNode: 7,
   }
-
-ToolChangeState:
-  {
-    GettingScrewSuccess: 1,
-    GettingScrewFailure: 2,
-    ReturningScrewSuccess: 3,
-    ReturningScrewFailure: 4,
-    GettingMillingSuccess: 5,
-    GettingMillingFailure: 6,
-    ReturningMillingSuccess: 7,
-    ReturningMillingFailure: 8,
-  }
-
