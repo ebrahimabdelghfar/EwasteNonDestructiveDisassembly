@@ -1,8 +1,8 @@
 import rospy
 import sys
 sys.path.append(".../")
-from Resources.nodes import Nodes
-from Resources.topics import Topics
+from resources.enums.nodes import Nodes
+from resources.enums.topics import Topics
 from std_msgs.msg import Int32, Bool
 from CentralNode.msg import node_response as NodeResponse
 from src.storage.db import RobotDatabase
