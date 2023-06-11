@@ -1,7 +1,10 @@
 OrdersOfOperation:
-{
-  ClampingNode: 1,
-  VisionNode: 2,
-  UnscrewingNode: 3,
-  GettingToolNode: 4,
-}
+  {
+    ClampingNode: 1,
+    VisionNode: 2,
+    UnscrewingNode: 3,
+    GettingScrewNode: 4,
+    ReturnScrewNode: 5,
+    GettingMillingNode: 6,
+    ReturnMillingNode: 7,
+  }
