@@ -2,8 +2,6 @@ from robot_helper import *
 from std_msgs.msg import Int32
 from std_msgs.msg import Bool
 from geometry_msgs.msg import WrenchStamped
-
-
 class GetToolNode:
     def __init__(self, group_name_1="NoTool", StopTourqeThershold1=0.5):
         self.RobotController = RobotControl(group_name=group_name_1)
@@ -232,10 +230,4 @@ class GetToolNode:
 
 changeTool=GetToolNode(group_name_1="NoTool")
 changeTool.StartOperation()
-
-# test=GetToolNode(group_name_1="NoTool")
-# test.GetScrewTool()
-# test.ReturnScrew()
-# while True:
-#     rospy.sleep()
 
