@@ -2,7 +2,6 @@
 import rospy
 import roslaunch
 import rosnode
-from Nodename import NodeName
 class HeartBeat:
     '''
     Objective : This class is used to check if the robot is running or not
@@ -28,8 +27,8 @@ class HeartBeat:
         #interval checker for the all nodes 
         rospy.Timer(rospy.Duration(self.HeartRate), self.NodesHeartBeat)
         #list all the runnung nodes
-        self.NodesExist = NodeName().NodesExist
-        self.NodeInfo = NodeName().NodeInfo
+        # self.NodesExist = NodeName().NodesExist
+        # self.NodeInfo = NodeName().NodeInfo
         pass
 
     def NodesHeartBeat(self,event)->None:
@@ -47,9 +46,9 @@ class HeartBeat:
         Objective : This is a dummy function to disable the rossignal handler
         '''
         pass
-
-test=HeartBeat(heartRate = 10)#heartRate in seconds
+    
+Heart=HeartBeat(heartRate = 10)#heartRate in seconds
 while not rospy.is_shutdown():
     rospy.sleep(1)
     pass
-
+#post processing for removing 
