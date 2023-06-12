@@ -76,10 +76,10 @@ def checkReadings():
 if __name__ == '__main__':
     try:
         rospy.init_node(Nodes.UNSCREW.value)
-        unscrewingPub = rospy.Publisher(Topics.UNSCREW_DONE, Bool, queue_size=1)
-        motorPub = rospy.Publisher(Topics.ScrewDriverMOTOR_COMMAND, Int32, queue_size=1)
-        rospy.Subscriber(Topics.ForceSensorWrench, WrenchStamped, ftCallback)
-        rospy.Subscriber(Topics.UNSCREW_START_FLAG, Bool, startUnscrewing_Callback)
+        unscrewingPub = rospy.Publisher(Topics.UNSCREW_DONE.value, Bool, queue_size=1)
+        motorPub = rospy.Publisher(Topics.ScrewDriverMOTOR_COMMAND.value, Int32, queue_size=1)
+        rospy.Subscriber(Topics.ForceSensorWrench.value, WrenchStamped, ftCallback)
+        rospy.Subscriber(Topics.UNSCREW_START_FLAG.value, Bool, startUnscrewing_Callback)
         # rate = rospy.Rate(10)  # 10hz
         while not rospy.is_shutdown():
             if startUnscrewing_Flag is True:
