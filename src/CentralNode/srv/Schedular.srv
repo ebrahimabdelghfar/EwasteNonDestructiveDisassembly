@@ -1,0 +1,3 @@
+---
+float64[] waypoints 
+int32[] waypoint_types

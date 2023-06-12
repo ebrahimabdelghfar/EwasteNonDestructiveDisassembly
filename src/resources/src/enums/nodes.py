@@ -12,8 +12,11 @@ class Nodes(Enum):
     APPROACH_AND_ENGAGE = "APPROACH_ANG_ENGAGE"
     UNSCREW = "UNSCREW_NODE"
     MILLING = "MILLING"
-
+    HeartBeat = "HeartBeat"
+    #list that contains all the nodes that always should be running
+    NodesToBeOperated=[FORCE,COLLISION_DETECTION,CENTRAL,VISION,CLAMPING,CHANGE_TOOL,CHECK_MOTOR,APPROACH_AND_ENGAGE,UNSCREW,MILLING]
+    NodesToBeOperatedInfo = {CHECK_MOTOR:["checkMotors","checkMotorsNode.py",CHECK_MOTOR]}
 
 if __name__ == "__main__":
     print("Hello, World!")
-    print(Nodes.CENTRAL.value)
+    print(Nodes.NodesToBeOperated.value)

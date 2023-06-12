@@ -2,7 +2,7 @@
 import rospy
 import roslaunch
 import rosnode
-from Nodename import NodeName
+from enums.nodes import Nodes
 class HeartBeat:
     '''
     Objective : This class is used to check if the robot is running or not
@@ -19,7 +19,7 @@ class HeartBeat:
         '''the following line disable rossignal handler so we can launch form callback'''
         roslaunch.pmon._init_signal_handlers = self.dummy_function
         '''end'''
-        rospy.init_node("HeartBeat")
+        rospy.init_node(Nodes.HeartBeat.value)
         #initiate the roslaunch api
         self.launch = roslaunch.scriptapi.ROSLaunch()
         self.launch.start()
@@ -28,14 +28,22 @@ class HeartBeat:
         #interval checker for the all nodes 
         rospy.Timer(rospy.Duration(self.HeartRate), self.NodesHeartBeat)
         #list all the runnung nodes
-        self.NodesExist = NodeName().NodesExist
-        self.NodeInfo = NodeName().NodeInfo
+        self.NodesExist = Nodes.NodesToBeOperated.value
+        self.NodeInfo = Nodes.NodesToBeOperatedInfo.value
         pass
 
     def NodesHeartBeat(self,event)->None:
         Operated , _ = rosnode.rosnode_ping_all()
+
+        #remove the '/' from the node name
+        for node in Operated:
+            Operated[Operated.index(node)] = node.replace("/","")
+        print("Nodes that are running {}".format(Operated))
+        #see the which nodes are not running
         not_running = list(set(self.NodesExist).difference(Operated))
+
         print("Nodes that are not running {}".format(not_running))
+        #start the nodes that are not running by looping through the list
         for node in not_running:
             print("Node {} is not running".format(node))
             node = roslaunch.core.Node(package=self.NodeInfo[node][0],node_type=self.NodeInfo[node][1],name =self.NodeInfo[node][2])
@@ -48,8 +56,6 @@ class HeartBeat:
         '''
         pass
 
-test=HeartBeat(heartRate = 10)#heartRate in seconds
-while not rospy.is_shutdown():
-    rospy.sleep(1)
-    pass
+HeartBeat=HeartBeat(heartRate = 10)#heartRate in seconds
+rospy.spin()
 

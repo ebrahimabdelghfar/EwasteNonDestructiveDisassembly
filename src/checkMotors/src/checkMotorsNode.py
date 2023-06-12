@@ -2,10 +2,11 @@
 import rospy 
 from abb_robot_msgs.msg import SystemState
 import roslaunch
+from enums.nodes import Nodes
 class CheckMotors:
     def __init__(self,heartRate,maxCount) -> None:
         '''the following line disable rossignal handler so we can launch form callback'''
-        rospy.init_node("checkMotors")
+        rospy.init_node(Nodes.CHECK_MOTOR.value)
         roslaunch.pmon._init_signal_handlers = self.dummy_function
         '''end'''
         rospy.Subscriber("/rws/system_states", SystemState, self.RobotStateCallback)
@@ -46,6 +47,4 @@ class CheckMotors:
 
 MotorBeat = CheckMotors(1,1)
 
-while not rospy.is_shutdown():
-    rospy.sleep(0.1)
-    pass
+rospy.spin()
