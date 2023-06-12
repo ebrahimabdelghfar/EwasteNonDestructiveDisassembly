@@ -23,7 +23,7 @@ class ApprochAndEngaging:
         self.NodeSuccess=rospy.Publisher(Topics.NODE_SUCCESS.value, node_response, queue_size=1)
         #define subscribers
         rospy.Subscriber(Topics.UNSCREW_DONE.value, Bool, self.unscrewDoneCallback)
-        rospy.Subscriber(Topics.ForceSensorWrench, WrenchStamped, self.SensorCallback)
+        rospy.Subscriber(Topics.ForceSensorWrench.value, WrenchStamped, self.SensorCallback)
         rospy.Subscriber(Topics.NODE_TO_OPERATE.value, Int32, self.NodeToOperateCallback)
         #motor commands 
         # 0: stop
