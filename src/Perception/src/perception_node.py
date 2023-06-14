@@ -26,7 +26,8 @@ import numpy as np
 import time
 
 # importing robot helper for coordinates view transformation 
-sys.path.append("../../control/src/")
+print(sys.path)
+sys.path.append("/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/control/src")
 from robot_helper import RobotControl, frames_transformations
 import numpy as np
 import tf.transformations
@@ -104,23 +105,24 @@ class PerceptionNode():
        
         predresults = pred[0]
         #predresults format: (xtl,ytl,xbr,ybr,conf,class)
-        predresults[:, :4] = scale_coords(image.shape[2:], predresults[:, :4], image.shape).round()
+        predresults[:, :4] = scale_coords(image.shape[2:], predresults[:, :4], self.color_image.shape).round()
 
         return predresults
     
     def pixelToSpace(self, predresults, verts ,debug=False):
         screwlist=[]
-
+        print('predresults are')
+        print(predresults)
         for predresult in predresults:
             # Blue color in BGR
             color = (255, 0, 0)
-            #print('predres value is {}'.format(predresult))
+            print('predres value is {}'.format(predresult))
             centerx = int((predresult[0] + predresult[2])) // 2
             centery = int((predresult[1] + predresult[3])) // 2
             print('center val is  {},{}',centerx,centery)
             xyz_position = verts[centery][centerx]
             xyz_position = [float(xyz_position[0]), float(xyz_position[1]), float(xyz_position[2])]
-            #print(xyz_position)
+            print(xyz_position[2])
             screwlist.append(xyz_position)
             rc = cv2.rectangle(self.color_image, (int(predresult[0]), int(predresult[1])), (int(predresult[2]), int(predresult[3])), color, 2) # Not used ?
 
@@ -158,21 +160,28 @@ class PerceptionNode():
         self.InitializeCamera()
 
         while not rospy.is_shutdown():
-        
+            
             ## Camera Readings
             ImageData, verts = self.imagePreprocess()
+            # print('image data is ')
+            # print(ImageData)
+            # print('verts are ')
+            # print(verts)
             ## Model inference on image data
             predictions = self.modelInference(ImageData)
             ## Get Positions in the space of camera
-            screwPositionsToCamera = self.pixelToSpace(predictions, verts)
+            screwPositionsToCamera = self.pixelToSpace(predictions, verts,debug=True)
             ## Get Positions relative to the base link
             screwPositions = list()
 
-            for screwPosition in screwPositionsToCamera:
-                screwPositions.append(self.camToWorldPositions(screwPosition[0], screwPosition[1], screwPosition[2])[:3])
+            # for screwPosition in screwPositionsToCamera:
+            #     screwPositions.append(self.camToWorldPositions(screwPosition[0], screwPosition[1], screwPosition[2])[:3])
 
             ## Publish readings
              
-            self.publishReadings(screwPositions)
+            self.publishReadings(screwPositionsToCamera)
 
             self.rate.sleep()
+
+perception=PerceptionNode()
+perception.launchNode()
