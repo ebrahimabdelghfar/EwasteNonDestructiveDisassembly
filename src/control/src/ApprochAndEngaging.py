@@ -62,10 +62,11 @@ class ApprochAndEngaging:
             x,y=pose[0]+(fs/math.pi)*math.sqrt(((8*math.pi*N_s*t)/15))*math.cos(math.sqrt(((8*math.pi*N_s*t)/15))),pose[1]+(fs/math.pi)*math.sqrt(((8*math.pi*N_s*t)/15))*math.sin(math.sqrt(((8*math.pi*N_s*t)/15)))
             waypoints.append([x,y,pose[2],pose[3],pose[4],pose[5]])
             pass
-        #execute the spiral shape
-        self.RobotJoystick.go_to_pose_goal_cartesian_waypoints(waypoints,velocity=0.1,acceleration=0.1,list_type=True,waitFlag=True)
+        #if wait flag == true then the followin line will not be skipped until the robot finish the path
+        #if wait flag == false then the following line will be skipped and the robot will start the path and the code will continue
+        self.RobotJoystick.go_to_pose_goal_cartesian_waypoints(waypoints,velocity=0.1,acceleration=0.1,list_type=True,waitFlag=False)
         #todo: put the force sensor check
-
+    
         #end
         pass
 

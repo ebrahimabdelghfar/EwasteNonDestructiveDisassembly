@@ -315,7 +315,7 @@ class frames_transformations:
         pose=geometry_msgs.msg.Pose()
         Pose2List=[]
         # transform_msg = self.tfBuffer.lookup_transform(parent_id,child_frame_id,rospy.Time.now(),timeout=rospy.Duration(0.5))
-        transform_msg = self.tfBuffer.lookup_transform(parent_id,child_frame_id,rospy.Time(0),timeout=rospy.Duration(0.1))
+        transform_msg = self.tfBuffer.lookup_transform(parent_id,child_frame_id,rospy.Time(0),timeout=rospy.Duration(0.5))
         #transfer from TransformStamped() to PoseStamped()
         pose.position.x=transform_msg.transform.translation.x
         pose.position.y=transform_msg.transform.translation.y
@@ -360,6 +360,3 @@ class frames_transformations:
         self.static_broadcaster.sendTransform(frames_msg)
         rospy.sleep(0.5)
         pass
-
-
-
