@@ -1,6 +1,6 @@
 import rospy
 from std_msgs.msg import Float32MultiArray , Bool, Int32
-from robot_helper import *
+from helper.robot_helper import *
 from enums.nodes import Nodes
 from enums.topics import Topics
 from geometry_msgs.msg import WrenchStamped
