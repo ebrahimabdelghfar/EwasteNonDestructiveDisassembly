@@ -326,7 +326,7 @@ class frames_transformations:
         #convert the it to 6d list
         angles=tf.transformations.euler_from_quaternion([pose.orientation.x,pose.orientation.y,pose.orientation.z,pose.orientation.w])
         Pose2List=[pose.position.x,pose.position.y,pose.position.z,angles[0],angles[1],angles[2]]
-        return pose,Pose2List
+        return Pose2List
 
     def put_frame_static_frame(self,parent_frame_name="base_link",child_frame_name="tool0",frame_coordinate=[0,0,0,0,0,0])->None:
         '''
@@ -359,15 +359,3 @@ class frames_transformations:
         self.static_broadcaster.sendTransform(frames_msg)
         rospy.sleep(0.5)
         pass
-
-if __name__ == "__main__":
-    test = RobotControl(group_name="NoTool")
-    tftest=frames_transformations()
-    print(test.get_pose())
-    tftest.put_frame_static_frame(parent_frame_name="base_link",child_frame_name="tool0",frame_coordinate=test.get_pose())
-
-
-
-
-
-

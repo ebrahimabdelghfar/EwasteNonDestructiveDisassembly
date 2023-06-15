@@ -11,20 +11,25 @@ class ApprochAndEngaging:
     def __init__(self) -> None:
         self.RobotJoystick = RobotControl(node_name=Nodes.APPROACH_AND_ENGAGE.value,group_name="ScrewIn")
         self.TransformCalculator = frames_transformations()
+        #editabel parameters
         self.MyNumber = 4
         self.UnscrewFlag = False
         self.engageFlag  = False
         self.SensorRead = WrenchStamped()
         self.NodeToOperate = 0
+        
         self.ListOfscrews = [1,2,3,4,5,6,7,8,9,10,11,12,1,2,3,4,5,6,7,8,9,10,11,12]#for testing only
+
         #define publishers 
         self.Motor=rospy.Publisher(Topics.ScrewDriverMOTOR_COMMAND.value, Int32, queue_size=1)
         self.StartUnscrewing = rospy.Publisher(Topics.UNSCREW_START_FLAG.value, Bool , queue_size=1)
         self.NodeSuccess=rospy.Publisher(Topics.NODE_SUCCESS.value, node_response, queue_size=1)
+
         #define subscribers
         rospy.Subscriber(Topics.UNSCREW_DONE.value, Bool, self.unscrewDoneCallback)
         rospy.Subscriber(Topics.ForceSensorWrench.value, WrenchStamped, self.SensorCallback)
         rospy.Subscriber(Topics.NODE_TO_OPERATE.value, Int32, self.NodeToOperateCallback)
+
         #motor commands 
         # 0: stop
         # 1: for rotate clockwise
@@ -35,7 +40,7 @@ class ApprochAndEngaging:
 
     def reshapeList(self,ListOfscrews)->list:
         #reshaping the list of screws to 2D (nx6) list array
-        ListOfscrews = [ListOfscrews[i:i+6] for i in range(0, len(ListOfscrews), 6)]
+        ListOfscrews = [ListOfscrews[i:i+3] for i in range(0, len(ListOfscrews), 3)]
         return ListOfscrews
 
     def unscrewDoneCallback(self,msg):

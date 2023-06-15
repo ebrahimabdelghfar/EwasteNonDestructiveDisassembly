@@ -3,6 +3,8 @@ from std_msgs.msg import Int32
 from std_msgs.msg import Bool
 from geometry_msgs.msg import WrenchStamped
 from enums.nodes import Nodes
+from enums.topics import Topics
+from CentralNode.msg import node_response
 class GetToolNode:
     def __init__(self, group_name_1="NoTool", StopTourqeThershold1=0.5):
         self.RobotController = RobotControl(node_name=Nodes.CHANGE_TOOL.value,group_name=group_name_1)
@@ -14,45 +16,19 @@ class GetToolNode:
         self.XtoleranceInHolder = 0.093
         self.ZtoleranceToGetDown = 0.002
         self.ZtoleranceAboveTheHolder = 0.05
-        
         # Threshold to check z torque while unlocking
         self.thresholdLocking = -1.1
-        
         # To check z force if tool is attached or not (tool weight)
         self.thresholdForToolWeightForceZ = 2.5
-        
-        # Operation numbers from parameters file to integrate with centeral node
-        self.GettingScrewOperationNo =rospy.get_param("/OrdersOfOperation/GettingScrewNode")
-        self.ReturnScrewOperationNo =rospy.get_param("/OrdersOfOperation/ReturnScrewNode")
-        
-        self.GettingMillingOperationNo =rospy.get_param("/OrdersOfOperation/GettingMillingNode")
-        self.ReturnMillingOperationNo =rospy.get_param("/OrdersOfOperation/ReturnMillingNode")
-        
-        
-        # States to be published to the centeral node
-        
-        self.GettingScrewSuccess =rospy.get_param("/ToolChangeState/GettingScrewSuccess")
-        self.GettingScrewFailed =rospy.get_param("/ToolChangeState/GettingScrewFailure")
-        
-        self.ReturningScrewSuccess =rospy.get_param("/ToolChangeState/ReturningScrewSuccess")
-        self.ReturningScrewFailed =rospy.get_param("/ToolChangeState/ReturningScrewFailure")
-    
-        
-        self.GettingMillingSuccess =rospy.get_param("/ToolChangeState/GettingMillingSuccess")
-        self.GettingMillingFailed =rospy.get_param("/ToolChangeState/GettingScrewFailure")
-        
-        self.ReturningMillingSuccess =rospy.get_param("/ToolChangeState/ReturningMillingSuccess")
-        self.ReturningMillingFailed=rospy.get_param("/ToolChangeState/ReturningMillingFailure")
-        
-        
         # define the Topic that being used
         self.ToolChangePub = rospy.Publisher(
-            "/ToolChangingState", Int32, queue_size=1)
+            Topics.NODE_SUCCESS.value, Int32, queue_size=1)
         self.TorqueZReadingPub = rospy.Subscriber(
-            "/ft_sensor_wrench/wrench/raw", WrenchStamped, self.FTReadingCallBack)
+            Topics.ForceSensorWrench.value, WrenchStamped, self.FTReadingCallBack)
         self.TorqueZReading = 0.0
         self.ForceZReading = 0.0
         self.StopTourqeThershold = StopTourqeThershold1
+        self.State=node_response()
 
     def FTReadingCallBack(self, data: WrenchStamped) -> None:
         '''
@@ -61,7 +37,11 @@ class GetToolNode:
         self.TorqueZReading = data.wrench.torque.z
         self.ForceZReading = data.wrench.force.z
 
-
+    def reshapeList(self,ListOfscrews)->list:
+        #reshaping the list of screws to 2D (nx6) list array
+        ListOfscrews = [ListOfscrews[i:i+6] for i in range(0, len(ListOfscrews), 6)]
+        return ListOfscrews
+    
     def ChangeGroupName(self, groupname_1="NoTool") -> None:
         self.RobotController = RobotControl(group_name=groupname_1)
 
@@ -84,15 +64,15 @@ class GetToolNode:
         # # go above the tool
         self.TransformationCalculator.put_frame_static_frame(parent_frame_name="base_link", child_frame_name="tool0", frame_coordinate=[
                                                              -0.09868947696839801, -0.38160183758005417, 0.1959320787026243+self.ZtoleranceAboveTheHolder, -3.141268865426805,0, -0.35668452629565967])
-        pose,_ = self.TransformationCalculator.transform(
+        pose = self.TransformationCalculator.transform(
             parent_id="base_link", child_frame_id="tool0")
         self.RobotController.go_to_pose_goal_cartesian(
-            pose, 1, 1, Replanning=True)
+            pose, 1, 1, Replanning=True,wating=False)
 
         # go to Holder
         self.TransformationCalculator.put_frame_static_frame(parent_frame_name="base_link", child_frame_name="tool0", frame_coordinate=[
                                                              -0.09868947696839801, -0.38160183758005417, 0.1959320787026243+self.ZtoleranceToGetDown, -3.141268865426805,0, -0.35668452629565967])
-        pose,_ = self.TransformationCalculator.transform(
+        pose = self.TransformationCalculator.transform(
             parent_id="base_link", child_frame_id="tool0")
         self.RobotController.go_to_pose_goal_cartesian(
             pose, 0.005, 0.005, Replanning=True,WaitFlag=False)
@@ -101,7 +81,8 @@ class GetToolNode:
         # lock the tool
         joints = self.RobotController.get_joint_state()
         self.RobotController.go_by_joint_angle(
-        [joints[0], joints[1], joints[2], joints[3], joints[4], math.radians(-50)], 0.01, 0.01, Replanning=False, WaitFlag=False) 
+        [joints[0], joints[1], joints[2], joints[3], joints[4], math.radians(-50)], 0.01, 0.01, Replanning=False, WaitFlag=False)
+        # wait in the loop untill finish locking 
         while True :
             print(self.TorqueZReading)
 
@@ -115,7 +96,7 @@ class GetToolNode:
            
         joints = self.RobotController.get_joint_state()
         self.RobotController.go_by_joint_angle(
-        [joints[0], joints[1], joints[2], joints[3], joints[4], joints[5]-math.radians(5)], 0.01, 0.01, Replanning=False, WaitFlag=True) 
+        [joints[0], joints[1], joints[2], joints[3], joints[4], joints[5]-math.radians(5)], 0.01, 0.01, Replanning=True, WaitFlag=False) 
         # get the tool out of the holder
         
         # # pose after griping to conserve the ring position
@@ -129,7 +110,7 @@ class GetToolNode:
         # self.LastPose = self.RobotController.get_pose()
         # print(self.LastPose)
         
-        # releasec
+        # go to save position
         self.RobotController.go_by_joint_angle(
             [-1.57, 0.0, 0.0, 0.0, 1.57, 0.0], 0.1, 0.1, Replanning=True, WaitFlag=False)
         
@@ -155,14 +136,14 @@ class GetToolNode:
         self.LastPoseScrew= [-0.008646758616481053, -0.3815806593735198, 0.19797902752280033, -3.141458694563271, -3.532326355302995e-05, -0.8195031142692732]
         self.TransformationCalculator.put_frame_static_frame(parent_frame_name="base_link", child_frame_name="tool0", frame_coordinate=[
                                                              self.LastPoseScrew[0], self.LastPoseScrew[1], self.LastPoseScrew[2], self.LastPoseScrew[3], self.LastPoseScrew[4], self.LastPoseScrew[5]])
-        pose,_ = self.TransformationCalculator.transform(
+        pose = self.TransformationCalculator.transform(
             parent_id="base_link", child_frame_id="tool0")
         self.RobotController.go_to_pose_goal_cartesian(pose, 0.10, 0.10,Replanning=True)
 
         # go inside the holder
         self.TransformationCalculator.put_frame_static_frame(parent_frame_name="base_link", child_frame_name="tool0", frame_coordinate=[
                                                              self.LastPoseScrew[0]-self.XtoleranceOutHolder, self.LastPoseScrew[1], self.LastPoseScrew[2], self.LastPoseScrew[3], self.LastPoseScrew[4], self.LastPoseScrew[5]])
-        pose,_ = self.TransformationCalculator.transform(
+        pose = self.TransformationCalculator.transform(
             parent_id="base_link", child_frame_id="tool0")
         self.RobotController.go_to_pose_goal_cartesian(pose, 0.10, 0.10,Replanning=True)
 
@@ -185,13 +166,11 @@ class GetToolNode:
         self.RobotController.go_by_joint_angle(
         [joints[0], joints[1], joints[2], joints[3], joints[4], joints[5]+math.radians(5) ], 0.01, 0.01, Replanning=False, WaitFlag=True) 
         
-        # # go up
-
         # pose after griping to conserve the ring position
         NowPose = self.RobotController.get_pose()
         self.TransformationCalculator.put_frame_static_frame(parent_frame_name="base_link", child_frame_name="tool0", frame_coordinate=[
                                                              NowPose[0], NowPose[1], NowPose[2]+self.ZtoleranceAboveTheHolder, NowPose[3], NowPose[4], NowPose[5]])
-        pose,_ = self.TransformationCalculator.transform(
+        pose = self.TransformationCalculator.transform(
             parent_id="base_link", child_frame_id="tool0")
         self.RobotController.go_to_pose_goal_cartesian(pose, 0.1, 0.1,Replanning=True)
         
