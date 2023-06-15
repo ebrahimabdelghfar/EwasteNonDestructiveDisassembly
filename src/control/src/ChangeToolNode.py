@@ -30,6 +30,9 @@ class GetToolNode:
         self.StopTourqeThershold = StopTourqeThershold1
         self.State=node_response()
 
+        self.schedulecollectorofgettingTool=[]
+        self.schedulecollectorofreturningTool=[] 
+
     def FTReadingCallBack(self, data: WrenchStamped) -> None:
         '''
         objective: this function is used to get the torque reading from the sensor
@@ -60,7 +63,8 @@ class GetToolNode:
         # rotate the robot by 90o for safely get the tool
         self.RobotController.go_by_joint_angle(
             [-1.57, 0.0, 0.0, 0.0, 1.57, 0.0], 1, 1, Replanning=True)
-
+        
+        self.schedulecollectorofgettingTool.append(self.RobotController.get_joint_state())
         # # go above the tool
         self.TransformationCalculator.put_frame_static_frame(parent_frame_name="base_link", child_frame_name="tool0", frame_coordinate=[
                                                              -0.09868947696839801, -0.38160183758005417, 0.1959320787026243+self.ZtoleranceAboveTheHolder, -3.141268865426805,0, -0.35668452629565967])
@@ -68,7 +72,8 @@ class GetToolNode:
             parent_id="base_link", child_frame_id="tool0")
         self.RobotController.go_to_pose_goal_cartesian(
             pose, 1, 1, Replanning=True,wating=False)
-
+        
+        self.schedulecollectorofgettingTool.append(self.RobotController.get_pose())
         # go to Holder
         self.TransformationCalculator.put_frame_static_frame(parent_frame_name="base_link", child_frame_name="tool0", frame_coordinate=[
                                                              -0.09868947696839801, -0.38160183758005417, 0.1959320787026243+self.ZtoleranceToGetDown, -3.141268865426805,0, -0.35668452629565967])
@@ -76,7 +81,8 @@ class GetToolNode:
             parent_id="base_link", child_frame_id="tool0")
         self.RobotController.go_to_pose_goal_cartesian(
             pose, 0.005, 0.005, Replanning=True,WaitFlag=False)
-
+        
+        self.schedulecollectorofgettingTool.append(self.RobotController.get_pose())
 
         # lock the tool
         joints = self.RobotController.get_joint_state()
@@ -93,12 +99,15 @@ class GetToolNode:
             else :
                 print("locking")
         print("Done locking")  
-           
+        
+        self.schedulecollectorofgettingTool.append(self.RobotController.get_joint_state())
+
         joints = self.RobotController.get_joint_state()
         self.RobotController.go_by_joint_angle(
         [joints[0], joints[1], joints[2], joints[3], joints[4], joints[5]-math.radians(5)], 0.01, 0.01, Replanning=True, WaitFlag=False) 
         # get the tool out of the holder
-        
+        self.schedulecollectorofgettingTool.append(self.RobotController.get_joint_state())
+
         # # pose after griping to conserve the ring position
         NowPose = self.RobotController.get_pose()
         self.TransformationCalculator.put_frame_static_frame(parent_frame_name="base_link", child_frame_name="tool1", frame_coordinate=[
@@ -107,13 +116,15 @@ class GetToolNode:
              parent_id="base_link", child_frame_id="tool1")
         self.RobotController.go_to_pose_goal_cartesian(pose, 1, 1,Replanning=True,WaitFlag=False)
 
-        # self.LastPose = self.RobotController.get_pose()
-        # print(self.LastPose)
+        self.schedulecollectorofgettingTool.append(self.RobotController.get_pose())
         
         # go to save position
         self.RobotController.go_by_joint_angle(
             [-1.57, 0.0, 0.0, 0.0, 1.57, 0.0], 0.1, 0.1, Replanning=True, WaitFlag=False)
         
+        self.schedulecollectorofgettingTool.append(self.RobotController.get_joint_state())
+        #flatten the list
+        self.schedulecollectorofgettingTool = [item for sublist in self.schedulecollectorofgettingTool for item in sublist]
         
 
     def ReturnScrew(self) -> None:

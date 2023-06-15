@@ -5,11 +5,11 @@ from enums.nodes import Nodes
 from enums.topics import Topics
 from geometry_msgs.msg import WrenchStamped
 from CentralNode.msg import node_response
-
+import numpy as np
 
 class ApprochAndEngaging:
     def __init__(self) -> None:
-        self.RobotJoystick = RobotControl(node_name=Nodes.APPROACH_AND_ENGAGE.value,group_name="ScrewIn")
+        self.RobotJoystick = RobotControl(node_name=Nodes.APPROACH_AND_ENGAGE.value,group_name="manipulator")
         self.TransformCalculator = frames_transformations()
         #editabel parameters
         self.MyNumber = 4
@@ -37,6 +37,37 @@ class ApprochAndEngaging:
         self.off = 0
         self.motorCommands = Int32()
 
+        #constant parameters
+
+    def Spiralshape(self,step)->list:
+        '''
+        this function will generate and execute the spiral shape
+        parameters:
+        step: the step of the time shape
+        @type step: float
+        '''
+        #constant parameters for spiral shape
+        recess=0.005
+        fs=2*recess
+        N_s=60
+        fixederror=2.5 #(mm)
+        waypoints = []
+        #calculate the parameters of the spiral
+        tmax=int(((10*math.pi)/N_s)*(math.ceil(N_s/2)))
+
+        #generate a list of screws in spiral shape
+        pose = self.RobotJoystick.get_pose()
+        for i in np.arange(step,tmax,step):
+            t=i
+            x,y=pose[0]+(fs/math.pi)*math.sqrt(((8*math.pi*N_s*t)/15))*math.cos(math.sqrt(((8*math.pi*N_s*t)/15))),pose[1]+(fs/math.pi)*math.sqrt(((8*math.pi*N_s*t)/15))*math.sin(math.sqrt(((8*math.pi*N_s*t)/15)))
+            waypoints.append([x,y,pose[2],pose[3],pose[4],pose[5]])
+            pass
+        #execute the spiral shape
+        self.RobotJoystick.go_to_pose_goal_cartesian_waypoints(waypoints,velocity=0.1,acceleration=0.1,list_type=True,waitFlag=True)
+        #todo: put the force sensor check
+
+        #end
+        pass
 
     def reshapeList(self,ListOfscrews)->list:
         #reshaping the list of screws to 2D (nx6) list array
@@ -96,8 +127,12 @@ class ApprochAndEngaging:
 
 
 
+
                     #end of one screw cycle
                     i += 1
                     pass
                 pass
         pass
+
+test=ApprochAndEngaging()
+test.Spiralshape(0.1)

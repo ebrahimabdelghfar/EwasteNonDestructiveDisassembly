@@ -12,7 +12,7 @@ rospy.init_node("SpiralGeneration")
 tmax=int(((10*math.pi)/N_s)*(math.ceil(N_s/2)))
 frames=frames_transformations()
 x=0
-for i in np.arange(0,tmax,0.001):
+for i in np.arange(0,tmax,0.01):
     t=i
     x,y=(fs/math.pi)*math.sqrt(((8*math.pi*N_s*t)/15))*math.cos(math.sqrt(((8*math.pi*N_s*t)/15))),(fs/math.pi)*math.sqrt(((8*math.pi*N_s*t)/15))*math.sin(math.sqrt(((8*math.pi*N_s*t)/15)))
     yaw,pitch,roll=0,0,math.sqrt(((8*math.pi*N_s*t)/15))

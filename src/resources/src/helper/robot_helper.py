@@ -166,7 +166,7 @@ class RobotControl:
             else:
                 self.move_group.go(wait=WaitFlag)
             pass
-    def go_to_pose_goal_cartesian_waypoints(self, waypoints,velocity=0.1,acceleration=0.1,list_type=False)->None:
+    def go_to_pose_goal_cartesian_waypoints(self, waypoints,velocity=0.1,acceleration=0.1,list_type=False,waitFlag=False)->None:
         '''
         --------------------
         This function is used to move the robot to the desired pose by cartesian path
@@ -215,7 +215,7 @@ class RobotControl:
         # generate a new plan with the new velocity and acceleration by retiming the trajectory
         new_plan=self.move_group.retime_trajectory(self.robot.get_current_state(),plan,velocity_scaling_factor=velocity,acceleration_scaling_factor=acceleration)
         # execute the plan
-        state=self.move_group.execute(new_plan,wait=True)
+        state=self.move_group.execute(new_plan,wait=waitFlag)
         pass
     def generate_spiral_waypoints(self,starting_pose,angle,step)->list:
         '''
