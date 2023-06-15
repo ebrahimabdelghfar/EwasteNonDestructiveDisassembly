@@ -297,7 +297,7 @@ class frames_transformations:
 
         pass
 
-    def transform(self, parent_id, child_frame_id):
+    def transform(self, parent_id, child_frame_id)->list:
         '''
         functioninality:
             This function is used get the transform between two frames and return the pose of the child frame
@@ -307,14 +307,14 @@ class frames_transformations:
             child_frame_id: name of the child frame
         --------------------
         return:
-            pose: geometry_msgs.msg.Pose() , list of 6d pose
+            pose: geometry_msgs.msg.Pose()
         '''
         # transform the frame
 
         transform_msg = geometry_msgs.msg.TransformStamped()
         pose=geometry_msgs.msg.Pose()
         Pose2List=[]
-        transform_msg = self.tfBuffer.lookup_transform(parent_id,child_frame_id,rospy.Time.now(),timeout=rospy.Duration(0.1))
+        transform_msg = self.tfBuffer.lookup_transform(parent_id,child_frame_id,rospy.Time.now())
         #transfer from TransformStamped() to PoseStamped()
         pose.position.x=transform_msg.transform.translation.x
         pose.position.y=transform_msg.transform.translation.y
@@ -326,7 +326,7 @@ class frames_transformations:
         #convert the it to 6d list
         angles=tf.transformations.euler_from_quaternion([pose.orientation.x,pose.orientation.y,pose.orientation.z,pose.orientation.w])
         Pose2List=[pose.position.x,pose.position.y,pose.position.z,angles[0],angles[1],angles[2]]
-        return pose,Pose2List
+        return Pose2List
 
     def put_frame_static_frame(self,parent_frame_name="base_link",child_frame_name="tool0",frame_coordinate=[0,0,0,0,0,0])->None:
         '''

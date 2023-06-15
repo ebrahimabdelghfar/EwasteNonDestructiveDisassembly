@@ -2,10 +2,9 @@ from robot_helper import *
 from std_msgs.msg import Int32
 from std_msgs.msg import Bool
 from geometry_msgs.msg import WrenchStamped
-from enums.nodes import Nodes
 class GetToolNode:
     def __init__(self, group_name_1="NoTool", StopTourqeThershold1=0.5):
-        self.RobotController = RobotControl(node_name=Nodes.CHANGE_TOOL.value,group_name=group_name_1)
+        self.RobotController = RobotControl(group_name=group_name_1)
         self.TransformationCalculator = frames_transformations()
         # list of the last pose of the robot after getting the tool
         self.LastPoseScrew = []
@@ -84,7 +83,7 @@ class GetToolNode:
         # # go above the tool
         self.TransformationCalculator.put_frame_static_frame(parent_frame_name="base_link", child_frame_name="tool0", frame_coordinate=[
                                                              -0.09868947696839801, -0.38160183758005417, 0.1959320787026243+self.ZtoleranceAboveTheHolder, -3.141268865426805,0, -0.35668452629565967])
-        pose,_ = self.TransformationCalculator.transform(
+        pose = self.TransformationCalculator.transform(
             parent_id="base_link", child_frame_id="tool0")
         self.RobotController.go_to_pose_goal_cartesian(
             pose, 1, 1, Replanning=True)
@@ -92,7 +91,7 @@ class GetToolNode:
         # go to Holder
         self.TransformationCalculator.put_frame_static_frame(parent_frame_name="base_link", child_frame_name="tool0", frame_coordinate=[
                                                              -0.09868947696839801, -0.38160183758005417, 0.1959320787026243+self.ZtoleranceToGetDown, -3.141268865426805,0, -0.35668452629565967])
-        pose,_ = self.TransformationCalculator.transform(
+        pose = self.TransformationCalculator.transform(
             parent_id="base_link", child_frame_id="tool0")
         self.RobotController.go_to_pose_goal_cartesian(
             pose, 0.005, 0.005, Replanning=True,WaitFlag=False)
@@ -155,14 +154,14 @@ class GetToolNode:
         self.LastPoseScrew= [-0.008646758616481053, -0.3815806593735198, 0.19797902752280033, -3.141458694563271, -3.532326355302995e-05, -0.8195031142692732]
         self.TransformationCalculator.put_frame_static_frame(parent_frame_name="base_link", child_frame_name="tool0", frame_coordinate=[
                                                              self.LastPoseScrew[0], self.LastPoseScrew[1], self.LastPoseScrew[2], self.LastPoseScrew[3], self.LastPoseScrew[4], self.LastPoseScrew[5]])
-        pose,_ = self.TransformationCalculator.transform(
+        pose = self.TransformationCalculator.transform(
             parent_id="base_link", child_frame_id="tool0")
         self.RobotController.go_to_pose_goal_cartesian(pose, 0.10, 0.10,Replanning=True)
 
         # go inside the holder
         self.TransformationCalculator.put_frame_static_frame(parent_frame_name="base_link", child_frame_name="tool0", frame_coordinate=[
                                                              self.LastPoseScrew[0]-self.XtoleranceOutHolder, self.LastPoseScrew[1], self.LastPoseScrew[2], self.LastPoseScrew[3], self.LastPoseScrew[4], self.LastPoseScrew[5]])
-        pose,_ = self.TransformationCalculator.transform(
+        pose = self.TransformationCalculator.transform(
             parent_id="base_link", child_frame_id="tool0")
         self.RobotController.go_to_pose_goal_cartesian(pose, 0.10, 0.10,Replanning=True)
 
@@ -191,7 +190,7 @@ class GetToolNode:
         NowPose = self.RobotController.get_pose()
         self.TransformationCalculator.put_frame_static_frame(parent_frame_name="base_link", child_frame_name="tool0", frame_coordinate=[
                                                              NowPose[0], NowPose[1], NowPose[2]+self.ZtoleranceAboveTheHolder, NowPose[3], NowPose[4], NowPose[5]])
-        pose,_ = self.TransformationCalculator.transform(
+        pose = self.TransformationCalculator.transform(
             parent_id="base_link", child_frame_id="tool0")
         self.RobotController.go_to_pose_goal_cartesian(pose, 0.1, 0.1,Replanning=True)
         
@@ -201,7 +200,7 @@ class GetToolNode:
 
     def StartOperation(self):
         while not rospy.is_shutdown():
-            RecievedOpertaion:Int32 = rospy.wait_for_message("/NodeToOperate", Int32)
+            RecievedOpertaion:Int32 =rospy.wait_for_message("/NodeToOperate", Int32)
             
             # Order recieved for getting unscrewing tool
             if self.GettingScrewOperationNo == RecievedOpertaion.data:
@@ -227,6 +226,8 @@ class GetToolNode:
             else:
                 pass
                 
+
+
 changeTool=GetToolNode(group_name_1="NoTool")
 changeTool.StartOperation()
 
