@@ -26,20 +26,23 @@ import numpy as np
 import time
 
 # importing robot helper for coordinates view transformation 
-print(sys.path)
-sys.path.append("/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/control/src")
+sys.path.append("/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/control/src/")
 from robot_helper import RobotControl, frames_transformations
 import numpy as np
 import tf.transformations
 
+#Robot Control imports
+
 class PerceptionNode():
     
     def __init__(self, width=1280, height=720) -> None:
-        self.perceptionNode = rospy.init_node("Perception") # Need to change this to the enum values 
+        #self.perceptionNode = rospy.init_node("Perception") # Need to change this to the enum values 
         self.perceptionPublisher = rospy.Publisher('ListOfScrews', String, queue_size=50) # Need to change this to the enum values
 
+       
+        self.framesTransformer=frames_transformations()
+        self.Controller=RobotControl(node_name="Perception",group_name="NoTool")
         self.rate = rospy.Rate(200)
-
         #camera viewing dimensions
         self.Width = width
         self.Height = height
@@ -135,16 +138,16 @@ class PerceptionNode():
 
 
     def camToWorldPositions(self, x, y ,z, verbose=False):
-        framesTransformer = frames_transformations()
-        static_frame = frames_transformations.put_frame_static_frame(parent_frame_name='camera_link', child_frame_name="static")
-        relative_transformations = framesTransformer.transform(parent_id="base_link", child_frame_id='static')#chid id might be wrong
-        # apply transformations and rotations wrt robot
-        translation=relative_transformations[:3]
         
-        rotation = relative_transformations[3:]
+        static_frame = self.framesTransformer.put_frame_static_frame(parent_frame_name='camera_link', child_frame_name="static")
+        relative_transformations = self.framesTransformer.transform(parent_id="base_link", child_frame_id='static')#chid id might be wrong
+        # apply transformations and rotations wrt robot
+        translations=relative_transformations[:3]
+        
+        rotations = relative_transformations[3:]
         cam_matrix = np.array([x,y,z,1])
         
-        homogeneous_matrix = tf.transformations.compose_matrix(translate=translation,angles=rotation)
+        homogeneous_matrix = tf.transformations.compose_matrix(translate=translations,angles=rotations)
        
         worldpose = np.matmul(homogeneous_matrix,cam_matrix)
         
@@ -182,6 +185,42 @@ class PerceptionNode():
             self.publishReadings(screwPositionsToCamera)
 
             self.rate.sleep()
+    def scan(self,poses)->list:
+        predictions=list()
+        for pose in poses:
+            screwPositions=list()
+            self.Controller.go_to_pose_goal_cartesian(pose,1,0.2)
+            image, verts = self.imagePreprocess()
+            predictions=self.modelInference(image)
+            screwPositionsToCamera = self.pixelToSpace(predictions, verts,debug=True)
+            for screwPosition in screwPositionsToCamera:
+                screwPositions.append(self.camToWorldPositions(screwPosition[0], screwPosition[1], screwPosition[2])[:3])
+        
+            
+
+        return predictions
+    def identifyScrewsNoRepetions(self, predictions: list) -> list:
+        result = []
+        for prediction_list in predictions:
+            unique_screws = []
+            for element in prediction_list:
+                x, y, z = element
+                found = False
+                for screw in unique_screws:
+                    if abs(screw[0]-x)<=0.01 and abs(screw[0]-x)<=0.01: 
+                        found = True
+                        break
+                if found:
+                    average_x = (screw[0] + x) / 2
+                    average_y = (screw[1] + y) / 2
+                    average_z = (screw[2] + z) / 2
+                    unique_screws.append((average_x, average_y, average_z))
+                else:
+                    unique_screws.append(element)
+            result.append(unique_screws)
+        return result
 
 perception=PerceptionNode()
+xyzpose=perception.Controller.get_pose()[:3]
+perception.Controller.go_to_pose_goal_cartesian([xyzpose[0]+0.5,xyzpose[1]+0.5,xyzpose[2],0,0,0])
 perception.launchNode()
