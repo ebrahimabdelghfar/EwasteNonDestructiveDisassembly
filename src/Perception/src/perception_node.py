@@ -35,14 +35,13 @@ import tf.transformations
 
 class PerceptionNode():
     
-    def __init__(self, width=1280, height=720) -> None:
+    def __init__(self, width=1280, height=720, useCuda="cpu") -> None:
         #self.perceptionNode = rospy.init_node("Perception") # Need to change this to the enum values 
         self.perceptionPublisher = rospy.Publisher('ListOfScrews', String, queue_size=50) # Need to change this to the enum values
         self.nodeToOperateListener = rospy.Subscriber("NodeToOperate",Int32,self.nodeToOperateCallback)
        
-        
 
-        self.Controller=RobotControl(node_name="Perception",group_name="NoTool")
+        self.Controller = RobotControl(node_name="Perception",group_name="NoTool")
         self.framesTransformer=frames_transformations()
         self.rate = rospy.Rate(200)
         #camera viewing dimensions
@@ -50,15 +49,25 @@ class PerceptionNode():
         self.Height = height
         self.operate = True
         self.model = None
+        self.useCuda = useCuda
+
     def nodeToOperateCallback(self,data):
-        if data==1:
+        if data == 1:
             self.operate = True
         else: 
             self.operate = False
-    def loadModel(self, location="/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/Perception/src/epoch_480.pt"): 
+    
+
+    def loadModel(self, location="/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/Perception/src/epoch_480.pt"):
+        cuda =  "cpu" if self.useCuda == "cpu" else 0
+        device = "cpu" if self.useCuda == "cpu" else select_device("0")
+        
         #load model 
-        intialModel = attempt_load(location, "cpu")
-        self.model = TracedModel(intialModel, "cpu", 640)
+        intialModel = attempt_load(location, device)
+        self.model = TracedModel(intialModel, cuda, 640)
+
+        if cuda == "cpu":
+            self.model.half()
 
     def InitializeCamera(self):
         # Configure camera streams
@@ -99,7 +108,12 @@ class PerceptionNode():
         #transpose from cv2 bgr to rgb
         image = image[:, :, ::-1].transpose(2, 0, 1)
         image = np.ascontiguousarray(image)
-        image = torch.from_numpy(image).float()
+
+        if self.useCuda == "cpu":
+            image = torch.from_numpy(image).float()
+        else:
+            img = torch.from_numpy(img).to(0).half()
+            
         image /= 255.0
         image.unsqueeze(0)
         image = image[None,:,:,:]
