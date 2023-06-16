@@ -9,7 +9,7 @@ import numpy as np
 
 class ApprochAndEngaging:
     def __init__(self) -> None:
-        self.RobotJoystick = RobotControl(node_name=Nodes.APPROACH_AND_ENGAGE.value,group_name="manipulator")
+        self.RobotJoystick = RobotControl(node_name=Nodes.APPROACH_AND_ENGAGE.value,group_name="ScrewIn")
         self.TransformCalculator = frames_transformations()
         #editabel parameters
         self.MyNumber = 4
@@ -37,9 +37,17 @@ class ApprochAndEngaging:
         self.off = 0
         self.motorCommands = Int32()
 
-        #constant parameters
+    def Approach(self,Pose,velocity,acceleration)->None:
+        '''
+        this function will go to the give cordinates path
+        parameters:
+        Pose: the pose of the path
+        @type Pose: list [x,y,z,roll,pitch,yaw]
+        '''
+        self.RobotJoystick.go_to_pose_goal_cartesian(Pose,velocity=velocity,acceleration=acceleration,Replanning=True,waitFlag=False)
+        pass
 
-    def Spiralshape(self,step)->list:
+    def Spiralshape(self,timeStep)->None:
         '''
         this function will generate and execute the spiral shape
         parameters:
@@ -57,7 +65,7 @@ class ApprochAndEngaging:
 
         #generate a list of screws in spiral shape
         pose = self.RobotJoystick.get_pose()
-        for i in np.arange(step,tmax,step):
+        for i in np.arange(timeStep,tmax,timeStep):
             t=i
             x,y=pose[0]+(fs/math.pi)*math.sqrt(((8*math.pi*N_s*t)/15))*math.cos(math.sqrt(((8*math.pi*N_s*t)/15))),pose[1]+(fs/math.pi)*math.sqrt(((8*math.pi*N_s*t)/15))*math.sin(math.sqrt(((8*math.pi*N_s*t)/15)))
             waypoints.append([x,y,pose[2],pose[3],pose[4],pose[5]])
