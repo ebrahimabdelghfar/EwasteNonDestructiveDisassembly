@@ -7,7 +7,7 @@ import geometry_msgs.msg
 import tf2_ros
 import tf.transformations
 import math
-from std_msgs.msg import Bool,Float64MultiArray, MultiArrayLayout, MultiArrayDimension,String
+from std_msgs.msg import Bool,Float64MultiArray, MultiArrayLayout, MultiArrayDimension,String,Int32
 import json
 import torch
 
@@ -38,17 +38,23 @@ class PerceptionNode():
     def __init__(self, width=1280, height=720) -> None:
         #self.perceptionNode = rospy.init_node("Perception") # Need to change this to the enum values 
         self.perceptionPublisher = rospy.Publisher('ListOfScrews', String, queue_size=50) # Need to change this to the enum values
-
+        self.nodeToOperateListener = rospy.Subscriber("NodeToOperate",Int32,self.nodeToOperateCallback)
        
-        self.framesTransformer=frames_transformations()
+        
+
         self.Controller=RobotControl(node_name="Perception",group_name="NoTool")
+        self.framesTransformer=frames_transformations()
         self.rate = rospy.Rate(200)
         #camera viewing dimensions
         self.Width = width
         self.Height = height
-
+        self.operate = True
         self.model = None
-
+    def nodeToOperateCallback(self,data):
+        if data==1:
+            self.operate = True
+        else: 
+            self.operate = False
     def loadModel(self, location="/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/Perception/src/epoch_480.pt"): 
         #load model 
         intialModel = attempt_load(location, "cpu")
@@ -163,28 +169,28 @@ class PerceptionNode():
         self.InitializeCamera()
 
         while not rospy.is_shutdown():
-            
-            ## Camera Readings
-            ImageData, verts = self.imagePreprocess()
-            # print('image data is ')
-            # print(ImageData)
-            # print('verts are ')
-            # print(verts)
-            ## Model inference on image data
-            predictions = self.modelInference(ImageData)
-            ## Get Positions in the space of camera
-            screwPositionsToCamera = self.pixelToSpace(predictions, verts,debug=True)
-            ## Get Positions relative to the base link
-            screwPositions = list()
+            if self.operate:
+                ## Camera Readings
+                ImageData, verts = self.imagePreprocess()
+                # print('image data is ')
+                # print(ImageData)
+                # print('verts are ')
+                # print(verts)
+                ## Model inference on image data
+                predictions = self.modelInference(ImageData)
+                ## Get Positions in the space of camera
+                screwPositionsToCamera = self.pixelToSpace(predictions, verts,debug=True)
+                ## Get Positions relative to the base link
+                screwPositions = list()
 
-            # for screwPosition in screwPositionsToCamera:
-            #     screwPositions.append(self.camToWorldPositions(screwPosition[0], screwPosition[1], screwPosition[2])[:3])
+                # for screwPosition in screwPositionsToCamera:
+                #     screwPositions.append(self.camToWorldPositions(screwPosition[0], screwPosition[1], screwPosition[2])[:3])
 
-            ## Publish readings
-             
-            self.publishReadings(screwPositionsToCamera)
+                ## Publish readings
+                
+                self.publishReadings(screwPositionsToCamera)
 
-            self.rate.sleep()
+                self.rate.sleep()
     def scan(self,poses)->list:
         predictions=list()
         for pose in poses:
@@ -196,9 +202,8 @@ class PerceptionNode():
             for screwPosition in screwPositionsToCamera:
                 screwPositions.append(self.camToWorldPositions(screwPosition[0], screwPosition[1], screwPosition[2])[:3])
         
-            
-
         return predictions
+    
     def identifyScrewsNoRepetions(self, predictions: list) -> list:
         result = []
         for prediction_list in predictions:
@@ -217,7 +222,8 @@ class PerceptionNode():
                     unique_screws.append((average_x, average_y, average_z))
                 else:
                     unique_screws.append(element)
-            result.append(unique_screws)
+            for unique_screw in unique_screws:
+                result.append(unique_screw)
         return result
 
 perception=PerceptionNode()
