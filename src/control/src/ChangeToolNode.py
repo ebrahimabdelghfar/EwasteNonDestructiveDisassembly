@@ -4,6 +4,8 @@ from std_msgs.msg import Bool
 from geometry_msgs.msg import WrenchStamped
 from enums.nodes import Nodes
 from enums.topics import Topics
+from enums.schedular import schedular
+from enums.response_status import Response
 from CentralNode.msg import node_response
 class GetToolNode:
     def __init__(self, group_name_1="NoTool", StopTourqeThershold1=0.5):
@@ -22,16 +24,26 @@ class GetToolNode:
         self.thresholdForToolWeightForceZ = 2.5
         # define the Topic that being used
         self.ToolChangePub = rospy.Publisher(
-            Topics.NODE_SUCCESS.value, Int32, queue_size=1)
+            Topics.NODE_SUCCESS.value, node_response, queue_size=1)
         self.TorqueZReadingPub = rospy.Subscriber(
             Topics.ForceSensorWrench.value, WrenchStamped, self.FTReadingCallBack)
+        #end
+        #force-tourqe thershold
         self.TorqueZReading = 0.0
         self.ForceZReading = 0.0
         self.StopTourqeThershold = StopTourqeThershold1
+        #end
         self.State=node_response()
-
+        #this variable is used to store the scehdule of getting and returning tool
         self.schedulecollectorofgettingTool=[]
-        self.schedulecollectorofreturningTool=[] 
+        self.schedulecollectorofreturningTool=[]
+        #this variable will be reterive from server
+        self.waypoints=[]
+        self.waypointstype=[]
+        self.CheckForceFlag=[]
+        self.Velocity=[]
+        self.Acceleration=[]
+        #end
 
     def FTReadingCallBack(self, data: WrenchStamped) -> None:
         '''
@@ -47,6 +59,56 @@ class GetToolNode:
     
     def ChangeGroupName(self, groupname_1="NoTool") -> None:
         self.RobotController = RobotControl(group_name=groupname_1)
+    
+    def CheckToolTourqe(self) -> None:
+        '''
+        arguments:
+            null
+        functionality:
+            This function is used to check the tourqe of locking and unlocking the tool
+        '''
+        while True :
+            print(self.TorqueZReading)
+
+            if (abs(self.TorqueZReading) >= abs(self.thresholdLocking) ):
+                self.RobotController.Stop()
+                print("Breaking")
+                break
+            else :
+                print("locking")     
+        pass
+        
+    def ChangeTool(self)->None:
+        for index in range(len(self.waypoints)):
+            if self.waypointstype[index]==schedular.JointType.value:
+                if self.CheckForceFlag[index]==schedular.CheckForceSensor.value:
+                    self.RobotController.go_by_joint_angle(self.waypoints[index], self.Velocity, self.Acceleration, Replanning=False,WaitFlag=False)
+                    self.CheckToolTourqe()              
+                    pass
+                else:
+                    self.RobotController.go_by_joint_angle(self.waypoints[index], self.Velocity, self.Acceleration, Replanning=True,WaitFlag=False)
+                    pass
+                pass
+            elif self.waypointstype[index]==schedular.CartesianType.value:
+                if self.CheckForceFlag[index]==schedular.CheckForceSensor.value:
+                    self.RobotController.go_to_pose_goal_cartesian(self.waypoints[index], self.Velocity, self.Acceleration, Replanning=False,WaitFlag=False)
+                    self.CheckToolTourqe()
+                    pass
+                else:
+                    self.RobotController.go_to_pose_goal_cartesian(self.waypoints[index], self.Velocity, self.Acceleration, Replanning=True,WaitFlag=False)
+                    pass
+                pass
+            #after each point go it will increment the index of the node
+            #and publish the status of the node
+            self.State.nodeId=Nodes.CHANGE_TOOL.value
+            self.State.status=Response.IN_PROGRESS.value
+            self.State.extraMessage=str(index+1)
+            self.ToolChangePub.publish(self.State)
+            pass
+        self.State.nodeId=Nodes.CHANGE_TOOL.value
+        self.State.status=Response.SUCCESSFULL.value
+        self.ToolChangePub.publish(self.State)
+        pass 
 
     def GetScrewTool(self) -> None:
         '''
@@ -125,8 +187,8 @@ class GetToolNode:
         self.schedulecollectorofgettingTool.append(self.RobotController.get_joint_state())
         #flatten the list
         self.schedulecollectorofgettingTool = [item for sublist in self.schedulecollectorofgettingTool for item in sublist]
+        print(self.schedulecollectorofgettingTool)
         
-
     def ReturnScrew(self) -> None:
         '''
         --------------------

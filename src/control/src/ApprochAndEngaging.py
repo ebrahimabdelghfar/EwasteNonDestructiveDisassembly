@@ -83,15 +83,15 @@ class ApprochAndEngaging:
         ListOfscrews = [ListOfscrews[i:i+3] for i in range(0, len(ListOfscrews), 3)]
         return ListOfscrews
 
-    def unscrewDoneCallback(self,msg):
+    def unscrewDoneCallback(self,msg:Bool)->None:
         self.UnscrewFlag = msg.data
         pass
 
-    def SensorCallback(self,msg):
+    def SensorCallback(self,msg:WrenchStamped)->None:
         self.SensorRead = msg
         pass
 
-    def OperateMotor(self):
+    def OperateMotor(self)->None:
         self.motorCommands.data = self.on
         while self.Motor.get_num_connections() < 1:
             #ensure that the publisher is connected
