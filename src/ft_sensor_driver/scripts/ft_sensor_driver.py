@@ -5,7 +5,7 @@ import rospy
 import numpy as np
 from geometry_msgs.msg import WrenchStamped, Wrench
 from std_msgs.msg import Float64
-
+from enums.nodes import Nodes
 
 transformation_matrix = np.array([[-0.023653656180277, 0.013498529819632, 0.21932096679904, -3.49237283000002, -0.260976645567291, 3.76683279822371],
                                   [-0.27509758285346, 4.18175481585886, 0.06683548240138, -
@@ -23,7 +23,7 @@ bias_timeout = 10
 publish_rate = 800.0 # hz
 use_raw_data = False
 
-rospy.init_node("ft_sensor")
+rospy.init_node(Nodes.FORCE.value)
 wrench_pub = rospy.Publisher("ft_sensor_wrench/wrench/raw", WrenchStamped, queue_size=1)
 rospy.sleep(1)
 
@@ -57,10 +57,8 @@ with nidaqmx.Task() as task:
             wrench_msg.wrench.force.z = wrench[2]
             wrench_msg.wrench.torque.x = wrench[3]
             wrench_msg.wrench.torque.y = wrench[4]
-            wrench_msg.wrench.torque.z = wrench[5]
+            wrench_msg.wrench.torque.z = wrench[5] 
             wrench_pub.publish(wrench_msg)
-            # print the force data
-            # print (wrench_msg)
             rate.sleep()
                 
     except rospy.ROSInterruptException:
