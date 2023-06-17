@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-# license removed for brevity
+#!/usr/bin/env python3
 import rospy
 from std_msgs.msg import Int64,Int32,Bool,String
 from geometry_msgs.msg import WrenchStamped

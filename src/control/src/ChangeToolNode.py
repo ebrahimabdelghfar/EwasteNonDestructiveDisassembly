@@ -1,12 +1,15 @@
+#!/usr/bin/env python3
 from helper.robot_helper import *
 from std_msgs.msg import Int32
 from std_msgs.msg import Bool
 from geometry_msgs.msg import WrenchStamped
 from enums.nodes import Nodes
 from enums.topics import Topics
-from enums.schedular import schedular
+from enums.schedular import schedulars
+from enums.services import Services
 from enums.response_status import Response
 from CentralNode.msg import node_response
+from CentralNode.srv import Schedular , SchedularResponse , SchedularRequest
 class GetToolNode:
     def __init__(self, group_name_1="NoTool", StopTourqeThershold1=0.5):
         self.RobotController = RobotControl(node_name=Nodes.CHANGE_TOOL.value,group_name=group_name_1)
@@ -22,11 +25,13 @@ class GetToolNode:
         self.thresholdLocking = -1.1
         # To check z force if tool is attached or not (tool weight)
         self.thresholdForToolWeightForceZ = 2.5
-        # define the Topic that being used
+        # define the Topic and sever that being used
         self.ToolChangePub = rospy.Publisher(
             Topics.NODE_SUCCESS.value, node_response, queue_size=1)
         self.TorqueZReadingPub = rospy.Subscriber(
             Topics.ForceSensorWrench.value, WrenchStamped, self.FTReadingCallBack)
+        self.ToolChangeClient = rospy.ServiceProxy(Services.SCHEDULAR.value, Schedular, persistent=True)
+        CentralResponse = SchedularResponse()
         #end
         #force-tourqe thershold
         self.TorqueZReading = 0.0
@@ -52,10 +57,10 @@ class GetToolNode:
         self.TorqueZReading = data.wrench.torque.z
         self.ForceZReading = data.wrench.force.z
 
-    def reshapeList(self,ListOfscrews)->list:
-        #reshaping the list of screws to 2D (nx6) list array
-        ListOfscrews = [ListOfscrews[i:i+6] for i in range(0, len(ListOfscrews), 6)]
-        return ListOfscrews
+    def reshapeList(self,GivenList)->list:
+        #reshaping the given list to 2D (nx6) list array
+        GivenList = [GivenList[i:i+6] for i in range(0, len(GivenList), 6)]
+        return GivenList
     
     def ChangeGroupName(self, groupname_1="NoTool") -> None:
         self.RobotController = RobotControl(group_name=groupname_1)
@@ -79,9 +84,18 @@ class GetToolNode:
         pass
         
     def ChangeTool(self)->None:
+        rospy.wait_for_service(Services.SCHEDULAR.value)
+        #this where the tool will call the server to get the schedule of changing tool
+        self.CentralResponse:SchedularResponse = self.ToolChangeClient(SchedularRequest())
+        self.waypoints = self.CentralResponse.waypoints
+        self.waypointstype = self.CentralResponse.waypoint_types
+        self.CheckForceFlag = self.CentralResponse.check_force_flag
+        self.Velocity = self.CentralResponse.Velocity
+        self.Acceleration = self.CentralResponse.Acceleration
+        #save the schedule of getting and returning tool
         for index in range(len(self.waypoints)):
-            if self.waypointstype[index]==schedular.JointType.value:
-                if self.CheckForceFlag[index]==schedular.CheckForceSensor.value:
+            if self.waypointstype[index]==schedulars.JointType.value:
+                if self.CheckForceFlag[index]==schedulars.CheckForceSensor.value:
                     self.RobotController.go_by_joint_angle(self.waypoints[index], self.Velocity, self.Acceleration, Replanning=False,WaitFlag=False)
                     self.CheckToolTourqe()              
                     pass
@@ -89,8 +103,8 @@ class GetToolNode:
                     self.RobotController.go_by_joint_angle(self.waypoints[index], self.Velocity, self.Acceleration, Replanning=True,WaitFlag=False)
                     pass
                 pass
-            elif self.waypointstype[index]==schedular.CartesianType.value:
-                if self.CheckForceFlag[index]==schedular.CheckForceSensor.value:
+            elif self.waypointstype[index]==schedulars.CartesianType.value:
+                if self.CheckForceFlag[index]==schedulars.CheckForceSensor.value:
                     self.RobotController.go_to_pose_goal_cartesian(self.waypoints[index], self.Velocity, self.Acceleration, Replanning=False,WaitFlag=False)
                     self.CheckToolTourqe()
                     pass
