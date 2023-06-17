@@ -22,8 +22,8 @@ class ApprochAndEngaging:
         self.ListOfscrews = [1,2,3,4,5,6,7,8,9,10,11,12,1,2,3,4,5,6,7,8,9,10,11,12]#for testing only
 
         #define publishers 
-        self.Motor=rospy.Publisher(Topics.ScrewDriverMOTOR_COMMAND.value, Int32, queue_size=1)
-        self.StartUnscrewing = rospy.Publisher(Topics.UNSCREW_START_FLAG.value, Bool , queue_size=1)
+        self.Motor=rospy.Publisher(Topics.ScrewDriverMOTOR_COMMAND.value, Int32, queue_size=1,latch=True)
+        self.StartUnscrewing = rospy.Publisher(Topics.UNSCREW_START_FLAG.value, Bool , queue_size=1,latch=True)
         self.NodeSuccess=rospy.Publisher(Topics.NODE_SUCCESS.value, node_response, queue_size=1)
 
         #define subscribers
@@ -59,7 +59,7 @@ class ApprochAndEngaging:
         recess=0.005
         fs=2*recess
         N_s=60
-        fixederror=2.5 #(mm)
+        fixederror=0.002 #(mm)
         waypoints = []
         #calculate the parameters of the spiral
         tmax=int(((10*math.pi)/N_s)*(math.ceil(N_s/2)))
@@ -132,7 +132,6 @@ class ApprochAndEngaging:
 
                     #end of one screw cycle
                     i += 1
-
 
 test=ApprochAndEngaging()
 test.Spiralshape(0.1)

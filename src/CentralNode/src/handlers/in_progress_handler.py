@@ -1,5 +1,5 @@
 from storage.db import RobotDatabase
-from operations import OPERATIONS
+from enums.operations import OPERATIONS
 import sys
 from enums.nodes import Nodes
 from enums.tools import Tools

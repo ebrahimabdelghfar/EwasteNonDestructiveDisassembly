@@ -8,7 +8,7 @@ from enums.topics import Topics
 from enums.schedular import schedulars
 from enums.services import Services
 from enums.response_status import Response
-from enums.OperationNo import OperationId
+from enums.operations import OPERATIONS
 from CentralNode.msg import node_response
 from CentralNode.srv import Schedular , SchedularResponse , SchedularRequest
 class GetToolNode:
@@ -50,6 +50,13 @@ class GetToolNode:
         self.Velocity=[]
         self.Acceleration=[]
         #end
+
+        self.unscrewIndex = OPERATIONS.index(Nodes.APPROACH_AND_ENGAGE)
+        self.visionIndex = OPERATIONS.index(Nodes.VISION)
+        self.returnScrewDriverIndex = OPERATIONS.index(Nodes.CHANGE_TOOL)
+        self.getMillingIndex = self.returnScrewDriverIndex + 1
+        self.returnMillingIndex = OPERATIONS.index(Nodes.CHANGE_TOOL, self.getMillingIndex + 1)
+        self.getScrewDriverIndex = self.returnMillingIndex + 1
 
     def FTReadingCallBack(self, data: WrenchStamped) -> None:
         '''
@@ -269,30 +276,26 @@ class GetToolNode:
         input: OperationNo:int -----> the number of the operation
         output: None
         '''
-        if OperationId.GetScrew.value == OperationNo:
+        if self.getScrewDriverIndex == OperationNo:
             self.ChangeTool()
-            if self.ForceZReading >= self.thresholdForToolWeightForceZ:
-                self.State.nodeId=OperationId.GetScrew.value 
+            if self.ForceZReading >= self.thresholdForToolWeightForceZ: 
                 self.State.status=Response.SUCCESSFULL.value
                 self.ToolChangePub.publish(self.State)
                 print("GettingScrewSuccess")
             else:
-                self.State.nodeId=Nodes.CHANGE_TOOL.value #change it to number of Operation
                 self.State.status=Response.FAILED.value
                 self.ToolChangePub.publish(self.State)
                 print("GettingScrewFailed")
                 pass
             pass
-        elif OperationId.ReturnScrew.value == OperationNo:
+        elif self.returnScrewDriverIndex == OperationNo:
             self.ChangeTool()
             if self.ForceZReading <= self.thresholdForToolWeightForceZ:
-                self.State.nodeId=OperationId.ReturnScrew.value 
                 self.State.status=Response.SUCCESSFULL.value
                 self.ToolChangePub.publish(self.State)
                 print("ReturningScrewSuccess")
 
             else:
-                self.State.nodeId=OperationId.ReturnScrew.value 
                 self.State.status=Response.FAILED.value
                 self.ToolChangePub.publish(self.State)
                 print("ReturningScrewFailed")
@@ -305,9 +308,9 @@ class GetToolNode:
         output: None
         '''
         while not rospy.is_shutdown():
-            RecievedOpertaion:Int32 = rospy.wait_for_message("/NodeToOperate", Int32)
+            RecievedOpertaion:Int32 = rospy.wait_for_message(Topics.NODE_TO_OPERATE.value, Int32)
             self.Operation(RecievedOpertaion.data)
         pass             
 changeTool=GetToolNode(group_name_1="NoTool")
-changeTool.StartOperation()
+
 

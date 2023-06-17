@@ -10,7 +10,7 @@ from std_msgs.msg import Int32, Bool
 from CentralNode.msg import node_response as NodeResponse
 from storage.db import RobotDatabase
 import storage.storage_keys as StorageKeys
-from operations import OPERATIONS
+from enums.operations import OPERATIONS
 from handlers.success_handler import handleSuccess
 from handlers.in_progress_handler import handleInProgress
 
