@@ -9,4 +9,6 @@ class Topics(Enum):
     UNSCREW_DONE = "UNSCREW_DONE"
     START_MILLING = "START_MILLING"
     FINISHED_MILLING = "FINISHED_MILLING"
+    ScrewDriverMOTOR_COMMAND = "MOTOR_COMMAND"
+    ForceSensorWrench = "ft_sensor_wrench/wrench/raw"
 

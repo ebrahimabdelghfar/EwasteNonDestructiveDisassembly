@@ -1,11 +1,9 @@
-#!/usr/bin/env python
-# license removed for brevity
+#!/usr/bin/env python3
 import rospy
-from std_msgs.msg import String
-from std_msgs.msg import Int64
-from std_msgs.msg import Bool
-from geometry_msgs.msg import Wrench , WrenchStamped
-
+from std_msgs.msg import Int64,Int32,Bool,String
+from geometry_msgs.msg import WrenchStamped
+from enums.nodes import Nodes
+from enums.topics import Topics
 
 # Delay between previous and current sensor readings
 ftSensor_delay = 0.5  # 500 ms
@@ -32,12 +30,11 @@ False_data.data = False
 # Global variable that contains the .data for the start flag
 startUnscrewing_Flag = False
 
-def ftCallback(ftSensor_incomingReading):
-    
+def ftCallback(ftSensor_incomingReading:WrenchStamped):
+    global ftSensor_currentReading
     # Update sensor readings
     ftSensor_currentReading = ftSensor_incomingReading.wrench.force.z
     # rospy.loginfo("ftSensor_currentReading = %f" , ftSensor_currentReading)
-
 
 def startUnscrewing_Callback(startUnscrewing):
     rospy.loginfo("entered startUnscrewing_Callback")
@@ -76,11 +73,11 @@ def checkReadings():
 
 if __name__ == '__main__':
     try:
-        rospy.init_node('unscrewing', anonymous=True)
-        unscrewingPub = rospy.Publisher('UnscrewingDone', Bool, queue_size=1)
-        motorPub = rospy.Publisher('DCMotorControl', Bool, queue_size=1)
-        rospy.Subscriber("ft_sensor_wrench/wrench/raw", WrenchStamped, ftCallback)
-        rospy.Subscriber("UnscrewingStartFlag", Bool, startUnscrewing_Callback)
+        rospy.init_node(Nodes.UNSCREW.value)
+        unscrewingPub = rospy.Publisher(Topics.UNSCREW_DONE.value, Bool, queue_size=1)
+        motorPub = rospy.Publisher(Topics.ScrewDriverMOTOR_COMMAND.value, Int32, queue_size=1)
+        rospy.Subscriber(Topics.ForceSensorWrench.value, WrenchStamped, ftCallback)
+        rospy.Subscriber(Topics.UNSCREW_START_FLAG.value, Bool, startUnscrewing_Callback)
         # rate = rospy.Rate(10)  # 10hz
         while not rospy.is_shutdown():
             if startUnscrewing_Flag is True:
