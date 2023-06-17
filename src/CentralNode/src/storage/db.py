@@ -40,6 +40,9 @@ class RobotDatabase(object):
         self.config = {}
         self.saveFile()
 
+    def isNotEmpty(self):
+        return self.readAllFromDB() != {}
+
     def checkFile(self):
         if path.isfile(DB_FILE_PATH) is False:
             raise Exception("File not found")
