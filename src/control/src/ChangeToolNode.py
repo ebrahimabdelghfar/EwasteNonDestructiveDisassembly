@@ -8,10 +8,11 @@ from enums.topics import Topics
 from enums.schedular import schedulars
 from enums.services import Services
 from enums.response_status import Response
+from enums.OperationNo import OperationId
 from CentralNode.msg import node_response
 from CentralNode.srv import Schedular , SchedularResponse , SchedularRequest
 class GetToolNode:
-    def __init__(self, group_name_1="NoTool", StopTourqeThershold1=0.5):
+    def __init__(self, group_name_1:str="NoTool", StopTourqeThershold1:float=0.5):
         self.RobotController = RobotControl(node_name=Nodes.CHANGE_TOOL.value,group_name=group_name_1)
         self.TransformationCalculator = frames_transformations()
         # list of the last pose of the robot after getting the tool
@@ -57,12 +58,12 @@ class GetToolNode:
         self.TorqueZReading = data.wrench.torque.z
         self.ForceZReading = data.wrench.force.z
 
-    def reshapeList(self,GivenList)->list:
+    def reshapeList(self,GivenList:list)->list:
         #reshaping the given list to 2D (nx6) list array
         GivenList = [GivenList[i:i+6] for i in range(0, len(GivenList), 6)]
         return GivenList
     
-    def ChangeGroupName(self, groupname_1="NoTool") -> None:
+    def ChangeGroupName(self, groupname_1:str="NoTool") -> None:
         self.RobotController = RobotControl(group_name=groupname_1)
     
     def CheckToolTourqe(self) -> None:
@@ -119,11 +120,9 @@ class GetToolNode:
             self.State.extraMessage=str(index+1)
             self.ToolChangePub.publish(self.State)
             pass
-        self.State.nodeId=Nodes.CHANGE_TOOL.value
-        self.State.status=Response.SUCCESSFULL.value
-        self.ToolChangePub.publish(self.State)
-        pass 
 
+        pass 
+#old codes that will be used to get the the schedule of getting and returning tool
     def GetScrewTool(self) -> None:
         '''
         --------------------
@@ -264,35 +263,52 @@ class GetToolNode:
         # releasec
         self.RobotController.go_by_joint_angle(
             [-1.57, 0.0, 0.0, 0.0, 1.57, 0.0], 0.1, 0.1, Replanning=True, WaitFlag=False)
-
-    def StartOperation(self):
-        while not rospy.is_shutdown():
-            RecievedOpertaion:Int32 = rospy.wait_for_message("/NodeToOperate", Int32)
-            
-            # Order recieved for getting unscrewing tool
-            if self.GettingScrewOperationNo == RecievedOpertaion.data:
-                self.GetScrewTool()
-                if self.ForceZReading >= self.thresholdForToolWeightForceZ:
-                    self.ToolChangePub.publish(self.GettingScrewSuccess)
-                    print("GettingScrewSuccess")
-                else:
-                    self.ToolChangePub.publish(self.GettingScrewFailed)
-                    print("GettingScrewFailed")
-                    
-            # Order recieved for returning unscrewing tool
-            elif self.ReturnScrewOperationNo == RecievedOpertaion.data:
-                self.ReturnScrew()
-                if self.ForceZReading <= self.thresholdForToolWeightForceZ:
-                    self.ToolChangePub.publish(self.ReturningScrewSuccess)
-                    print("ReturningScrewSuccess")
-
-                else:
-                    self.ToolChangePub.publish(self.ReturningScrewFailed)
-                    print("ReturningScrewFailed")
+#end of old code
+    def Operation(self,OperationNo:int)->None:
+        '''
+        objective: this function as switch case for the operations manily used to see how to check force sensor
+        input: OperationNo:int -----> the number of the operation
+        output: None
+        '''
+        if OperationId.GetScrew.value == OperationNo:
+            self.ChangeTool()
+            if self.ForceZReading >= self.thresholdForToolWeightForceZ:
+                self.State.nodeId=OperationId.GetScrew.value 
+                self.State.status=Response.SUCCESSFULL.value
+                self.ToolChangePub.publish(self.State)
+                print("GettingScrewSuccess")
+            else:
+                self.State.nodeId=Nodes.CHANGE_TOOL.value #change it to number of Operation
+                self.State.status=Response.FAILED.value
+                self.ToolChangePub.publish(self.State)
+                print("GettingScrewFailed")
+                pass
+            pass
+        elif OperationId.ReturnScrew.value == OperationNo:
+            self.ChangeTool()
+            if self.ForceZReading <= self.thresholdForToolWeightForceZ:
+                self.State.nodeId=OperationId.ReturnScrew.value 
+                self.State.status=Response.SUCCESSFULL.value
+                self.ToolChangePub.publish(self.State)
+                print("ReturningScrewSuccess")
 
             else:
-                pass
-                
+                self.State.nodeId=OperationId.ReturnScrew.value 
+                self.State.status=Response.FAILED.value
+                self.ToolChangePub.publish(self.State)
+                print("ReturningScrewFailed")
+            pass
+
+    def Main(self)->None:
+        '''
+        objective: this function is the main function of the node
+        input: None
+        output: None
+        '''
+        while not rospy.is_shutdown():
+            RecievedOpertaion:Int32 = rospy.wait_for_message("/NodeToOperate", Int32)
+            self.Operation(RecievedOpertaion.data)
+        pass             
 changeTool=GetToolNode(group_name_1="NoTool")
 changeTool.StartOperation()
 
