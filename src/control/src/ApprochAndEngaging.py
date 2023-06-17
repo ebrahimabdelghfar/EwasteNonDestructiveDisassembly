@@ -10,7 +10,7 @@ import numpy as np
 
 class ApprochAndEngaging:
     def __init__(self) -> None:
-        self.RobotJoystick = RobotControl(node_name=Nodes.APPROACH_AND_ENGAGE.value,group_name="ScrewIn")
+        self.RobotJoystick = RobotControl(node_name=Nodes.APPROACH_AND_ENGAGE.value,group_name="manipulator")
         self.TransformCalculator = frames_transformations()
         #editabel parameters
         self.MyNumber = 4
@@ -70,14 +70,13 @@ class ApprochAndEngaging:
             t=i
             x,y=pose[0]+(fs/math.pi)*math.sqrt(((8*math.pi*N_s*t)/15))*math.cos(math.sqrt(((8*math.pi*N_s*t)/15))),pose[1]+(fs/math.pi)*math.sqrt(((8*math.pi*N_s*t)/15))*math.sin(math.sqrt(((8*math.pi*N_s*t)/15)))
             waypoints.append([x,y,pose[2],pose[3],pose[4],pose[5]])
-            pass
+
         #if wait flag == true then the followin line will not be skipped until the robot finish the path
         #if wait flag == false then the following line will be skipped and the robot will start the path and the code will continue
         self.RobotJoystick.go_to_pose_goal_cartesian_waypoints(waypoints,velocity=0.1,acceleration=0.1,list_type=True,waitFlag=False)
         #todo: put the force sensor check
     
         #end
-        pass
 
     def reshapeList(self,ListOfscrews)->list:
         #reshaping the list of screws to 2D (nx6) list array
@@ -86,20 +85,16 @@ class ApprochAndEngaging:
 
     def unscrewDoneCallback(self,msg:Bool)->None:
         self.UnscrewFlag = msg.data
-        pass
 
     def SensorCallback(self,msg:WrenchStamped)->None:
         self.SensorRead = msg
-        pass
 
     def OperateMotor(self)->None:
         self.motorCommands.data = self.on
         while self.Motor.get_num_connections() < 1:
             #ensure that the publisher is connected
             rospy.sleep(0.1)
-            pass
         self.Motor.publish(self.motorCommands)
-        pass
 
     def stopMotor(self):
         self.motorCommands.data = self.off
@@ -108,11 +103,9 @@ class ApprochAndEngaging:
             rospy.sleep(0.1)
             pass
         self.Motor.publish(self.motorCommands)
-        pass
 
     def NodeToOperateCallback(self,msg):
         self.NodeToOperate = msg.data
-        pass
 
     def unscrew(self):
         pass
@@ -126,7 +119,6 @@ class ApprochAndEngaging:
                 for screw in self.ListOfscrews:
                     self.TransformCalculator.put_frame_static_frame(parent_frame_name="base_link",child_frame_name="screw"+str(i),frame_coordinate=screw)
                     i += 1
-                    pass
                 #then go to each screw and unscrew it
                 i=0 #iterator for screws
                 for screw in self.ListOfscrews:
@@ -140,9 +132,7 @@ class ApprochAndEngaging:
 
                     #end of one screw cycle
                     i += 1
-                    pass
-                pass
-        pass
+
 
 test=ApprochAndEngaging()
 test.Spiralshape(0.1)

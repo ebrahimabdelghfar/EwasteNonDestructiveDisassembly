@@ -1,6 +1,6 @@
 import json
 from os import path
-DB_FILE_PATH = 'src\CentralNode\src\storage\configuration.json'
+DB_FILE_PATH = '/home/himaet23/EwasteNonDestructiveDisassembly/src/CentralNode/src/storage/configuration.json'
 
 
 

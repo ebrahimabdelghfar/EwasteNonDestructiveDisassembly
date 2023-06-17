@@ -1,9 +1,9 @@
-from src.storage.db import RobotDatabase
+from storage.db import RobotDatabase
 from operations import OPERATIONS
 import sys
-from resources.src.enums.nodes import Nodes
-from resources.src.enums.tools import Tools
-import src.storage.storage_keys as StorageKeys
+from enums.nodes import Nodes
+from enums.tools import Tools
+import storage.storage_keys as StorageKeys
 #from enums.nodes import Nodes
 sys.path.append("./")
 
@@ -18,9 +18,9 @@ def handleSuccess(currentNode, nodeResponse):
     getScrewDriverIndex = returnMillingIndex + 1
 
     if currentNode == unscrewIndex:
-            RobotDatabase().addToDB(StorageKeys.CANT_UNSCREW_LIST, nodeResponse.extraData)
+            RobotDatabase().addToDB(StorageKeys.CANT_UNSCREW_LIST, nodeResponse.extraMessage)
     elif currentNode == visionIndex:
-            RobotDatabase().addToDB(StorageKeys.LIST_OF_SCREWS, nodeResponse.extraData)
+            RobotDatabase().addToDB(StorageKeys.LIST_OF_SCREWS, nodeResponse.extraMessage)
     elif currentNode in [returnScrewDriverIndex, returnMillingIndex]:
            RobotDatabase().addToDB(StorageKeys.TOOL_IN_HAND, Tools.NO_TOOL.value)
     elif currentNode == getMillingIndex:

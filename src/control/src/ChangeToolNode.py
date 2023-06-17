@@ -115,7 +115,6 @@ class GetToolNode:
                 pass
             #after each point go it will increment the index of the node
             #and publish the status of the node
-            self.State.nodeId=Nodes.CHANGE_TOOL.value
             self.State.status=Response.IN_PROGRESS.value
             self.State.extraMessage=str(index+1)
             self.ToolChangePub.publish(self.State)

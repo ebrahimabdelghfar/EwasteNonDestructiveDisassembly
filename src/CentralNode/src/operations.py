@@ -1,4 +1,4 @@
-from resources.src.enums.nodes import Nodes
+from enums.nodes import Nodes
 #from enums.nodes import Nodes
 OPERATIONS = [
     Nodes.CLAMPING,
