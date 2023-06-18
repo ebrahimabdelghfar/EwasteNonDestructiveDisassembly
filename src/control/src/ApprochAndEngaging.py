@@ -24,10 +24,12 @@ class ApprochAndEngaging:
         #define publishers 
         self.Motor=rospy.Publisher(Topics.ScrewDriverMOTOR_COMMAND.value, Int32, queue_size=1)
         self.StartUnscrewing = rospy.Publisher(Topics.UNSCREW_START_FLAG.value, Bool , queue_size=1)
+        self.startMilling = rospy.Publisher(Topics.START_MILLING.value, Bool , queue_size=1)        
         self.NodeSuccess=rospy.Publisher(Topics.NODE_SUCCESS.value, node_response, queue_size=1)
 
         #define subscribers
         rospy.Subscriber(Topics.UNSCREW_DONE.value, Bool, self.unscrewDoneCallback)
+        rospy.Subscriber(Topics.FINISHED_MILLING.value, Bool, self.finishedMillingCallback)
         rospy.Subscriber(Topics.ForceSensorWrench.value, WrenchStamped, self.SensorCallback)
         rospy.Subscriber(Topics.NODE_TO_OPERATE.value, Int32, self.NodeToOperateCallback)
 
@@ -102,7 +104,7 @@ class ApprochAndEngaging:
         return ListOfscrews
 
     def unscrewDoneCallback(self,msg:Bool)->None:
-        self.UnscrewFlag = msg.data
+        #self.UnscrewFlag = msg.data
         pass
 
     def SensorCallback(self,msg:WrenchStamped)->None:
@@ -131,8 +133,19 @@ class ApprochAndEngaging:
         self.NodeToOperate = msg.data
         pass
 
-    def unscrew(self):
-        pass
+    def unscrew(self, index):
+        self.StartUnscrewing(True)
+        #rospy.Spin()
+        receivedFlag = rospy.wait_for_message(Topics.UNSCREW_DONE.value, Bool)
+        self.UnscrewFlag = receivedFlag.data
+        if not receivedFlag.data:
+            self.BadScrews.append(index)
+
+    def mill(self):
+        self.startMilling(True)
+        #rospy.Spin()
+        receivedFlag = rospy.wait_for_message(Topics.UNSCREW_DONE.value, Bool)
+
 
     def main(self):
         while not rospy.is_shutdown():
