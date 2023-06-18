@@ -45,7 +45,6 @@ class RobotControl:
         self.move_group.set_goal_orientation_tolerance(OrientationTolerance)
         self.PostionTolerance=0.0001 
         pass
-
     def Stop(self)->None:
         '''
         functionality:
@@ -59,7 +58,6 @@ class RobotControl:
         self.move_group.clear_pose_targets()
         self.move_group.stop()
         pass
-
     def get_joint_state(self)->list:
         '''
         fuctionality:
@@ -122,7 +120,6 @@ class RobotControl:
                     self.Stop()
                     print ("reached")
                     break
-                # print ("execute")
             pass
         else:
             if WaitFlag==True:
@@ -166,7 +163,7 @@ class RobotControl:
             else:
                 self.move_group.go(wait=WaitFlag)
             pass
-    def go_to_pose_goal_cartesian_waypoints(self, waypoints,velocity=0.1,acceleration=0.1,list_type=False)->None:
+    def go_to_pose_goal_cartesian_waypoints(self, waypoints,velocity=0.1,acceleration=0.1,list_type=False,waitFlag=False)->None:
         '''
         --------------------
         This function is used to move the robot to the desired pose by cartesian path
@@ -215,61 +212,9 @@ class RobotControl:
         # generate a new plan with the new velocity and acceleration by retiming the trajectory
         new_plan=self.move_group.retime_trajectory(self.robot.get_current_state(),plan,velocity_scaling_factor=velocity,acceleration_scaling_factor=acceleration)
         # execute the plan
-        state=self.move_group.execute(new_plan,wait=True)
+        state=self.move_group.execute(new_plan,wait=waitFlag)
         pass
-    def generate_spiral_waypoints(self,starting_pose,angle,step)->list:
-        '''
-        --------------------
-        This function is used to generate a list of waypoints for a spiral path
-        --------------------
-        arguments:
-            starting_pose: geometry_msgs.msg.Pose
-            angle: angle of the spiral in radians
-            step: step size of the spiral
-        --------------------
-        return:
-            list_of_poses: nx6 list of waypoints
-                n: number of waypoints
-                6: x,y,z,roll,pitch,yaw
-        '''
-        list_poses = []
-        # generate the waypoints
-        for i in range(angle):
-            list_poses.append([starting_pose.position.x+step*i*math.cos(i/5),starting_pose.position.y+step*i*math.sin(i/5),starting_pose.position.z,0,-math.pi,0])
-        return list_poses
-    def get_joints_velocity(self)->geometry_msgs.msg.Twist:
-        '''
-        fucntionality:
-            This function is used to get the current joint velocity of the robot
-        --------------------
-        arguments:
-            no arguments
-        --------------------
-        This function is used to get the current joint velocity of the robot
-        --------------------
-        return:
-            joint_velocity: list of joint velocities in radians per second
-        --------------------
-        '''
-        # get the current joint velocity
-        joint_velocity = self.move_group.get_current_joint_velocity()
-        return joint_velocity
-    def get_end_effector_velocity(self)->geometry_msgs.msg.Twist:
-        '''
-        functionality:
-            This function is used to get the current end effector velocity of the robot
-        --------------------
-        arguments:
-            no arguments
-        --------------------
-        return:
-            end_effector_velocity: geometry_msgs.msg.Twist
-        --------------------
-        '''
-        # get the current end effector velocity
-        end_effector_velocity = self.move_group.get_current_velocity()
-        return end_effector_velocity
-    pass
+
 class frames_transformations:
     '''
     this class is used to put and tarnsform frames in the tf tree
@@ -296,7 +241,6 @@ class frames_transformations:
         self.broadcaster = tf2_ros.TransformBroadcaster()
 
         pass
-
     def transform(self, parent_id, child_frame_id):
         '''
         functioninality:
@@ -314,7 +258,8 @@ class frames_transformations:
         transform_msg = geometry_msgs.msg.TransformStamped()
         pose=geometry_msgs.msg.Pose()
         Pose2List=[]
-        transform_msg = self.tfBuffer.lookup_transform(parent_id,child_frame_id,rospy.Time.now(),timeout=rospy.Duration(0.1))
+        # transform_msg = self.tfBuffer.lookup_transform(parent_id,child_frame_id,rospy.Time.now(),timeout=rospy.Duration(0.5))
+        transform_msg = self.tfBuffer.lookup_transform(parent_id,child_frame_id,rospy.Time(0),timeout=rospy.Duration(0.5))
         #transfer from TransformStamped() to PoseStamped()
         pose.position.x=transform_msg.transform.translation.x
         pose.position.y=transform_msg.transform.translation.y
@@ -326,8 +271,7 @@ class frames_transformations:
         #convert the it to 6d list
         angles=tf.transformations.euler_from_quaternion([pose.orientation.x,pose.orientation.y,pose.orientation.z,pose.orientation.w])
         Pose2List=[pose.position.x,pose.position.y,pose.position.z,angles[0],angles[1],angles[2]]
-        return pose,Pose2List
-
+        return Pose2List
     def put_frame_static_frame(self,parent_frame_name="base_link",child_frame_name="tool0",frame_coordinate=[0,0,0,0,0,0])->None:
         '''
         --------------------
@@ -359,15 +303,3 @@ class frames_transformations:
         self.static_broadcaster.sendTransform(frames_msg)
         rospy.sleep(0.5)
         pass
-
-if __name__ == "__main__":
-    test = RobotControl(group_name="NoTool")
-    tftest=frames_transformations()
-    print(test.get_pose())
-    tftest.put_frame_static_frame(parent_frame_name="base_link",child_frame_name="tool0",frame_coordinate=test.get_pose())
-
-
-
-
-
-

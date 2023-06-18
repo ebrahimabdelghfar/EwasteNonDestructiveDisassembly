@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-# license removed for brevity
+#!/usr/bin/env python3
 import rospy
 from std_msgs.msg import Int64,Int32,Bool,String
 from geometry_msgs.msg import WrenchStamped
@@ -31,12 +30,11 @@ False_data.data = False
 # Global variable that contains the .data for the start flag
 startUnscrewing_Flag = False
 
-def ftCallback(ftSensor_incomingReading):
-    
+def ftCallback(ftSensor_incomingReading:WrenchStamped):
+    global ftSensor_currentReading
     # Update sensor readings
     ftSensor_currentReading = ftSensor_incomingReading.wrench.force.z
     # rospy.loginfo("ftSensor_currentReading = %f" , ftSensor_currentReading)
-
 
 def startUnscrewing_Callback(startUnscrewing):
     rospy.loginfo("entered startUnscrewing_Callback")

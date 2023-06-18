@@ -31,6 +31,7 @@ void loop() {
     digitalWrite(ClampingPin,state);
     state = !state;
     Finishing.data = true;
+    pub_operation_mode.publish(&Finishing);
   }
   delay(2000);
   Finishing.data = false;
