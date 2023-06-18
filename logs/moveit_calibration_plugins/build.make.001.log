@@ -1,0 +1,4 @@
+[ 33%] Built target moveit_handeye_calibration_target_core
+[ 55%] Built target moveit_handeye_calibration_solver_core
+[ 77%] Built target moveit_handeye_calibration_target
+[100%] Built target moveit_handeye_calibration_solver

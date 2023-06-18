@@ -1,0 +1,8 @@
+prefix=/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/moveit_calibration_plugins
+
+Name: moveit_calibration_plugins
+Description: Description of moveit_calibration_plugins
+Version: 0.1.0
+Cflags: -I/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/Perception/moveit_calibration/moveit_calibration_plugins/handeye_calibration_target/include -I/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/Perception/moveit_calibration/moveit_calibration_plugins/handeye_calibration_solver/include -I/usr/include/eigen3
+Libs: -L${prefix}/lib 
+Requires: roscpp sensor_msgs

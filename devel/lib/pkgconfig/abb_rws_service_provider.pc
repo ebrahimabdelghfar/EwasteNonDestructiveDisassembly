@@ -1,0 +1,1 @@
+/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/abb_rws_service_provider/lib/pkgconfig/abb_rws_service_provider.pc

@@ -1,0 +1,1 @@
+/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/checkMotors/lib/pkgconfig/checkMotors.pc

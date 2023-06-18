@@ -4,16 +4,18 @@ import copy
 import rospy
 from moveit_commander import *
 import geometry_msgs.msg
+import tf2_geometry_msgs
 import tf2_ros
 import tf.transformations
 import math
 from std_msgs.msg import Bool,Float64MultiArray, MultiArrayLayout, MultiArrayDimension,String,Int32
 import json
 import torch
-
+import numpy as np
 import cv2
 import numpy as np
-sys.path.append("../yolov7/")
+
+sys.path.append("/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/yolov7")
 from models.experimental import attempt_load
 from utils.datasets import LoadImages, letterbox
 from utils.torch_utils import TracedModel,select_device
@@ -26,7 +28,7 @@ import numpy as np
 import time
 
 # importing robot helper for coordinates view transformation 
-sys.path.append("/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/control/src/")
+sys.path.append("/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/resources/src/helper")
 from robot_helper import RobotControl, frames_transformations
 import numpy as np
 import tf.transformations
@@ -35,13 +37,14 @@ import tf.transformations
 
 class PerceptionNode():
     
-    def __init__(self, width=1280, height=720, useCuda="cpu") -> None:
+    def __init__(self, width=1280, height=720) -> None:
         #self.perceptionNode = rospy.init_node("Perception") # Need to change this to the enum values 
         self.perceptionPublisher = rospy.Publisher('ListOfScrews', String, queue_size=50) # Need to change this to the enum values
         self.nodeToOperateListener = rospy.Subscriber("NodeToOperate",Int32,self.nodeToOperateCallback)
        
+        
 
-        self.Controller = RobotControl(node_name="Perception",group_name="NoTool")
+        self.Controller=RobotControl(node_name="Perception",group_name="ScrewIn")
         self.framesTransformer=frames_transformations()
         self.rate = rospy.Rate(200)
         #camera viewing dimensions
@@ -49,32 +52,22 @@ class PerceptionNode():
         self.Height = height
         self.operate = True
         self.model = None
-        self.useCuda = useCuda
-
     def nodeToOperateCallback(self,data):
-        if data == 1:
+        if data==1:
             self.operate = True
         else: 
             self.operate = False
-    
-
-    def loadModel(self, location="/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/Perception/src/epoch_480.pt"):
-        cuda =  "cpu" if self.useCuda == "cpu" else 0
-        device = "cpu" if self.useCuda == "cpu" else select_device("0")
-        
+    def loadModel(self, location="/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/Perception/src/epoch_480.pt"): 
         #load model 
-        intialModel = attempt_load(location, device)
-        self.model = TracedModel(intialModel, cuda, 640)
-
-        if cuda == "cpu":
-            self.model.half()
+        intialModel = attempt_load(location, "cpu")
+        self.model = TracedModel(intialModel, "cpu", 640)
 
     def InitializeCamera(self):
         # Configure camera streams
         self.pipeline = rs.pipeline()
         self.config = rs.config()
-        self.config.enable_stream(rs.stream.color, 1280, 720, rs.format.bgr8, 30)
-        self.config.enable_stream(rs.stream.depth, 848, 480, rs.format.z16, 30)
+        self.config.enable_stream(rs.stream.color, 1280, 720, rs.format.bgr8, 6)
+        self.config.enable_stream(rs.stream.depth, 848, 480, rs.format.z16, 6)
         self.pipeline.start(self.config)
 
         self.aligned_stream = rs.align(rs.stream.color) # alignment between color and depth
@@ -108,12 +101,7 @@ class PerceptionNode():
         #transpose from cv2 bgr to rgb
         image = image[:, :, ::-1].transpose(2, 0, 1)
         image = np.ascontiguousarray(image)
-
-        if self.useCuda == "cpu":
-            image = torch.from_numpy(image).float()
-        else:
-            img = torch.from_numpy(img).to(0).half()
-            
+        image = torch.from_numpy(image).float()
         image /= 255.0
         image.unsqueeze(0)
         image = image[None,:,:,:]
@@ -134,18 +122,18 @@ class PerceptionNode():
     
     def pixelToSpace(self, predresults, verts ,debug=False):
         screwlist=[]
-        print('predresults are')
-        print(predresults)
+        # print('predresults are')
+        # print(predresults)
         for predresult in predresults:
             # Blue color in BGR
             color = (255, 0, 0)
-            print('predres value is {}'.format(predresult))
+            # print('predres value is {}'.format(predresult))
             centerx = int((predresult[0] + predresult[2])) // 2
             centery = int((predresult[1] + predresult[3])) // 2
-            print('center val is  {},{}',centerx,centery)
+            # print('center val is  {},{}',centerx,centery)
             xyz_position = verts[centery][centerx]
             xyz_position = [float(xyz_position[0]), float(xyz_position[1]), float(xyz_position[2])]
-            print(xyz_position[2])
+            # print(xyz_position[2])
             screwlist.append(xyz_position)
             rc = cv2.rectangle(self.color_image, (int(predresult[0]), int(predresult[1])), (int(predresult[2]), int(predresult[3])), color, 2) # Not used ?
 
@@ -156,22 +144,31 @@ class PerceptionNode():
         return screwlist
     
 
+    def poseTransform(self,x,y,z):
+        self.framesTransformer.tf_buffer.lookup_transform("base_link",
+                                   "camera_link", #source frame
+                                   rospy.Time(0), #get the tf at first available time
+                                   rospy.Duration(1.0))
+        
+        # posetotransform=
+        # pose_transformed = tf2_geometry_msgs.do_transform_pose(poseStampedToTransform, transform)
 
     def camToWorldPositions(self, x, y ,z, verbose=False):
         
-        static_frame = self.framesTransformer.put_frame_static_frame(parent_frame_name='camera_link', child_frame_name="static")
+        self.framesTransformer.put_frame_static_frame(parent_frame_name="camera_link",child_frame_name="static",frame_coordinate=[x,y,z,3.14141457586858, -1.5697755396280457, 0.0009377635141111193])
         relative_transformations = self.framesTransformer.transform(parent_id="base_link", child_frame_id='static')#chid id might be wrong
         # apply transformations and rotations wrt robot
-        translations=relative_transformations[:3]
+        # translations=relative_transformations[:3]
         
-        rotations = relative_transformations[3:]
-        cam_matrix = np.array([x,y,z,1])
+        # rotations = relative_transformations[3:]
+        # cam_matrix = np.array([x,y,z,1])
         
-        homogeneous_matrix = tf.transformations.compose_matrix(translate=translations,angles=rotations)
+        # homogeneous_matrix = tf.transformations.compose_matrix(translate=translations,angles=rotations)
+        
        
-        worldpose = np.matmul(homogeneous_matrix,cam_matrix)
+        # worldpose = np.matmul(homogeneous_matrix,cam_matrix)
         
-        return worldpose
+        return relative_transformations
     
     def publishReadings(self, Data):
         my_msg = String()
@@ -196,13 +193,19 @@ class PerceptionNode():
                 screwPositionsToCamera = self.pixelToSpace(predictions, verts,debug=True)
                 ## Get Positions relative to the base link
                 screwPositions = list()
-
-                # for screwPosition in screwPositionsToCamera:
-                #     screwPositions.append(self.camToWorldPositions(screwPosition[0], screwPosition[1], screwPosition[2])[:3])
-
-                ## Publish readings
                 
-                self.publishReadings(screwPositionsToCamera)
+                for screwPosition in screwPositionsToCamera:
+                    alignedScrewPosition = self.swap(screwPosition)
+                    screwPositions.append(self.camToWorldPositions(alignedScrewPosition[0], alignedScrewPosition[1], alignedScrewPosition[2]))
+
+                # Publish readings
+                if isinstance(screwPositions, np.ndarray):
+                    print('transforming nd array')
+                    screwPositions = screwPositions.tolist()
+                
+                    pass
+                print('positions are')
+                print(screwPositions)
 
                 self.rate.sleep()
     def scan(self,poses)->list:
@@ -239,8 +242,13 @@ class PerceptionNode():
             for unique_screw in unique_screws:
                 result.append(unique_screw)
         return result
-
-perception=PerceptionNode()
-xyzpose=perception.Controller.get_pose()[:3]
-perception.Controller.go_to_pose_goal_cartesian([xyzpose[0]+0.5,xyzpose[1]+0.5,xyzpose[2],0,0,0])
+    def swap(self,position:list):
+        # align realsense axis to camera link axis 
+        return[position[2],-position[0],-position[1]]
+perception=PerceptionNode()        
+#xyzpose=perception.Controller.get_pose()[:3]
+#perception.Controller.go_to_pose_goal_cartesian([xyzpose[0]+0.5,xyzpose[1]+0.5,xyzpose[2],0,0,0])
 perception.launchNode()
+pose=[0.3415449901080874, 0.08756450183511326, 0.2540691819881634, -3.1289211366304626, -0.09482885806231008, 0.07191366388360511]
+pose=[0.468965394266172, -0.11892876800415482, 0.2631456616785275, -3.1289607005477835, -0.09484716686890036, 0.07206694957528902]
+perception.Controller.go_to_pose_goal_cartesian(pose)

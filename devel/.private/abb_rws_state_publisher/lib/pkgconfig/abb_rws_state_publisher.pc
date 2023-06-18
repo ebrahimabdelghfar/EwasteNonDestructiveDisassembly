@@ -1,0 +1,8 @@
+prefix=/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/abb_rws_state_publisher
+
+Name: abb_rws_state_publisher
+Description: Description of abb_rws_state_publisher
+Version: 0.5.0
+Cflags: -I/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/ABB_Dependent/abb_robot_driver/abb_rws_state_publisher/include
+Libs: -L${prefix}/lib -labb_rws_state_publisher /home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/lib/libabb_egm_rws_managers.so
+Requires: abb_rapid_sm_addin_msgs abb_robot_cpp_utilities abb_robot_msgs roscpp sensor_msgs
