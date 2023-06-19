@@ -14,7 +14,8 @@ class Nodes(Enum):
     MILLING = "MILLING"
     HeartBeat = "HeartBeat"
     #list that contains all the nodes that always should be running
-    NodesToBeOperated=[FORCE,COLLISION_DETECTION,CENTRAL,VISION,CLAMPING,CHANGE_TOOL,CHECK_MOTOR,APPROACH_AND_ENGAGE,UNSCREW,MILLING]
+    # NodesToBeOperated=[FORCE,COLLISION_DETECTION,CENTRAL,VISION,CLAMPING,CHANGE_TOOL,CHECK_MOTOR,APPROACH_AND_ENGAGE,UNSCREW,MILLING]
+    NodesToBeOperated=[CHECK_MOTOR]
     NodesToBeOperatedInfo = {CHECK_MOTOR:["checkMotors","checkMotorsNode.py",CHECK_MOTOR]}
 
 if __name__ == "__main__":
