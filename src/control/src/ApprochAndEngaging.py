@@ -18,16 +18,18 @@ class ApprochAndEngaging:
         self.engageFlag  = False
         self.SensorRead = WrenchStamped()
         self.NodeToOperate = 0
-        
+        self.EngageTourqe = 2.5
         self.ListOfscrews = [1,2,3,4,5,6,7,8,9,10,11,12,1,2,3,4,5,6,7,8,9,10,11,12]#for testing only
-
+        self.BadScrews = []
         #define publishers 
-        self.Motor=rospy.Publisher(Topics.ScrewDriverMOTOR_COMMAND.value, Int32, queue_size=1,latch=True)
-        self.StartUnscrewing = rospy.Publisher(Topics.UNSCREW_START_FLAG.value, Bool , queue_size=1,latch=True)
+        self.Motor=rospy.Publisher(Topics.ScrewDriverMOTOR_COMMAND.value, Int32, queue_size=1)
+        self.StartUnscrewing = rospy.Publisher(Topics.UNSCREW_START_FLAG.value, Bool , queue_size=1)
+        self.startMilling = rospy.Publisher(Topics.START_MILLING.value, Bool , queue_size=1)        
         self.NodeSuccess=rospy.Publisher(Topics.NODE_SUCCESS.value, node_response, queue_size=1)
 
         #define subscribers
         rospy.Subscriber(Topics.UNSCREW_DONE.value, Bool, self.unscrewDoneCallback)
+        rospy.Subscriber(Topics.FINISHED_MILLING.value, Bool, self.finishedMillingCallback)
         rospy.Subscriber(Topics.ForceSensorWrench.value, WrenchStamped, self.SensorCallback)
         rospy.Subscriber(Topics.NODE_TO_OPERATE.value, Int32, self.NodeToOperateCallback)
 
@@ -48,7 +50,7 @@ class ApprochAndEngaging:
         self.RobotJoystick.go_to_pose_goal_cartesian(Pose,velocity=velocity,acceleration=acceleration,Replanning=True,waitFlag=False)
         pass
 
-    def Spiralshape(self,timeStep)->None:
+    def Spiralshape(self,timeStep,NowScrew)->None:
         '''
         this function will generate and execute the spiral shape
         parameters:
@@ -61,9 +63,9 @@ class ApprochAndEngaging:
         N_s=60
         fixederror=0.002 #(mm)
         waypoints = []
+        PostionTolerance = 0.001
         #calculate the parameters of the spiral
         tmax=int(((10*math.pi)/N_s)*(math.ceil(N_s/2)))
-
         #generate a list of screws in spiral shape
         pose = self.RobotJoystick.get_pose()
         for i in np.arange(timeStep,tmax,timeStep):
@@ -73,10 +75,28 @@ class ApprochAndEngaging:
 
         #if wait flag == true then the followin line will not be skipped until the robot finish the path
         #if wait flag == false then the following line will be skipped and the robot will start the path and the code will continue
+        self.OperateMotor()
         self.RobotJoystick.go_to_pose_goal_cartesian_waypoints(waypoints,velocity=0.1,acceleration=0.1,list_type=True,waitFlag=False)
-        #todo: put the force sensor check
-    
-        #end
+        while True:
+            if self.SensorRead.wrench.torque.z >= self.EngageTourqe:
+                self.stopMotor()
+                self.engageFlag = True
+                print("engaged")
+                break
+            #check that the robot reached the last point
+            currentPose = self.RobotJoystick.get_pose()
+            if all(abs(currentPose[i]-waypoints[-1][i])<PostionTolerance for i in range(len(currentPose))):
+                print("broken")
+                self.stopMotor()
+                self.engageFlag = False
+                break
+        if self.engageFlag:
+            self.engageFlag = False
+            pass
+        else:
+            self.BadScrews.append(NowScrew)
+            pass
+        #end of spiral shape
 
     def reshapeList(self,ListOfscrews)->list:
         #reshaping the list of screws to 2D (nx6) list array
@@ -84,7 +104,8 @@ class ApprochAndEngaging:
         return ListOfscrews
 
     def unscrewDoneCallback(self,msg:Bool)->None:
-        self.UnscrewFlag = msg.data
+        #self.UnscrewFlag = msg.data
+        pass
 
     def SensorCallback(self,msg:WrenchStamped)->None:
         self.SensorRead = msg
@@ -107,8 +128,19 @@ class ApprochAndEngaging:
     def NodeToOperateCallback(self,msg):
         self.NodeToOperate = msg.data
 
-    def unscrew(self):
-        pass
+    def unscrew(self, index):
+        self.StartUnscrewing(True)
+        #rospy.Spin()
+        receivedFlag = rospy.wait_for_message(Topics.UNSCREW_DONE.value, Bool)
+        self.UnscrewFlag = receivedFlag.data
+        if not receivedFlag.data:
+            self.BadScrews.append(index)
+
+    def mill(self):
+        self.startMilling(True)
+        #rospy.Spin()
+        receivedFlag = rospy.wait_for_message(Topics.UNSCREW_DONE.value, Bool)
+
 
     def main(self):
         while not rospy.is_shutdown():
@@ -122,7 +154,7 @@ class ApprochAndEngaging:
                 #then go to each screw and unscrew it
                 i=0 #iterator for screws
                 for screw in self.ListOfscrews:
-                    pose,_ = self.TransformCalculator.transform(parent_id="base_link",child_frame_id="screw"+str(i))
+                    pose = self.TransformCalculator.transform(parent_id="base_link",child_frame_id="screw"+str(i))
                     self.RobotJoystick.go_to_pose_goal_cartesian(pose_goal=pose,velocity=0.1,acceleration=0.1,replanning=True)
                     #rest of the cycle
 

@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
 import rospy
+
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy import signal
+import math
+
 from std_msgs.msg import Int64,Int32,Bool,String
 from geometry_msgs.msg import WrenchStamped
 from enums.nodes import Nodes
@@ -13,7 +19,7 @@ ftSensor_previousReading = 0
 ftSensor_currentReading = 0
 
 # The range of readings that indicates near constant reading
-ftSensor_epsilon = 0
+ftSensor_epsilon = 0.7
 
 # A counter to check failure every specific period without adding an extra rospy.sleep()
 unscrewingFailure_counter = 0
@@ -30,6 +36,8 @@ False_data.data = False
 # Global variable that contains the .data for the start flag
 startUnscrewing_Flag = False
 
+
+
 def ftCallback(ftSensor_incomingReading:WrenchStamped):
     global ftSensor_currentReading
     # Update sensor readings
@@ -42,7 +50,7 @@ def startUnscrewing_Callback(startUnscrewing):
     startUnscrewing_Flag = startUnscrewing.data
     if startUnscrewing_Flag is True:
         # rospy.loginfo("startUnscrewing is True")
-        motorPub.publish(True_data)
+        motorPub.publish(2)
     else:
         rospy.loginfo("Didn't enter checkReadings")
 
@@ -50,7 +58,7 @@ def startUnscrewing_Callback(startUnscrewing):
 
 
 def checkReadings():
-    global unscrewingFailure_counter, unscrewingFailure_max, ftSensor_previousReading, ftSensor_currentReading, ftSensor_epsilon
+    global unscrewingFailure_counter, unscrewingFailure_max, ftSensor_previousReading, ftSensor_currentReading, ftSensor_epsilon , FzCurrent
     rospy.loginfo("entered checkReadings")
 
     # Check current reading aganist previous readings every "ftSensor_delay" seconds
@@ -60,10 +68,13 @@ def checkReadings():
     if abs(ftSensor_currentReading-ftSensor_previousReading) < ftSensor_epsilon:
         rospy.loginfo("Finished Unscrewing <3")
 
-        motorPub.publish(False_data)
+        motorPub.publish(0)
         unscrewingPub.publish(True_data)
+    else:
+        rospy.loginfo("-----Unscrewing Unscrewing Unscrewing-----")
+        
     if unscrewingFailure_counter == unscrewingFailure_max:
-        motorPub.publish(False_data)
+        motorPub.publish(0)
         unscrewingPub.publish(False_data)
         unscrewingFailure_counter = 0
         rospy.loginfo("Unscrewing Failed")
@@ -76,11 +87,12 @@ if __name__ == '__main__':
         rospy.init_node(Nodes.UNSCREW.value)
         unscrewingPub = rospy.Publisher(Topics.UNSCREW_DONE.value, Bool, queue_size=1)
         motorPub = rospy.Publisher(Topics.ScrewDriverMOTOR_COMMAND.value, Int32, queue_size=1)
-        rospy.Subscriber(Topics.ForceSensorWrench.value, WrenchStamped, ftCallback)
+        rospy.Subscriber(Topics.ForceSensorWrenchWeightedFilter.value, WrenchStamped, ftCallback)
         rospy.Subscriber(Topics.UNSCREW_START_FLAG.value, Bool, startUnscrewing_Callback)
         # rate = rospy.Rate(10)  # 10hz
         while not rospy.is_shutdown():
-            if startUnscrewing_Flag is True:
+            # if startUnscrewing_Flag is True:
+            if True:
                 checkReadings()
            
             # rate.sleep()
