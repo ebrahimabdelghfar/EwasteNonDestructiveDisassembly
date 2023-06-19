@@ -30,9 +30,9 @@ class GetToolNode:
         self.ToolChangePub = rospy.Publisher(
             Topics.NODE_SUCCESS.value, node_response, queue_size=1)
         self.TorqueZReadingPub = rospy.Subscriber(
-            Topics.ForceSensorWrench.value, WrenchStamped, self.FTReadingCallBack)
+            Topics.ForceSensorWrenchWeightedFilter.value, WrenchStamped, self.FTReadingCallBack)
         self.ToolChangeClient = rospy.ServiceProxy(Services.SCHEDULAR.value, Schedular, persistent=True)
-        CentralResponse = SchedularResponse()
+        self.CentralResponse = SchedularResponse()
         #end
         #force-tourqe thershold
         self.TorqueZReading = 0.0
@@ -95,35 +95,37 @@ class GetToolNode:
         rospy.wait_for_service(Services.SCHEDULAR.value)
         #this where the tool will call the server to get the schedule of changing tool
         self.CentralResponse:SchedularResponse = self.ToolChangeClient(SchedularRequest())
-        self.waypoints = self.CentralResponse.waypoints
-        self.waypointstype = self.CentralResponse.waypoint_types
-        self.CheckForceFlag = self.CentralResponse.check_force_flag
-        self.Velocity = self.CentralResponse.Velocity
-        self.Acceleration = self.CentralResponse.Acceleration
+        self.waypoints = self.reshapeList(list(self.CentralResponse.waypoints))
+        print(self.waypoints)
+        self.waypointstype = list(self.CentralResponse.waypoint_types)
+        self.CheckForceFlag = list(self.CentralResponse.checkTorque)
+        self.Velocity = list(self.CentralResponse.velocity)
+        self.Acceleration = list(self.CentralResponse.acceleration)
         #save the schedule of getting and returning tool
-        for index in range(len(self.waypoints)):
-            if self.waypointstype[index]==schedulars.JointType.value:
-                if self.CheckForceFlag[index]==schedulars.CheckForceSensor.value:
-                    self.RobotController.go_by_joint_angle(self.waypoints[index], self.Velocity, self.Acceleration, Replanning=False,WaitFlag=False)
+        for ways in self.waypoints:
+            print(self.waypointstype[self.waypoints.index(ways)])
+            if self.waypointstype[self.waypoints.index(ways)]==schedulars.JointType.value:
+                if self.CheckForceFlag[self.waypoints.index(ways)]==schedulars.CheckForceSensor.value:
+                    self.RobotController.go_by_joint_angle(ways, self.Velocity[self.waypoints.index(ways)], self.Acceleration[self.waypoints.index(ways)], Replanning=True,WaitFlag=False)
                     self.CheckToolTourqe()              
                     pass
                 else:
-                    self.RobotController.go_by_joint_angle(self.waypoints[index], self.Velocity, self.Acceleration, Replanning=True,WaitFlag=False)
+                    self.RobotController.go_by_joint_angle(ways, self.Velocity[self.waypoints.index(ways)], self.Acceleration[self.waypoints.index(ways)], Replanning=True,WaitFlag=False)
                     pass
                 pass
-            elif self.waypointstype[index]==schedulars.CartesianType.value:
-                if self.CheckForceFlag[index]==schedulars.CheckForceSensor.value:
-                    self.RobotController.go_to_pose_goal_cartesian(self.waypoints[index], self.Velocity, self.Acceleration, Replanning=False,WaitFlag=False)
+            elif self.waypointstype[self.waypoints.index(ways)]==schedulars.CartesianType.value:
+                if self.CheckForceFlag[self.waypoints.index(ways)]==schedulars.CheckForceSensor.value:
+                    self.RobotController.go_to_pose_goal_cartesian(ways, self.Velocity[self.waypoints.index(ways)], self.Acceleration[self.waypoints.index(ways)], Replanning=True,WaitFlag=False)
                     self.CheckToolTourqe()
                     pass
                 else:
-                    self.RobotController.go_to_pose_goal_cartesian(self.waypoints[index], self.Velocity, self.Acceleration, Replanning=True,WaitFlag=False)
+                    self.RobotController.go_to_pose_goal_cartesian(ways, self.Velocity[self.waypoints.index(ways)], self.Acceleration[self.waypoints.index(ways)], Replanning=True,WaitFlag=False)
                     pass
                 pass
             #after each point go it will increment the index of the node
             #and publish the status of the node
             self.State.status=Response.IN_PROGRESS.value
-            self.State.extraMessage=str(index+1)
+            self.State.extraMessage=str(self.waypoints.index(ways)+1)
             self.ToolChangePub.publish(self.State)
             pass
 
@@ -152,7 +154,7 @@ class GetToolNode:
         pose = self.TransformationCalculator.transform(
             parent_id="base_link", child_frame_id="tool0")
         self.RobotController.go_to_pose_goal_cartesian(
-            pose, 1, 1, Replanning=True,wating=False)
+            pose, 1, 1, Replanning=True,WaitFlag=False)
         
         self.schedulecollectorofgettingTool.append(self.RobotController.get_pose())
         # go to Holder
@@ -180,7 +182,7 @@ class GetToolNode:
             else :
                 print("locking")
         print("Done locking")  
-        
+
         self.schedulecollectorofgettingTool.append(self.RobotController.get_joint_state())
 
         joints = self.RobotController.get_joint_state()
@@ -201,7 +203,7 @@ class GetToolNode:
         
         # go to save position
         self.RobotController.go_by_joint_angle(
-            [-1.57, 0.0, 0.0, 0.0, 1.57, 0.0], 0.1, 0.1, Replanning=True, WaitFlag=False)
+            [-1.57, 0.0, 0.0, 0.0, 1.57, 0.0], 1, 1, Replanning=True, WaitFlag=False)
         
         self.schedulecollectorofgettingTool.append(self.RobotController.get_joint_state())
         #flatten the list
