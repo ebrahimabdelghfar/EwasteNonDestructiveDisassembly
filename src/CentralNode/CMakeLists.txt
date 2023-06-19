@@ -57,6 +57,7 @@ add_message_files(
 add_service_files(
   FILES
   Schedular.srv
+  ScrewList.srv
 )
 
 ## Generate actions in the 'action' folder
