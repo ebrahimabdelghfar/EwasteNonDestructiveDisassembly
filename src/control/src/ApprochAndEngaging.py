@@ -22,14 +22,9 @@ class ApprochAndEngaging:
         self.ListOfscrews = [1,2,3,4,5,6,7,8,9,10,11,12,1,2,3,4,5,6,7,8,9,10,11,12]#for testing only
         self.BadScrews = []
         #define publishers 
-<<<<<<< HEAD
         self.Motor=rospy.Publisher(Topics.ScrewDriverMOTOR_COMMAND.value, Int32, queue_size=1)
         self.StartUnscrewing = rospy.Publisher(Topics.UNSCREW_START_FLAG.value, Bool , queue_size=1)
         self.startMilling = rospy.Publisher(Topics.START_MILLING.value, Bool , queue_size=1)        
-=======
-        self.Motor=rospy.Publisher(Topics.ScrewDriverMOTOR_COMMAND.value, Int32, queue_size=1,latch=True)
-        self.StartUnscrewing = rospy.Publisher(Topics.UNSCREW_START_FLAG.value, Bool , queue_size=1,latch=True)
->>>>>>> cc0d3befc963b723e0733fd36b8e99cfbb4a5a11
         self.NodeSuccess=rospy.Publisher(Topics.NODE_SUCCESS.value, node_response, queue_size=1)
 
         #define subscribers
@@ -82,7 +77,6 @@ class ApprochAndEngaging:
         #if wait flag == false then the following line will be skipped and the robot will start the path and the code will continue
         self.OperateMotor()
         self.RobotJoystick.go_to_pose_goal_cartesian_waypoints(waypoints,velocity=0.1,acceleration=0.1,list_type=True,waitFlag=False)
-<<<<<<< HEAD
         while True:
             if self.SensorRead.wrench.torque.z >= self.EngageTourqe:
                 self.stopMotor()
@@ -103,11 +97,6 @@ class ApprochAndEngaging:
             self.BadScrews.append(NowScrew)
             pass
         #end of spiral shape
-=======
-        #todo: put the force sensor check
-    
-        #end
->>>>>>> cc0d3befc963b723e0733fd36b8e99cfbb4a5a11
 
     def reshapeList(self,ListOfscrews)->list:
         #reshaping the list of screws to 2D (nx6) list array
@@ -115,12 +104,8 @@ class ApprochAndEngaging:
         return ListOfscrews
 
     def unscrewDoneCallback(self,msg:Bool)->None:
-<<<<<<< HEAD
         #self.UnscrewFlag = msg.data
         pass
-=======
-        self.UnscrewFlag = msg.data
->>>>>>> cc0d3befc963b723e0733fd36b8e99cfbb4a5a11
 
     def SensorCallback(self,msg:WrenchStamped)->None:
         self.SensorRead = msg
