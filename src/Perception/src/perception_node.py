@@ -204,23 +204,23 @@ class PerceptionNode():
                 break
     def scan(self, scantimes) -> list:
         pose = self.Controller.get_pose()
-        limit = 0.35
+        limit = 0.20
         step = (2 * limit) / scantimes
         waypoints = []
 
         limit = -limit
         x = limit
-        y = pose[1] + limit
+        # y = pose[1] + limit
 
         for i in range(scantimes):
             newpose = pose.copy()  # Create a copy of the pose list
             newpose[0] = x
-            newpose[1] = y
+            # newpose[1] = y
             print('pose generated before is {}'.format(newpose))
             waypoints.append(newpose)
             print('pose generated after is {}'.format(newpose))
             x += step
-            y += step
+            # y += step
             print('new x and y are {}, {}'.format(x, y))
 
         predictions = []
@@ -228,13 +228,11 @@ class PerceptionNode():
         print(waypoints)
 
         
-        self.Controller.go_by_joint_angle(joint_goal_list=[0,0,0,0,0,0],velocity=0.1,acceleration=0.1,Replanning=True,WaitFlag=False)
+        # self.Controller.go_by_joint_angle(joint_goal_list=[0,0,0,0,0,0],velocity=0.1,acceleration=0.1,Replanning=True,WaitFlag=False)
 
-
-        return
         for pose in waypoints:
             screwPositions=list()
-            # print('pose is ')
+            # print('pose is ') 
             # print(pose)
             # self.Controller.go_to_pose_goal_cartesian(pose,1,0.2,Replanning=True,WaitFlag=False)
             image, verts = self.imagePreprocess()
@@ -245,32 +243,35 @@ class PerceptionNode():
         
         return predictions
     
-    def identifyScrewsNoRepetions(self, predictions: list) -> list:
+    def identifyScrewsNoRepetitions(self,predictions: list,tolerance=0.01) -> list:
         result = []
-        
+        unique_screws = []
         for prediction_list in predictions:
-            unique_screws = []
+            
             for element in prediction_list:
-                x, y, z = element
+                x, y, z = element[:3]
                 found = False
-                for screw in unique_screws:
-                    index=-1
-                    if abs(screw[0]-x)<=0.01 and abs(screw[0]-x)<=0.01: 
+                for i in range(len(unique_screws)):
+                    screw = unique_screws[i]
+                    index = -1
+                    if abs(screw[0] - x) <= tolerance and abs(screw[1] - y) <= tolerance:
                         found = True
-                        index=unique_screws.index(screw)
+                        index = i
                         break
                 if found:
+                    print('found')
+                    print(unique_screws[index])
                     average_x = (screw[0] + x) / 2
                     average_y = (screw[1] + y) / 2
                     average_z = (screw[2] + z) / 2
-                    if index!=-1:
+                    if index != -1:
                         unique_screws.pop(index)
                     unique_screws.append((average_x, average_y, average_z))
                 else:
                     unique_screws.append(element)
-            for unique_screw in unique_screws:
-                result.append(unique_screw)
-        return result
+        
+        return unique_screws
+
     def swap(self,position:list):
         # align realsense axis to camera link axis 
         return[position[2],-position[0],-position[1]]
