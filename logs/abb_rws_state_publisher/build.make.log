@@ -1,0 +1,6 @@
+[ 25%] [32mBuilding CXX object CMakeFiles/abb_rws_state_publisher.dir/src/rws_state_publisher.cpp.o[0m
+[ 50%] [32m[1mLinking CXX shared library /home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/abb_rws_state_publisher/lib/libabb_rws_state_publisher.so[0m
+[ 50%] Built target abb_rws_state_publisher
+[ 75%] [32mBuilding CXX object CMakeFiles/abb_rws_state_publisher_exe.dir/src/main.cpp.o[0m
+[100%] [32m[1mLinking CXX executable /home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/abb_rws_state_publisher/lib/abb_rws_state_publisher/rws_state_publisher[0m
+[100%] Built target abb_rws_state_publisher_exe

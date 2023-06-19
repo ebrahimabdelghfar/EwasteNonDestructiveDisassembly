@@ -1,0 +1,1 @@
+/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/abb_rapid_msgs/share/roseus/ros/abb_rapid_msgs/msg/Pose.l

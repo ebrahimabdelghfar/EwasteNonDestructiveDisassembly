@@ -1,0 +1,1 @@
+/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/abb_robot_bringup_examples/lib/pkgconfig/abb_robot_bringup_examples.pc

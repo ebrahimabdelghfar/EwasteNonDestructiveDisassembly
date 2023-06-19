@@ -1,0 +1,1 @@
+/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/abb_irb120_support/lib/pkgconfig/abb_irb120_support.pc

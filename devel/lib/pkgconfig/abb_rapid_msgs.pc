@@ -1,0 +1,1 @@
+/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/abb_rapid_msgs/lib/pkgconfig/abb_rapid_msgs.pc

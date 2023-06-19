@@ -1,0 +1,8 @@
+[ 16%] [32mBuilding CXX object CMakeFiles/abb_rws_service_provider.dir/src/rws_service_provider_core_srvs.cpp.o[0m
+[ 33%] [32mBuilding CXX object CMakeFiles/abb_rws_service_provider.dir/src/rws_service_provider.cpp.o[0m
+[ 50%] [32mBuilding CXX object CMakeFiles/abb_rws_service_provider.dir/src/rws_service_provider_sm_srvs.cpp.o[0m
+[ 66%] [32m[1mLinking CXX shared library /home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/abb_rws_service_provider/lib/libabb_rws_service_provider.so[0m
+[ 66%] Built target abb_rws_service_provider
+[ 83%] [32mBuilding CXX object CMakeFiles/abb_rws_service_provider_exe.dir/src/main.cpp.o[0m
+[100%] [32m[1mLinking CXX executable /home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/abb_rws_service_provider/lib/abb_rws_service_provider/rws_service_provider[0m
+[100%] Built target abb_rws_service_provider_exe

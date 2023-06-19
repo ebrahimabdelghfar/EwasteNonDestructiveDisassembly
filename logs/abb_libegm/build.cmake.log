@@ -1,0 +1,20 @@
+Not searching for unused variables given on the command line.
+[36m--[0m The CXX compiler identification is GNU 9.4.0
+[36m--[0m Detecting CXX compiler ABI info
+[36m--[0m Detecting CXX compiler ABI info - done
+[36m--[0m Check for working CXX compiler: /usr/bin/c++ - skipped
+[36m--[0m Detecting CXX compile features
+[36m--[0m Detecting CXX compile features - done
+[36m--[0m Found Boost: /usr/lib/x86_64-linux-gnu/cmake/Boost-1.71.0/BoostConfig.cmake (found version "1.71.0") found components: regex system thread
+[36m--[0m Found Protobuf: /usr/lib/x86_64-linux-gnu/libprotobuf.so;-lpthread (found version "3.6.1")
+[36m--[0m Generating protobuf C++ for: proto/egm.proto;proto/egm_wrapper.proto;proto/egm_wrapper_trajectory.proto
+[36m--[0m Found Threads: TRUE
+[36m--[0m Performing Test COMPILER_HAS_HIDDEN_VISIBILITY
+[36m--[0m Performing Test COMPILER_HAS_HIDDEN_VISIBILITY - Success
+[36m--[0m Performing Test COMPILER_HAS_HIDDEN_INLINE_VISIBILITY
+[36m--[0m Performing Test COMPILER_HAS_HIDDEN_INLINE_VISIBILITY - Success
+[36m--[0m Performing Test COMPILER_HAS_DEPRECATED_ATTR
+[36m--[0m Performing Test COMPILER_HAS_DEPRECATED_ATTR - Success
+[36m--[0m Configuring done (2.9s)
+[36m--[0m Generating done (0.1s)
+[36m--[0m Build files have been written to: /home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/build/abb_libegm

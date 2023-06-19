@@ -4,10 +4,11 @@ from std_msgs.msg import Float32MultiArray , Bool, Int32
 from helper.robot_helper import *
 from enums.nodes import Nodes
 from enums.topics import Topics
+from enums.services import Services
 from geometry_msgs.msg import WrenchStamped
 from CentralNode.msg import node_response
 import numpy as np
-
+from CentralNode.srv import ScrewList
 class ApprochAndEngaging:
     def __init__(self) -> None:
         self.RobotJoystick = RobotControl(node_name=Nodes.APPROACH_AND_ENGAGE.value,group_name="manipulator")
@@ -26,6 +27,8 @@ class ApprochAndEngaging:
         self.StartUnscrewing = rospy.Publisher(Topics.UNSCREW_START_FLAG.value, Bool , queue_size=1)
         self.startMilling = rospy.Publisher(Topics.START_MILLING.value, Bool , queue_size=1)        
         self.NodeSuccess=rospy.Publisher(Topics.NODE_SUCCESS.value, node_response, queue_size=1)
+        #service client
+       
 
         #define subscribers
         rospy.Subscriber(Topics.UNSCREW_DONE.value, Bool, self.unscrewDoneCallback)
@@ -39,7 +42,10 @@ class ApprochAndEngaging:
         self.on = 1
         self.off = 0
         self.motorCommands = Int32()
-
+    def GetScrewList(self):
+          rospy.wait_for_service(Services.GET_SCREW_LIST.value)
+          self.ScrewListClient = rospy.ServiceProxy(Services.GET_SCREW_LIST.value, ScrewList)
+          self.ListOfscrews=self.ScrewListClient().screwList
     def Approach(self,Pose,velocity,acceleration)->None:
         '''
         this function will go to the give cordinates path
@@ -100,8 +106,7 @@ class ApprochAndEngaging:
 
     def reshapeList(self,ListOfscrews)->list:
         #reshaping the list of screws to 2D (nx6) list array
-        ListOfscrews = [ListOfscrews[i:i+3] for i in range(0, len(ListOfscrews), 3)]
-        return ListOfscrews
+        return np.reshape(ListOfscrews,(-1,6)).tolist()
 
     def unscrewDoneCallback(self,msg:Bool)->None:
         #self.UnscrewFlag = msg.data
