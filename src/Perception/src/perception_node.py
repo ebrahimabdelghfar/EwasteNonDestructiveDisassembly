@@ -251,36 +251,85 @@ class PerceptionNode():
             pose[1]+=self.yErr
             pose[2]+=self.zErr
         return screwlist
-    def identifyScrewsNoRepetitions(self,predictions: list,tolerance=0.02) -> list:
+    # def identifyScrewsNoRepetitions(self,predictions: list,tolerance=0.02) -> list:
        
-        unique_screws = []
-        for prediction_list in predictions:
+    #     unique_screws = []
+    #     for prediction_list in predictions:
             
-            for element in prediction_list:
-                x, y, z = element[:3]
-                found = False
-                for i in range(len(unique_screws)):
-                    screw = unique_screws[i]
-                    index = -1
-                    if (screw[0]*x>0 and screw[1]*y>0) and (abs(screw[0] - x) <= tolerance and abs(screw[1] - y) <= tolerance):
-                        found = True
-                        index = i
-                        break
-                if found:
+    #         for element in prediction_list:
+    #             x, y, z = element[:3]
+    #             found = False
+    #             for i in range(len(unique_screws)):
+    #                 screw = unique_screws[i]
+    #                 index = -1
+    #                 if (screw[0]*x>0 and screw[1]*y>0) and (abs(screw[0] - x) <= tolerance and abs(screw[1] - y) <= tolerance):
+    #                     found = True
+    #                     index = i
+    #                     break
+    #             if found:
                     
-                    average_x = (screw[0] + x) / 2
-                    average_y = (screw[1] + y) / 2
-                    average_z = (screw[2] + z) / 2
-                    average_pose=[average_x,average_y,average_z]
-                    # adding angles
-                    average_pose.extend(screw[3:])
-                    if index != -1:
-                        unique_screws.pop(index)
-                    unique_screws.append(average_pose)
-                else:
-                    unique_screws.append(element)
+    #                 average_x = (screw[0] + x) / 2
+    #                 average_y = (screw[1] + y) / 2
+    #                 average_z = (screw[2] + z) / 2
+    #                 average_pose=[average_x,average_y,average_z]
+    #                 # adding angles
+    #                 average_pose.extend(screw[3:])
+    #                 if index != -1:
+    #                     unique_screws.pop(index)
+    #                 unique_screws.append(average_pose)
+    #             else:
+    #                 unique_screws.append(element)
         
-        return unique_screws
+    #     return unique_screws
+
+    def identifyScrewsNoRepetitions(self, poseList, thershold=0.01):
+
+        globalList = poseList[0]
+        map = {}
+
+        for i in range (1,len(poseList)):
+            screwList = poseList[i]
+            newList = []
+
+            for j in range(len(screwList)):
+                matched = False
+
+                for index, point in enumerate(globalList):
+                    if (self.calculateDistance(point,screwList[j]) < thershold ):
+                        matched = True
+                        if index in map:
+                            map[index].append((i,j))
+                        else:
+                            map[index] = [(i,j)]
+                        break
+                if not matched:  
+                    newList.append(screwList[j])
+            globalList.extend(newList)
+        data = []
+        for index, item in enumerate(globalList):
+            if index in map:
+                avX, avY, avZ = item[0:3]
+                for copy in map[index]:
+                    x,y,z = poseList[copy[0]][copy[1]][0:3]
+                    avX += x
+                    avY += y
+                    avZ += z
+                avX /= len(map[index]) + 1
+                avY /= len(map[index]) + 1
+                avZ /= len(map[index]) + 1
+                temp = [avX,avY,avZ]
+                temp.extend(item[3:])
+                data.append(temp)
+            else :
+                data.append(item)
+        return data
+    def calculateDistance(self, pos1, pos2):
+
+        x1, y1, z1 =  pos1[0:3]
+
+        x2, y2, z2 =  pos2[0:3]
+
+        return math.sqrt((x1-x2)**2 + (y1-y2)**2 + (z1-z2)**2)
 
     def swap(self,position:list):
         # align realsense axis to camera link axis 
