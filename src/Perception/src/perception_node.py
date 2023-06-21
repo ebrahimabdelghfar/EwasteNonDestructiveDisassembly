@@ -38,13 +38,17 @@ import tf.transformations
 class PerceptionNode():
     
     def __init__(self, width=1280, height=720) -> None:
-        #self.perceptionNode = rospy.init_node("Perception") # Need to change this to the enum values 
-        self.perceptionPublisher = rospy.Publisher('ListOfScrews', String, queue_size=50) # Need to change this to the enum values
+        # self.perceptionNode = rospy.init_node("Perception") # Need to change this to the enum values 
+        self.perceptionPublisher = rospy.Publisher('ListOfScrews', Float64MultiArray, queue_size=50) # Need to change this to the enum values
         self.nodeToOperateListener = rospy.Subscriber("NodeToOperate",Int32,self.nodeToOperateCallback)
        
-        
+        #CAD related parameters
+        self.start_position=[0.3162318772410906, 0.00527568967887596, 0.41920871874099996, -3.1415189863509134, 0.007510451851129454, 1.7006139777966402e-05]
+        self.xErr=0.006
+        self.yErr=0.013
+        self.zErr=-0.018
 
-        self.Controller=RobotControl(node_name="Perception",group_name="NoTool")
+        self.Controller=RobotControl(node_name="Perception",group_name="ScrewIn")
         self.framesTransformer=frames_transformations()
         self.rate = rospy.Rate(200)
         #camera viewing dimensions
@@ -66,7 +70,7 @@ class PerceptionNode():
         # Configure camera streams
         self.pipeline = rs.pipeline()
         self.config = rs.config()
-        self.config.enable_stream(rs.stream.color, 1280, 720, rs.format.bgr8, 6)
+        self.config.enable_stream(rs.stream.color, 1280, 720, rs.format.bgr8, 10)
         self.config.enable_stream(rs.stream.depth, 848, 480, rs.format.z16, 6)
         self.pipeline.start(self.config)
 
@@ -87,8 +91,8 @@ class PerceptionNode():
         depth_frame = frames.get_depth_frame()
 
         ## depth enhancement using temporal filtering and hole filling
-        depth_frame = self.temporalFilter.process(depth_frame)
-        depth_frame = self.holeFillingFilter.process(depth_frame)
+        # depth_frame = self.temporalFilter.process(depth_frame)
+        # depth_frame = self.holeFillingFilter.process(depth_frame)
         ####
         df = np.asarray(depth_frame.get_data()) # Not used ?
         points = self.point_cloud.calculate(depth_frame)
@@ -148,27 +152,18 @@ class PerceptionNode():
         
         self.framesTransformer.put_frame_static_frame(parent_frame_name="camera_link",child_frame_name="static",frame_coordinate=[x,y,z,3.14141457586858, -1.5697755396280457, 0.0009377635141111193])
         relative_transformations = self.framesTransformer.transform(parent_id="base_link", child_frame_id='static')#chid id might be wrong
-        # apply transformations and rotations wrt robot
-        # translations=relative_transformations[:3]
         
-        # rotations = relative_transformations[3:]
-        # cam_matrix = np.array([x,y,z,1])
-        
-        # homogeneous_matrix = tf.transformations.compose_matrix(translate=translations,angles=rotations)
-        
-       
-        # worldpose = np.matmul(homogeneous_matrix,cam_matrix)
         
         return relative_transformations
     
     def publishReadings(self, Data):
-        my_msg = String()
-        my_msg.data = json.dumps(Data)
+        my_msg = Float64MultiArray()
+        my_msg.data = Data
         self.perceptionPublisher.publish(my_msg)
 
     def launchNode(self):
-        # self.loadModel()
-        # self.InitializeCamera()
+        self.loadModel()
+        self.InitializeCamera()
 
         while not rospy.is_shutdown():
             if self.operate:
@@ -188,7 +183,7 @@ class PerceptionNode():
                 for screwPosition in screwPositionsToCamera:
                     alignedScrewPosition = self.swap(screwPosition)
                     screwPositions.append(self.camToWorldPositions(alignedScrewPosition[0], alignedScrewPosition[1], alignedScrewPosition[2]))
-
+                    
                 # Publish readings
                 
                 print('positions are')
@@ -197,54 +192,67 @@ class PerceptionNode():
 
 
             else:
-                mylst=self.scan(5)        
-                print('scanning output is ')
-                print(mylst)
+                screwlist=self.scan(3)        
+                screwlist=self.identifyScrewsNoRepetitions(screwlist)
+                screwlist=self.resolve_dimensional_errors(screwlist)
+                self.publishReadings(screwlist)
                 self.rate.sleep()
                 break
     def scan(self, scantimes) -> list:
+        self.Controller.go_to_pose_goal_cartesian(self.start_position,0.1,0.1,Replanning=False,WaitFlag=True)
         pose = self.Controller.get_pose()
+        #limits and steps
         limit = 0.20
+        xlimit = 0.20
         step = (2 * limit) / scantimes
+        xstep = 0.05
         waypoints = []
-
         limit = -limit
-        x = limit
-        # y = pose[1] + limit
-
+        y = limit
+        x = xlimit
+        # generate waypoints for scanning
         for i in range(scantimes):
             newpose = pose.copy()  # Create a copy of the pose list
-            newpose[0] = x
-            # newpose[1] = y
+            newpose[1] = round(y,2)
+            newpose[0] = round(x,3)
             print('pose generated before is {}'.format(newpose))
             waypoints.append(newpose)
             print('pose generated after is {}'.format(newpose))
-            x += step
-            # y += step
-            print('new x and y are {}, {}'.format(x, y))
-
+            y+= step
+            x+= xstep
+        # predictions from each pose will be in format of list of lists of predictions for poses
         predictions = []
-        print('waypoints are:')
-        print(waypoints)
-
-        
-        # self.Controller.go_by_joint_angle(joint_goal_list=[0,0,0,0,0,0],velocity=0.1,acceleration=0.1,Replanning=True,WaitFlag=False)
-
         for pose in waypoints:
-            screwPositions=list()
-            # print('pose is ') 
-            # print(pose)
-            # self.Controller.go_to_pose_goal_cartesian(pose,1,0.2,Replanning=True,WaitFlag=False)
+            # for each pose make a predictions list 
+            screwPositions = []
+            # move to the desired pose
+            self.Controller.go_to_pose_goal_cartesian(pose,0.1,0.1,Replanning=False,WaitFlag=True)
+            # capture the image and its point cloud
             image, verts = self.imagePreprocess()
-            predictions=self.modelInference(image)
-            screwPositionsToCamera = self.pixelToSpace(predictions, verts,debug=True)
+            # take the model inference output of the image
+            localpredictions=self.modelInference(image)
+            # get positions relative to camera
+            screwPositionsToCamera = self.pixelToSpace(localpredictions, verts,debug=True)
+            # for each screw in predections
             for screwPosition in screwPositionsToCamera:
-                screwPositions.append(self.camToWorldPositions(screwPosition[0], screwPosition[1], screwPosition[2])[:3])
-        
+                # swap axis according to the cad frame
+                alignedScrewPosition = self.swap(screwPosition)
+                # determine the world position of the given screw
+                screwPositions.append(self.camToWorldPositions(alignedScrewPosition[0], alignedScrewPosition[1], alignedScrewPosition[2]))
+            # add pose predictions to global list
+            predictions.append(screwPositions)
+            
         return predictions
     
-    def identifyScrewsNoRepetitions(self,predictions: list,tolerance=0.01) -> list:
-        result = []
+    def resolve_dimensional_errors(self,screwlist):
+        for pose in screwlist:
+            pose=list(pose)
+            pose[0]+=self.xErr
+            pose[1]+=self.yErr
+            pose[2]+=self.zErr
+        return screwlist
+    def identifyScrewsNoRepetitions(self,predictions: list,tolerance=0.02) -> list:
+       
         unique_screws = []
         for prediction_list in predictions:
             
@@ -254,19 +262,21 @@ class PerceptionNode():
                 for i in range(len(unique_screws)):
                     screw = unique_screws[i]
                     index = -1
-                    if abs(screw[0] - x) <= tolerance and abs(screw[1] - y) <= tolerance:
+                    if (screw[0]*x>0 and screw[1]*y>0) and (abs(screw[0] - x) <= tolerance and abs(screw[1] - y) <= tolerance):
                         found = True
                         index = i
                         break
                 if found:
-                    print('found')
-                    print(unique_screws[index])
+                    
                     average_x = (screw[0] + x) / 2
                     average_y = (screw[1] + y) / 2
                     average_z = (screw[2] + z) / 2
+                    average_pose=[average_x,average_y,average_z]
+                    # adding angles
+                    average_pose.extend(screw[3:])
                     if index != -1:
                         unique_screws.pop(index)
-                    unique_screws.append((average_x, average_y, average_z))
+                    unique_screws.append(average_pose)
                 else:
                     unique_screws.append(element)
         
@@ -275,10 +285,25 @@ class PerceptionNode():
     def swap(self,position:list):
         # align realsense axis to camera link axis 
         return[position[2],-position[0],-position[1]]
+    def flatten_list(screwList):
+        return np.ndarray.flatten(screwList).tolist()
 perception=PerceptionNode()
-#xyzpose=perception.Controller.get_pose()[:3]
-#perception.Controller.go_to_pose_goal_cartesian([xyzpose[0]+0.5,xyzpose[1]+0.5,xyzpose[2],0,0,0])
-perception.launchNode()
-# pose=[0.3415449901080874, 0.08756450183511326, 0.2540691819881634, -3.1289211366304626, -0.09482885806231008, 0.07191366388360511]
-# pose=[0.468965394266172, -0.11892876800415482, 0.2631456616785275, -3.1289607005477835, -0.09484716686890036, 0.07206694957528902]
-#perception.Controller.go_to_pose_goal_cartesian(pose)
+print('going')
+poses=[[[-0.3891096361720125, -0.14140713919044348, 0.2658808782237093, -3.124602683849082, -0.03132426481035682, 0.07162559637905236]], [[0.3918651429926565, -0.14010437566336098, 0.2661601810433043, -3.1245015720859857, -0.031367289757117625, 0.07170965843847281]], [], [[0.39608204451047097, -0.13901984749554222, 0.2647303779937681, -3.1245849122485696, -0.03135253569258669, 0.07163470980541461]], [], [], []]
+# print('before filtering:')
+# for pose in poses:
+#     print(pose)
+# print('filtered positions are:')
+# print(perception.identifyScrewsNoRepetitions(poses))
+print('robot pose now is' )
+print(perception.Controller.get_pose())
+# perception.launchNode()
+perception.Controller.go_to_pose_goal_cartesian([0.453595495268664+perception.xErr, -0.08863000495787196+perception.yErr, 0.2484750388757343+perception.zErr, -3.1232772777964883, -0.019748814102031206, 0.0718451779134633])
+# pose=poses[0][0].copy()
+# print('final pose is')
+# print(pose)
+# pose[0]=0.4467591172735064+0.006#(0.3891096361720125+0.3918651429926565+0.39608204451047097)/3
+# pose[1]=-0.006646629530442587+0.013#(-0.14140713919044348+-0.14010437566336098+-0.13901984749554222)/3
+# pose[2]=0.26666028665252534-0.018
+# perception.Controller.go_to_pose_goal_cartesian(pose,0.1,0.1)
+
