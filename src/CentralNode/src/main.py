@@ -10,7 +10,7 @@ from std_msgs.msg import Int32, Bool
 from CentralNode.msg import node_response as NodeResponse
 from storage.db import RobotDatabase
 import storage.storage_keys as StorageKeys
-from enums.operations import OPERATIONS
+from enums.operations import OPERATIONS, getChangeToolIndices
 from handlers.success_handler import handleSuccess
 from handlers.in_progress_handler import handleInProgress
 
@@ -21,6 +21,7 @@ class CentralNode:
         self.publishers = {}
         self.currentNode = 0
         self.objectExists = False
+        self.getScrewIndex, self.returnScrewIndex, self.getMillingIndex, self.returnMillingIndex = getChangeToolIndices()
     def initPublishers(self):
         self.publishers = {}
         self.publishers[Topics.NODE_TO_OPERATE] = rospy.Publisher(Topics.NODE_TO_OPERATE.value, Int32,queue_size=1,latch=True)
@@ -55,14 +56,24 @@ class CentralNode:
         print(f"Node success callback {nodeResponse.status}")
         print(Response.SUCCESSFULL.value)
         if nodeResponse.status == Response.IN_PROGRESS.value:
-            handleInProgress(self.currentNode, nodeResponse)
+            handleInProgress(self.currentNode, nodeResponse, self.currentSchedule)
         elif nodeResponse.status == Response.SUCCESSFULL.value:
             handleSuccess(self.currentNode, nodeResponse)
             RobotDatabase().addToDB(StorageKeys.OPERATION_DONE, self.currentNode)
             if self.currentNode < len(OPERATIONS):
                 RobotDatabase().addToDB(StorageKeys.OPERATION_INPROGRESS, self.currentNode + 1)
                 self.currentNode += 1
+                self.setSchedule()
                 self.publishers[Topics.NODE_TO_OPERATE].publish(self.currentNode)
+    def setSchedule(self):
+        if self.currentNode == self.getScrewIndex:
+            self.currentSchedule = RobotDatabase().getScrewSchedule()
+        elif self.currentNode == self.returnScrewIndex:
+            self.currentSchedule = RobotDatabase().returnScrewSchedule()
+        elif self.currentNode == self.getMillingIndex:
+            self.currentSchedule = RobotDatabase().getMillingSchedule()
+        elif self.currentNode == self.returnMillingIndex:
+            self.currentSchedule = RobotDatabase().returnMillingSchedule()
         
 if __name__ == '__main__':
     try:
