@@ -14,12 +14,7 @@ from enums.operations import OPERATIONS
 from handlers.success_handler import handleSuccess
 from handlers.in_progress_handler import handleInProgress
 
-def findIndices(x, item):
-    indices = []
-    for idx, value in enumerate(x):
-        if value == item:
-            indices.append(idx)
-    return indices
+
 class CentralNode:
     def __init__(self):
         self.subscribers = {}
