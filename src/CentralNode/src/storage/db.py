@@ -1,5 +1,7 @@
 import json
 from os import path
+import storage_keys as StorageKeys
+from CentralNode.src.storage.change_tool_database import ChangeToolScheduleDatabase
 DB_FILE_PATH = '/home/himaet23/EwasteNonDestructiveDisassembly/src/CentralNode/src/storage/configuration.json'
 
 
@@ -13,6 +15,17 @@ class RobotDatabase(object):
             self.config = {}
         return self._instance
     
+    def getScrewSchedule(self):
+        return ChangeToolScheduleDatabase().readFromDB(StorageKeys.GET_SCREW_SCHEDULE)
+        
+    def getMillingSchedule(self):
+        return ChangeToolScheduleDatabase().readFromDB(StorageKeys.GET_MILL_SCHEDULE)
+    
+    def returnMillingSchedule(self):
+        return ChangeToolScheduleDatabase().readFromDB(StorageKeys.RETURN_MILL_SCHEDULE)
+    
+    def returnScrewSchedule(self):
+        return ChangeToolScheduleDatabase().readFromDB(StorageKeys.RETURN_SCREW_SCHEDULE)
 
     def addToDB(self, key, value):
         self.checkFile()
