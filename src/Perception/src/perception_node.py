@@ -46,7 +46,7 @@ class PerceptionNode():
         self.start_position=[0.3162318772410906, 0.00527568967887596, 0.41920871874099996, -3.1415189863509134, 0.007510451851129454, 1.7006139777966402e-05]
         self.xErr=0.006
         self.yErr=0.013
-        self.zErr=-0.018
+        self.zErr=-0.015
 
         self.Controller=RobotControl(node_name="Perception",group_name="ScrewIn")
         self.framesTransformer=frames_transformations()
@@ -192,18 +192,27 @@ class PerceptionNode():
 
 
             else:
+
                 screwlist=self.scan(3)        
                 screwlist=self.identifyScrewsNoRepetitions(screwlist)
                 screwlist=self.resolve_dimensional_errors(screwlist)
-                self.publishReadings(screwlist)
+                print('******************************')
+                print('final screw list is :')
+                print(screwlist)
+                print('******************************')
+
+                for pose in screwlist:
+                    print(pose)
+                    # self.Controller.go_to_pose_goal_cartesian(pose,0.1,0.1,Replanning=True ,WaitFlag=False)
+                # self.publishReadings(screwlist)
                 self.rate.sleep()
                 break
     def scan(self, scantimes) -> list:
         self.Controller.go_to_pose_goal_cartesian(self.start_position,0.1,0.1,Replanning=False,WaitFlag=True)
         pose = self.Controller.get_pose()
         #limits and steps
-        limit = 0.20
-        xlimit = 0.20
+        limit = 0.1
+        xlimit = 0.25
         step = (2 * limit) / scantimes
         xstep = 0.05
         waypoints = []
@@ -245,44 +254,49 @@ class PerceptionNode():
         return predictions
     
     def resolve_dimensional_errors(self,screwlist):
+        newlist=[]
         for pose in screwlist:
             pose=list(pose)
             pose[0]+=self.xErr
             pose[1]+=self.yErr
             pose[2]+=self.zErr
-        return screwlist
-    # def identifyScrewsNoRepetitions(self,predictions: list,tolerance=0.02) -> list:
+            pose[0]=round(pose[0],4)
+            pose[1]=round(pose[1],4)
+            pose[2]=round(pose[2],4)
+            newlist.append(pose)
+        return newlist
+    def identifyScrewsNoRepetitions2(self,predictions: list,tolerance=0.02) -> list:
        
-    #     unique_screws = []
-    #     for prediction_list in predictions:
+        unique_screws = []
+        for prediction_list in predictions:
             
-    #         for element in prediction_list:
-    #             x, y, z = element[:3]
-    #             found = False
-    #             for i in range(len(unique_screws)):
-    #                 screw = unique_screws[i]
-    #                 index = -1
-    #                 if (screw[0]*x>0 and screw[1]*y>0) and (abs(screw[0] - x) <= tolerance and abs(screw[1] - y) <= tolerance):
-    #                     found = True
-    #                     index = i
-    #                     break
-    #             if found:
+            for element in prediction_list:
+                x, y, z = element[:3]
+                found = False
+                for i in range(len(unique_screws)):
+                    screw = unique_screws[i]
+                    index = -1
+                    if (screw[0]*x>0 and screw[1]*y>0) and (abs(screw[0] - x) <= tolerance and abs(screw[1] - y) <= tolerance):
+                        found = True
+                        index = i
+                        break
+                if found:
                     
-    #                 average_x = (screw[0] + x) / 2
-    #                 average_y = (screw[1] + y) / 2
-    #                 average_z = (screw[2] + z) / 2
-    #                 average_pose=[average_x,average_y,average_z]
-    #                 # adding angles
-    #                 average_pose.extend(screw[3:])
-    #                 if index != -1:
-    #                     unique_screws.pop(index)
-    #                 unique_screws.append(average_pose)
-    #             else:
-    #                 unique_screws.append(element)
+                    average_x = (screw[0] + x) / 2
+                    average_y = (screw[1] + y) / 2
+                    average_z = (screw[2] + z) / 2
+                    average_pose=[average_x,average_y,average_z]
+                    # adding angles
+                    average_pose.extend(screw[3:])
+                    if index != -1:
+                        unique_screws.pop(index)
+                    unique_screws.append(average_pose)
+                else:
+                    unique_screws.append(element)
         
-    #     return unique_screws
+        return unique_screws
 
-    def identifyScrewsNoRepetitions(self, poseList, thershold=0.01):
+    def identifyScrewsNoRepetitions(self, poseList, thershold=0.02):
 
         globalList = poseList[0]
         map = {}
@@ -346,8 +360,8 @@ poses=[[[-0.3891096361720125, -0.14140713919044348, 0.2658808782237093, -3.12460
 # print(perception.identifyScrewsNoRepetitions(poses))
 print('robot pose now is' )
 print(perception.Controller.get_pose())
-# perception.launchNode()
-perception.Controller.go_to_pose_goal_cartesian([0.453595495268664+perception.xErr, -0.08863000495787196+perception.yErr, 0.2484750388757343+perception.zErr, -3.1232772777964883, -0.019748814102031206, 0.0718451779134633])
+perception.launchNode()
+# perception.Controller.go_to_pose_goal_cartesian([0.453595495268664+perception.xErr, -0.08863000495787196+perception.yErr, 0.2484750388757343+perception.zErr, -3.1232772777964883, -0.019748814102031206, 0.0718451779134633])
 # pose=poses[0][0].copy()
 # print('final pose is')
 # print(pose)
