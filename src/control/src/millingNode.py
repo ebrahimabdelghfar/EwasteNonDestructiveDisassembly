@@ -12,10 +12,13 @@ class Milling:
         postionTolerance=0.001
         circleways=[]
         xlast,ylast=0,0
-        for i in range(360):
+        for i in range(1,360):
             x,y=center[0]+self.RadiusCut*math.cos(math.radians(i)),center[1]+self.RadiusCut*math.sin(math.radians(i))
-            if(abs(x-xlast)>=postionTolerance and abs(y-ylast)>=postionTolerance):
+            if(math.sqrt(((x-xlast)**2)+((y-ylast)**2))>postionTolerance):
                 circleways.append([x,y,center[2],center[3],center[4],center[5]])
+                print(f"apppend {x} , {y}")
+                xlast,ylast=x,y
+
         self.MillingControl.go_to_pose_goal_cartesian_waypoints(waypoints=circleways,velocity=0.1,acceleration=0.1,list_type=True,waitFlag=True,positionTolerance=postionTolerance)
     def GoDown(self):
         mypos=self.MillingControl.get_pose()

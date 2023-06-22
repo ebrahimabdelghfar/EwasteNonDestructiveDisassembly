@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import rospy
-from std_msgs.msg import Float32MultiArray , Bool, Int32
+from std_msgs.msg import Float32MultiArray ,Float64MultiArray, Bool, Int32
 from helper.robot_helper import *
 from enums.nodes import Nodes
 from enums.topics import Topics
@@ -10,7 +10,7 @@ import numpy as np
 
 class ApprochAndEngaging:
     def __init__(self) -> None:
-        self.RobotJoystick = RobotControl(node_name=Nodes.APPROACH_AND_ENGAGE.value,group_name="manipulator")
+        self.RobotJoystick = RobotControl(node_name=Nodes.APPROACH_AND_ENGAGE.value,group_name="ScrewIn")
         self.TransformCalculator = frames_transformations()
         #editabel parameters
         self.MyNumber = 4
@@ -30,9 +30,8 @@ class ApprochAndEngaging:
         #define subscribers
         rospy.Subscriber(Topics.UNSCREW_DONE.value, Bool, self.unscrewDoneCallback)
         #rospy.Subscriber(Topics.FINISHED_MILLING.value, Bool, self.finishedMillingCallback)
-        rospy.Subscriber(Topics.ForceSensorWrench.value, WrenchStamped, self.SensorCallback)
+        rospy.Subscriber(Topics.ForceSensorWrenchWeightedFilter.value, WrenchStamped, self.SensorCallback)
         rospy.Subscriber(Topics.NODE_TO_OPERATE.value, Int32, self.NodeToOperateCallback)
-
         #motor commands 
         # 0: stop
         # 1: for rotate clockwise
@@ -47,7 +46,7 @@ class ApprochAndEngaging:
         Pose: the pose of the path
         @type Pose: list [x,y,z,roll,pitch,yaw]
         '''
-        self.RobotJoystick.go_to_pose_goal_cartesian(Pose,velocity=velocity,acceleration=acceleration,Replanning=True,waitFlag=False)
+        self.RobotJoystick.go_to_pose_goal_cartesian(Pose,velocity=velocity,acceleration=acceleration,Replanning=True,WaitFlag=False)
         pass
 
     def Spiralshape(self,timeStep)->None:
@@ -100,8 +99,7 @@ class ApprochAndEngaging:
 
     def reshapeList(self,ListOfscrews)->list:
         #reshaping the list of screws to 2D (nx6) list array
-        ListOfscrews = [ListOfscrews[i:i+3] for i in range(0, len(ListOfscrews), 3)]
-        return ListOfscrews
+        return np.reshape(ListOfscrews,(-1,6)).tolist()
 
     def unscrewDoneCallback(self,msg:Bool)->None:
         #self.UnscrewFlag = msg.data
@@ -166,4 +164,10 @@ class ApprochAndEngaging:
                     i += 1
 
 test=ApprochAndEngaging()
-test.Spiralshape(0.1)
+waysTest=[[0.3194, -0.0956, 0.2432, -3.123396721367978, -0.019725309395561646, 0.07185048913905212],
+[0.3137, 0.1085, 0.241, -3.123403135584518, -0.019725996711971124, 0.07183367654001661],
+[0.3706, 0.0052, 0.2314, -3.1235418005447126, -0.019750957277378283, 0.07184738769188843],
+[0.4423, 0.117, 0.2314, -3.1235554386840754, -0.01974810023185756, 0.07186302361390409]]
+
+test.Approach(waysTest[0],velocity=0.1,acceleration=0.1)
+# test.Spiralshape(0.1)

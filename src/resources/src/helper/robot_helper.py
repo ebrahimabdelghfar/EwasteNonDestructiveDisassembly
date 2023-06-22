@@ -171,7 +171,7 @@ class RobotControl:
                     print ("reached")
                     break
                 if time.time()-start>2:
-                    if all(abs(last_pose[i]-current_pose[i])>0.01 for i in range(len(current_pose))):
+                    if any(abs(last_pose[i]-current_pose[i])>0.01 for i in range(len(current_pose))):
                         pass
                     else:
                         print("stucked")
@@ -209,7 +209,6 @@ class RobotControl:
         geo_pose=geometry_msgs.msg.Pose() #create a geometry_msgs.msg.Pose() object
         list_of_poses = []
         #start with appending the initial starting
-        list_of_poses.append(copy.deepcopy(self.move_group.get_current_pose().pose))
         if list_type==True:
             for ways in waypoints:
                 #set the position of the pose
