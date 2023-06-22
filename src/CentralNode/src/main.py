@@ -3,9 +3,10 @@ import sys
 sys.path.append(".../")
 from enums.nodes import Nodes
 from enums.response_status import Response
-
+from CentralNode.srv import ScrewList, Schedular, ScrewListResponse, SchedularResponse
 #from enums.nodes import Nodes
 from enums.topics import Topics
+from enums.services import Services
 from std_msgs.msg import Int32, Bool
 from CentralNode.msg import node_response as NodeResponse
 from storage.db import RobotDatabase
@@ -19,9 +20,11 @@ class CentralNode:
     def __init__(self):
         self.subscribers = {}
         self.publishers = {}
+        self.services = {}
         self.currentNode = 0
         self.objectExists = False
         self.getScrewIndex, self.returnScrewIndex, self.getMillingIndex, self.returnMillingIndex = getChangeToolIndices()
+
     def initPublishers(self):
         self.publishers = {}
         self.publishers[Topics.NODE_TO_OPERATE] = rospy.Publisher(Topics.NODE_TO_OPERATE.value, Int32,queue_size=1,latch=True)
@@ -32,6 +35,42 @@ class CentralNode:
         self.subscribers[Topics.NODE_SUCCESS] = rospy.Subscriber(Topics.NODE_SUCCESS.value, NodeResponse, self.nodeSuccessCallback,queue_size=1)
         # self.subscribers[Topics.COLLISION_DETECTED] = rospy.Subscriber(Topics.COLLISION_DETECTED, Bool)
     
+    def initServices(self):
+        self.services = {}
+        self.services[Services.GET_SCREW_LIST.value] = rospy.Service(Services.GET_SCREW_LIST.value, ScrewList, self.getScrewList)
+        self.services[Services.SCHEDULAR.value] = rospy.Service(Services.SCHEDULAR.value, Schedular, self.getSchedular)
+
+    def getScrewList(self):
+        screwList = RobotDatabase.readFromDB(StorageKeys.LIST_OF_SCREWS)
+        response = ScrewListResponse()
+
+        screwIndex = -1
+        try:
+            screwIndex = RobotDatabase().readFromDB(StorageKeys.SCREW_INDEX)
+        except:
+            screwIndex = 0
+
+        response.screwList = screwList[screwIndex:]
+        return response
+    
+    def getSchedular(self):
+
+        wayPoints, waypointTypes, checkTorque, velocity, acceleration = self.currentSchedule[StorageKeys.WAYPOINTS], self.currentSchedule[StorageKeys.WAYPOINTS_TYPES], self.currentSchedule[StorageKeys.CHECK_FORCE], self.currentSchedule[StorageKeys.VEL], self.currentSchedule[StorageKeys.ACC] 
+
+        startIndex = -1
+        try:
+            startIndex = RobotDatabase().readFromDB(StorageKeys.CHANGE_TOOL_SCHEDULE_INDEX)
+        except:
+            startIndex = 0
+
+        response = SchedularResponse()
+        response.waypoints = wayPoints[startIndex * 6:]
+        response.waypoint_types = waypointTypes[startIndex:]
+        response.checkTorque = checkTorque[startIndex:]
+        response.velocity = velocity[startIndex:]
+        response.acceleration = acceleration[startIndex:]
+        return response
+
     def start(self):
         rospy.init_node(Nodes.CENTRAL.value)
         self.initPublishers()
