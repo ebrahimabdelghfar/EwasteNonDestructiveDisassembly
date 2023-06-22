@@ -1,6 +1,6 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import rospy
-from std_msgs.msg import Float32MultiArray , Bool, Int32
+from std_msgs.msg import Float32MultiArray ,Float64MultiArray, Bool, Int32
 from helper.robot_helper import *
 from enums.nodes import Nodes
 from enums.topics import Topics
@@ -11,7 +11,7 @@ import numpy as np
 from CentralNode.srv import ScrewList
 class ApprochAndEngaging:
     def __init__(self) -> None:
-        self.RobotJoystick = RobotControl(node_name=Nodes.APPROACH_AND_ENGAGE.value,group_name="manipulator")
+        self.RobotJoystick = RobotControl(node_name=Nodes.APPROACH_AND_ENGAGE.value,group_name="ScrewIn")
         self.TransformCalculator = frames_transformations()
         #editabel parameters
         self.MyNumber = 4
@@ -32,10 +32,9 @@ class ApprochAndEngaging:
 
         #define subscribers
         rospy.Subscriber(Topics.UNSCREW_DONE.value, Bool, self.unscrewDoneCallback)
-        rospy.Subscriber(Topics.FINISHED_MILLING.value, Bool, self.finishedMillingCallback)
-        rospy.Subscriber(Topics.ForceSensorWrench.value, WrenchStamped, self.SensorCallback)
+        #rospy.Subscriber(Topics.FINISHED_MILLING.value, Bool, self.finishedMillingCallback)
+        rospy.Subscriber(Topics.ForceSensorWrenchWeightedFilter.value, WrenchStamped, self.SensorCallback)
         rospy.Subscriber(Topics.NODE_TO_OPERATE.value, Int32, self.NodeToOperateCallback)
-
         #motor commands 
         # 0: stop
         # 1: for rotate clockwise
@@ -53,10 +52,10 @@ class ApprochAndEngaging:
         Pose: the pose of the path
         @type Pose: list [x,y,z,roll,pitch,yaw]
         '''
-        self.RobotJoystick.go_to_pose_goal_cartesian(Pose,velocity=velocity,acceleration=acceleration,Replanning=True,waitFlag=False)
+        self.RobotJoystick.go_to_pose_goal_cartesian(Pose,velocity=velocity,acceleration=acceleration,Replanning=True,WaitFlag=False)
         pass
 
-    def Spiralshape(self,timeStep,NowScrew)->None:
+    def Spiralshape(self,timeStep)->None:
         '''
         this function will generate and execute the spiral shape
         parameters:
@@ -76,13 +75,13 @@ class ApprochAndEngaging:
         pose = self.RobotJoystick.get_pose()
         for i in np.arange(timeStep,tmax,timeStep):
             t=i
-            x,y=pose[0]+(fs/math.pi)*math.sqrt(((8*math.pi*N_s*t)/15))*math.cos(math.sqrt(((8*math.pi*N_s*t)/15))),pose[1]+(fs/math.pi)*math.sqrt(((8*math.pi*N_s*t)/15))*math.sin(math.sqrt(((8*math.pi*N_s*t)/15)))
+            x,y=pose[0]+(((fs/math.pi)*math.sqrt(((8*math.pi*N_s*t)/15))*math.cos(math.sqrt(((8*math.pi*N_s*t)/15))))*0.1),pose[1]+(((fs/math.pi)*math.sqrt(((8*math.pi*N_s*t)/15))*math.sin(math.sqrt(((8*math.pi*N_s*t)/15))))*0.1)
             waypoints.append([x,y,pose[2],pose[3],pose[4],pose[5]])
 
         #if wait flag == true then the followin line will not be skipped until the robot finish the path
         #if wait flag == false then the following line will be skipped and the robot will start the path and the code will continue
-        self.OperateMotor()
-        self.RobotJoystick.go_to_pose_goal_cartesian_waypoints(waypoints,velocity=0.1,acceleration=0.1,list_type=True,waitFlag=False)
+        # self.OperateMotor()
+        self.RobotJoystick.go_to_pose_goal_cartesian_waypoints(waypoints,velocity=0.1,acceleration=0.1,list_type=True,waitFlag=False,positionTolerance=0.01)
         while True:
             if self.SensorRead.wrench.torque.z >= self.EngageTourqe:
                 self.stopMotor()
@@ -100,7 +99,7 @@ class ApprochAndEngaging:
             self.engageFlag = False
             pass
         else:
-            self.BadScrews.append(NowScrew)
+            # self.BadScrews.append(NowScrew)
             pass
         #end of spiral shape
 
@@ -171,4 +170,10 @@ class ApprochAndEngaging:
                     i += 1
 
 test=ApprochAndEngaging()
-test.Spiralshape(0.1)
+waysTest=[[0.3194, -0.0956, 0.2432-0.002, -3.123396721367978, -0.019725309395561646, 0.07185048913905212],
+[0.3137, 0.1085, 0.241, -3.123403135584518, -0.019725996711971124, 0.07183367654001661],
+[0.3706, 0.0052, 0.2314, -3.1235418005447126, -0.019750957277378283, 0.07184738769188843],
+[0.4423, 0.117, 0.2314, -3.1235554386840754, -0.01974810023185756, 0.07186302361390409]]
+
+test.Approach(waysTest[2],velocity=0.1,acceleration=0.1)
+test.Spiralshape(0.01)

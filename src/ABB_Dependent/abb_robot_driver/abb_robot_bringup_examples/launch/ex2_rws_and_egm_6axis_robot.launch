@@ -3,7 +3,7 @@
   <!-- <arg name="robot_ip" doc="The robot controller's IP address" default="192.168.156.131"/> -->
   <!--arg name="robot_ip" doc="The robot controller's IP address" default="192.168.135.111"/-->
   
-  <arg name="robot_ip" doc="The robot controller's IP address" default="192.168.1.100"/>
+  <arg name="robot_ip" doc="The robot controller's IP address" default="192.168.1.104"/>
 
   <!-- Enable DEBUG output for all ABB nodes -->
   <arg name="debug" default="false"/>
