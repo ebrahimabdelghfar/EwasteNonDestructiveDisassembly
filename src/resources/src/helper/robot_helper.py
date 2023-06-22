@@ -8,6 +8,7 @@ import tf.transformations
 import math
 from std_msgs.msg import Bool
 from tf.transformations import euler_from_quaternion, quaternion_from_euler
+import time
 class RobotControl:
     '''
     This class contain module that facilitate the controll of the robot using moveit 
@@ -36,6 +37,7 @@ class RobotControl:
         self.move_group = MoveGroupCommander(group_name)
         self.move_group.set_planner_id(PlanningId)
         # set the planning time and flags
+        self.move_group.set_num_planning_attempts(100)
         self.move_group.set_planning_time(50)
         self.move_group.allow_replanning(True)
         self.move_group.allow_looking(True)
@@ -113,6 +115,8 @@ class RobotControl:
         #re-execute if doesn't reach the goal
         if Replanning==True:
             state=self.move_group.go(joint_goal_list,wait=False)
+            start=time.time()
+            last_joint_state=[0,0,0,0,0,0]
             while not rospy.is_shutdown() and state==True:
                 # stop any residual movement
                 current_joints = self.get_joint_state()
@@ -120,6 +124,14 @@ class RobotControl:
                     self.Stop()
                     print ("reached")
                     break
+                if time.time()-start>2:
+                    if all(abs(last_joint_state[i]-current_joints[i])>self.PostionTolerance for i in range(len(current_joints))):
+                        pass
+                    else:
+                        break
+                    last_joint_state=self.get_joint_state()
+                    start=time.time()
+
             pass
         else:
             if WaitFlag==True:
@@ -128,6 +140,8 @@ class RobotControl:
             else:
                 self.move_group.go(joint_goal_list,wait=WaitFlag)
             pass
+#function that calculate the velocity and acceleration of the robot durning the movement
+
     def go_to_pose_goal_cartesian(self, pose_goal,velocity=0.1,acceleration=0.1,Replanning=False,WaitFlag=False)->None:
         '''
         --------------------
@@ -148,13 +162,23 @@ class RobotControl:
         self.move_group.set_pose_target(pose_goal)
         if Replanning==True:
             plan = self.move_group.go(wait=False)
+            start=time.time()
+            last_pose=[0,0,0,0,0,0]
             while not rospy.is_shutdown() and plan==True:
                 current_pose = self.get_pose()
                 if all(abs(current_pose[i]-pose_goal[i])<self.PostionTolerance for i in range(len(current_pose))):
                     self.Stop()
                     print ("reached")
                     break
-                print ("re-execute")
+                if time.time()-start>2:
+                    if all(abs(last_pose[i]-current_pose[i])>0.01 for i in range(len(current_pose))):
+                        pass
+                    else:
+                        print("stucked")
+                        break
+                    last_pose=self.get_pose()
+                    start=time.time()
+                # print ("re-execute")
             pass
         else:
             if WaitFlag==True:
@@ -163,7 +187,7 @@ class RobotControl:
             else:
                 self.move_group.go(wait=WaitFlag)
             pass
-    def go_to_pose_goal_cartesian_waypoints(self, waypoints,velocity=0.1,acceleration=0.1,list_type=False,waitFlag=False)->None:
+    def go_to_pose_goal_cartesian_waypoints(self, waypoints,velocity=0.1,acceleration=0.1,list_type=False,waitFlag=False,positionTolerance=0.01)->None:
         '''
         --------------------
         This function is used to move the robot to the desired pose by cartesian path
@@ -206,7 +230,7 @@ class RobotControl:
         # set the goal pose
         (plan, fraction) = self.move_group.compute_cartesian_path(
                                     list_of_poses,   # waypoints to follow
-                                    0.01,        # eef_step
+                                    positionTolerance,        # eef_step
                                     0.0)         # jump_threshold
 
         # generate a new plan with the new velocity and acceleration by retiming the trajectory
