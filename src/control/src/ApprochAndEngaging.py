@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import rospy
 from std_msgs.msg import Float32MultiArray , Bool, Int32
 from helper.robot_helper import *
@@ -29,7 +29,7 @@ class ApprochAndEngaging:
 
         #define subscribers
         rospy.Subscriber(Topics.UNSCREW_DONE.value, Bool, self.unscrewDoneCallback)
-        rospy.Subscriber(Topics.FINISHED_MILLING.value, Bool, self.finishedMillingCallback)
+        #rospy.Subscriber(Topics.FINISHED_MILLING.value, Bool, self.finishedMillingCallback)
         rospy.Subscriber(Topics.ForceSensorWrench.value, WrenchStamped, self.SensorCallback)
         rospy.Subscriber(Topics.NODE_TO_OPERATE.value, Int32, self.NodeToOperateCallback)
 
@@ -50,7 +50,7 @@ class ApprochAndEngaging:
         self.RobotJoystick.go_to_pose_goal_cartesian(Pose,velocity=velocity,acceleration=acceleration,Replanning=True,waitFlag=False)
         pass
 
-    def Spiralshape(self,timeStep,NowScrew)->None:
+    def Spiralshape(self,timeStep)->None:
         '''
         this function will generate and execute the spiral shape
         parameters:
@@ -94,7 +94,7 @@ class ApprochAndEngaging:
             self.engageFlag = False
             pass
         else:
-            self.BadScrews.append(NowScrew)
+            # self.BadScrews.append(NowScrew)
             pass
         #end of spiral shape
 

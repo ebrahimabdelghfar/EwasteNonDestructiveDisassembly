@@ -23,7 +23,7 @@ class GetToolNode:
         self.ZtoleranceToGetDown = 0.002
         self.ZtoleranceAboveTheHolder = 0.05
         # Threshold to check z torque while unlocking
-        self.thresholdLocking = -1.1
+        self.thresholdLocking = -0.6
         # To check z force if tool is attached or not (tool weight)
         self.thresholdForToolWeightForceZ = 2.5
         # define the Topic and sever that being used
@@ -106,7 +106,7 @@ class GetToolNode:
             print(self.waypointstype[self.waypoints.index(ways)])
             if self.waypointstype[self.waypoints.index(ways)]==schedulars.JointType.value:
                 if self.CheckForceFlag[self.waypoints.index(ways)]==schedulars.CheckForceSensor.value:
-                    self.RobotController.go_by_joint_angle(ways, self.Velocity[self.waypoints.index(ways)], self.Acceleration[self.waypoints.index(ways)], Replanning=True,WaitFlag=False)
+                    self.RobotController.go_by_joint_angle(ways, self.Velocity[self.waypoints.index(ways)], self.Acceleration[self.waypoints.index(ways)], Replanning=False,WaitFlag=False)
                     self.CheckToolTourqe()              
                     pass
                 else:
@@ -125,7 +125,7 @@ class GetToolNode:
             #after each point go it will increment the index of the node
             #and publish the status of the node
             self.State.status=Response.IN_PROGRESS.value
-            self.State.extraMessage=str(self.waypoints.index(ways)+1)
+            self.State.extraMessage=str(self.waypoints.index(ways))
             self.ToolChangePub.publish(self.State)
             pass
 
@@ -272,6 +272,77 @@ class GetToolNode:
         self.RobotController.go_by_joint_angle(
             [-1.57, 0.0, 0.0, 0.0, 1.57, 0.0], 0.1, 0.1, Replanning=True, WaitFlag=False)
 #end of old code
+    def getMilling(self):
+        self.RobotController.go_by_joint_angle(
+           [1.57, 0.0, 0.0, 0.0, 1.57, 0.0], 1, 1, Replanning=True,WaitFlag=False)
+        self.schedulecollectorofgettingTool.append(self.RobotController.get_joint_state())
+        millingpose=[-0.09151079575874518+0.0022, 0.38115756747328866, 0.19735952156206063, -3.112502050572731, 0.021292323008053112, 0.8125718156068518]
+        self.RobotController.go_to_pose_goal_cartesian([millingpose[0],millingpose[1],millingpose[2]+self.ZtoleranceAboveTheHolder,millingpose[3],millingpose[4],millingpose[5]],velocity=1,acceleration=1,Replanning=True,WaitFlag=False)
+        self.schedulecollectorofgettingTool.append(self.RobotController.get_pose())
+        self.RobotController.go_to_pose_goal_cartesian([millingpose[0],millingpose[1],millingpose[2]+self.ZtoleranceToGetDown,millingpose[3],millingpose[4],millingpose[5]],velocity=0.1,acceleration=0.1,Replanning=True,WaitFlag=False)
+        self.schedulecollectorofgettingTool.append(self.RobotController.get_pose())
+        joints = self.RobotController.get_joint_state()
+        self.RobotController.go_by_joint_angle([joints[0], joints[1], joints[2], joints[3], joints[4], math.radians(150)], 0.01, 0.01, Replanning=False, WaitFlag=False)
+        # wait in the loop untill finish locking 
+        while True :
+            print(self.TorqueZReading)
+
+            if (abs(self.TorqueZReading) >= abs(-0.6) ):
+                self.RobotController.Stop()
+                print("Breaking")
+                break
+            else :
+                print("locking")
+        print("Done locking") 
+        self.schedulecollectorofgettingTool.append(self.RobotController.get_joint_state())
+        joints = self.RobotController.get_joint_state()
+        self.RobotController.go_by_joint_angle(
+        [joints[0], joints[1], joints[2], joints[3], joints[4], joints[5]-math.radians(5)], 0.01, 0.01, Replanning=True, WaitFlag=False) 
+        self.schedulecollectorofgettingTool.append(self.RobotController.get_joint_state())
+        NowPose = self.RobotController.get_pose() 
+        self.RobotController.go_to_pose_goal_cartesian([NowPose[0]+self.XtoleranceOutHolder, NowPose[1], NowPose[2], NowPose[3], NowPose[4], NowPose[5]],velocity=1,acceleration=1,Replanning=True)   
+        print(self.RobotController.get_pose()) 
+        self.schedulecollectorofgettingTool.append(self.RobotController.get_pose())      
+        self.schedulecollectorofgettingTool = [item for sublist in self.schedulecollectorofgettingTool for item in sublist]
+        print(self.schedulecollectorofgettingTool) 
+
+    def returnMilling(self):
+        self.RobotController.go_by_joint_angle(
+            [1.57, 0.0, 0.0, 0.0, 1.57, 0.0], 1, 1, Replanning=True)
+        self.schedulecollectorofgettingTool.append(self.RobotController.get_joint_state())
+        returnMill=[0.0006220377928233731, 0.3809777629928159, 0.19945188907163106, -3.120342633470789, 0.02873265492544359, 0.5147456481987344]
+        self.RobotController.go_to_pose_goal_cartesian([returnMill[0], returnMill[1], returnMill[2], returnMill[3], returnMill[4], returnMill[5]],velocity=1,acceleration=1,Replanning=True)
+        self.schedulecollectorofgettingTool.append(self.RobotController.get_pose())        
+        self.RobotController.go_to_pose_goal_cartesian([returnMill[0]-self.XtoleranceOutHolder, returnMill[1], returnMill[2], returnMill[3], returnMill[4], returnMill[5]],velocity=1,acceleration=1,Replanning=True)
+        self.schedulecollectorofgettingTool.append(self.RobotController.get_pose())        
+        joints = self.RobotController.get_joint_state()
+        self.RobotController.go_by_joint_angle(
+        [joints[0], joints[1], joints[2], joints[3], joints[4], math.radians(40)], 0.01, 0.01, Replanning=False, WaitFlag=False) 
+        while True :
+            print(self.TorqueZReading)
+
+            if (abs(self.TorqueZReading) >= abs(0.6) ):
+                self.RobotController.Stop()
+                print("Breaking")
+                break
+            else :
+                print("unlocking")
+        print("Done unlocking")  
+        self.schedulecollectorofgettingTool.append(self.RobotController.get_joint_state())
+        joints = self.RobotController.get_joint_state()
+        self.RobotController.go_by_joint_angle(
+        [joints[0], joints[1], joints[2], joints[3], joints[4], joints[5]+math.radians(5)], 0.01, 0.01, Replanning=True, WaitFlag=False) 
+        self.schedulecollectorofgettingTool.append(self.RobotController.get_joint_state())
+        NowPose = self.RobotController.get_pose()
+        self.RobotController.go_to_pose_goal_cartesian(pose_goal=[NowPose[0], NowPose[1], NowPose[2]+self.ZtoleranceAboveTheHolder, NowPose[3], NowPose[4], NowPose[5]],velocity=1,acceleration=1,Replanning=True)
+        self.schedulecollectorofgettingTool.append(self.RobotController.get_pose())
+        self.RobotController.go_by_joint_angle(
+            [1.57, 0.0, 0.0, 0.0, 1.57, 0.0], 0.1, 0.1, Replanning=True, WaitFlag=False)
+        self.schedulecollectorofgettingTool.append(self.RobotController.get_joint_state())
+        self.schedulecollectorofgettingTool = [item for sublist in self.schedulecollectorofgettingTool for item in sublist]
+        print(self.schedulecollectorofgettingTool) 
+        pass
+
     def Operation(self,OperationNo:int)->None:
         '''
         objective: this function as switch case for the operations manily used to see how to check force sensor
@@ -314,5 +385,5 @@ class GetToolNode:
             self.Operation(RecievedOpertaion.data)
         pass             
 changeTool=GetToolNode(group_name_1="NoTool")
-
+changeTool.ChangeTool()
 
