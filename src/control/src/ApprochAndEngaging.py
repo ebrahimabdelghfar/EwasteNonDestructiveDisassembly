@@ -69,13 +69,13 @@ class ApprochAndEngaging:
         pose = self.RobotJoystick.get_pose()
         for i in np.arange(timeStep,tmax,timeStep):
             t=i
-            x,y=pose[0]+(fs/math.pi)*math.sqrt(((8*math.pi*N_s*t)/15))*math.cos(math.sqrt(((8*math.pi*N_s*t)/15))),pose[1]+(fs/math.pi)*math.sqrt(((8*math.pi*N_s*t)/15))*math.sin(math.sqrt(((8*math.pi*N_s*t)/15)))
+            x,y=pose[0]+(((fs/math.pi)*math.sqrt(((8*math.pi*N_s*t)/15))*math.cos(math.sqrt(((8*math.pi*N_s*t)/15))))*0.1),pose[1]+(((fs/math.pi)*math.sqrt(((8*math.pi*N_s*t)/15))*math.sin(math.sqrt(((8*math.pi*N_s*t)/15))))*0.1)
             waypoints.append([x,y,pose[2],pose[3],pose[4],pose[5]])
 
         #if wait flag == true then the followin line will not be skipped until the robot finish the path
         #if wait flag == false then the following line will be skipped and the robot will start the path and the code will continue
-        self.OperateMotor()
-        self.RobotJoystick.go_to_pose_goal_cartesian_waypoints(waypoints,velocity=0.1,acceleration=0.1,list_type=True,waitFlag=False)
+        # self.OperateMotor()
+        self.RobotJoystick.go_to_pose_goal_cartesian_waypoints(waypoints,velocity=0.1,acceleration=0.1,list_type=True,waitFlag=False,positionTolerance=0.01)
         while True:
             if self.SensorRead.wrench.torque.z >= self.EngageTourqe:
                 self.stopMotor()
@@ -164,10 +164,10 @@ class ApprochAndEngaging:
                     i += 1
 
 test=ApprochAndEngaging()
-waysTest=[[0.3194, -0.0956, 0.2432, -3.123396721367978, -0.019725309395561646, 0.07185048913905212],
+waysTest=[[0.3194, -0.0956, 0.2432-0.002, -3.123396721367978, -0.019725309395561646, 0.07185048913905212],
 [0.3137, 0.1085, 0.241, -3.123403135584518, -0.019725996711971124, 0.07183367654001661],
 [0.3706, 0.0052, 0.2314, -3.1235418005447126, -0.019750957277378283, 0.07184738769188843],
 [0.4423, 0.117, 0.2314, -3.1235554386840754, -0.01974810023185756, 0.07186302361390409]]
 
-test.Approach(waysTest[0],velocity=0.1,acceleration=0.1)
-# test.Spiralshape(0.1)
+test.Approach(waysTest[2],velocity=0.1,acceleration=0.1)
+test.Spiralshape(0.01)
