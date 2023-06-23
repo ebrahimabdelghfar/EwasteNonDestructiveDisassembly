@@ -1,1 +1,0 @@
-/home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/abb_irb120_support/lib/pkgconfig/abb_irb120_support.pc

@@ -1,8 +1,0 @@
-prefix=/home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/egm_config
-
-Name: egm_config
-Description: Description of egm_config
-Version: 0.0.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: 

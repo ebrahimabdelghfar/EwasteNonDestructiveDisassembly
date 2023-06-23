@@ -1,1 +1,0 @@
-/home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/HardwareLevel/lib/pkgconfig/HardwareLevel.pc

@@ -1,2 +1,0 @@
-ABB_Dependent/abb/abb
-/home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/abb/cmake.lock /home/himaet23/EwasteNonDestructiveDisassembly/devel/./cmake.lock

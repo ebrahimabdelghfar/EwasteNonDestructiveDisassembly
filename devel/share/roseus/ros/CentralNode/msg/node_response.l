@@ -1,1 +1,0 @@
-/home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/CentralNode/share/roseus/ros/CentralNode/msg/node_response.l

@@ -1,1 +1,0 @@
-/home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/abb_resources/lib/pkgconfig/abb_resources.pc

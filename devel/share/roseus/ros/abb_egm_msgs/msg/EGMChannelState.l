@@ -1,1 +1,0 @@
-/home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/abb_egm_msgs/share/roseus/ros/abb_egm_msgs/msg/EGMChannelState.l

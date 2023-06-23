@@ -1,8 +1,0 @@
-prefix=/home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/control
-
-Name: control
-Description: Description of control
-Version: 0.0.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: 

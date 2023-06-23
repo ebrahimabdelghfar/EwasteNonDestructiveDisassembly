@@ -1,1 +1,0 @@
-/home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/egm_config/lib/pkgconfig/egm_config.pc

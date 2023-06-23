@@ -1,1 +1,0 @@
-/home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/realsense2_camera/share/roseus/ros/realsense2_camera/msg/Metadata.l

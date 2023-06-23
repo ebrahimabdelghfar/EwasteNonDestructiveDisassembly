@@ -1,7 +1,0 @@
-set(ft_sensor_driver_SETUP_PY_SETUP_MODULE "setuptools")
-set(ft_sensor_driver_SETUP_PY_VERSION "0.0.0")
-set(ft_sensor_driver_SETUP_PY_SCRIPTS "")
-set(ft_sensor_driver_SETUP_PY_PACKAGES "ft_sensor_driver")
-set(ft_sensor_driver_SETUP_PY_PACKAGE_DIRS "src/ft_sensor_driver")
-set(ft_sensor_driver_SETUP_PY_MODULES "")
-set(ft_sensor_driver_SETUP_PY_MODULE_DIRS "")

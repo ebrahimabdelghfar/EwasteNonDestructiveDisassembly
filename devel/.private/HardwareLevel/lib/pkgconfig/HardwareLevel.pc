@@ -1,8 +1,0 @@
-prefix=/home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/HardwareLevel
-
-Name: HardwareLevel
-Description: Description of HardwareLevel
-Version: 0.0.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: 

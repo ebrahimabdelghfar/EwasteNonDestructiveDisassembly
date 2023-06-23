@@ -1,1 +1,0 @@
-/home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/CentralNode/share/gennodejs/ros/CentralNode/msg/_index.js

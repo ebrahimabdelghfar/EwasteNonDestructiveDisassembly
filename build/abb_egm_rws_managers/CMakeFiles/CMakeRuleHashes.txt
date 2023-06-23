@@ -1,2 +1,0 @@
-# Hashes of file build rules.
-4b37a5020da2a7c895435dce7341aaec robot_controller_description.pb.h

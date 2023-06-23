@@ -1,1 +1,0 @@
-/home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/abb_egm_hardware_interface/lib/pkgconfig/abb_egm_hardware_interface.pc
