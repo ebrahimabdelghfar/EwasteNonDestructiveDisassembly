@@ -41,7 +41,9 @@ class CentralNode:
         self.services[Services.SCHEDULAR.value] = rospy.Service(Services.SCHEDULAR.value, Schedular, self.getSchedular)
 
     def getScrewList(self):
-        screwList = RobotDatabase.readFromDB(StorageKeys.LIST_OF_SCREWS)
+        key =  StorageKeys.LIST_OF_SCREWS if self.currentNode == 2 else StorageKeys.CANT_UNSCREW_LIST
+
+        screwList = RobotDatabase.readFromDB(key)
         response = ScrewListResponse()
 
         screwIndex = -1
