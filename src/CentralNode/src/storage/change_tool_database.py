@@ -1,6 +1,6 @@
 import json
 from os import path
-DB_FILE_PATH = 'F:\graduation project\EwasteNonDestructiveDisassembly\src\CentralNode\src\storage\get_tool_schedule.json'
+DB_FILE_PATH = 'src/CentralNode/src/storage/get_tool_schedule.json'
 
 
 

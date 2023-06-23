@@ -42,8 +42,20 @@ class HeartBeat:
         print("Nodes that are running {} ,are not running {}".format(Operated,not_running))
         #start the nodes that are not running by looping through the list
         for node in not_running:
-            node = roslaunch.core.Node(package=self.NodeInfo[node][0],node_type=self.NodeInfo[node][1],name =self.NodeInfo[node][2])
-            process=self.launch.launch(node)
+            if len(self.NodeInfo[node])==3 :
+                #if the node does not have any arguments
+                Run = roslaunch.core.Node(package=self.NodeInfo[node][0],node_type=self.NodeInfo[node][1],name =self.NodeInfo[node][2])
+            else:
+                #if the node has arguments
+                Run = roslaunch.core.Node(package=self.NodeInfo[node][0],node_type=self.NodeInfo[node][1],name =self.NodeInfo[node][2],args=self.NodeInfo[node][3])
+            process=self.launch.launch(Run)
+            while True:
+                '''ensure that the node is running'''
+                flag=rosnode.rosnode_ping("/"+node,max_count=2,skip_cache=True)
+                if flag:
+                    print("Node "+node+" is running")
+                    break
+                rospy.sleep(0.5)
     def dummy_function(self)->None: 
         '''
         Objective : This is a dummy function to disable the rossignal handler

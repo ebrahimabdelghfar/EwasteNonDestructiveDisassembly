@@ -1,8 +1,8 @@
 import json
 from os import path
-import storage_keys as StorageKeys
-from CentralNode.src.storage.change_tool_database import ChangeToolScheduleDatabase
-DB_FILE_PATH = '/home/himaet23/EwasteNonDestructiveDisassembly/src/CentralNode/src/storage/configuration.json'
+import storage.storage_keys as StorageKeys
+from storage.change_tool_database import ChangeToolScheduleDatabase
+DB_FILE_PATH = 'src/CentralNode/src/storage/configuration.json'
 
 
 
