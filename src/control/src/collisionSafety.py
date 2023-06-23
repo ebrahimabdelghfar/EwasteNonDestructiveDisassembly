@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# license removed for brevity
+
 import rospy
 from std_msgs.msg import String
 from std_msgs.msg import Int64
@@ -10,9 +10,6 @@ from std_msgs.msg import Float32
 from geometry_msgs.msg import Wrench, WrenchStamped
 from enums.nodes import Nodes
 from enums.topics import Topics
-
-import matplotlib.pyplot as plt
-
 # Intial values for torque and force variables
 fx = 0
 fy = 0
