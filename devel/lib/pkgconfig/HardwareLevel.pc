@@ -1,0 +1,1 @@
+/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/HardwareLevel/lib/pkgconfig/HardwareLevel.pc

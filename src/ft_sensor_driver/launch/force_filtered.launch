@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
 <launch>
     <node pkg="ft_sensor_driver" type="ft_sensor_driver.py" name="ft_sensor_driver"/>
+    <node pkg="ft_sensor_driver" type="weighted_avg_filter.py" name="weighted_avg_filter" output="screen"/>
+    
     <!-- <node pkg="ft_sensor_driver" type="res_pub.py" name="res_pub" output="screen"/> -->
 </launch>
