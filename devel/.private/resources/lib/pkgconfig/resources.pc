@@ -1,8 +1,0 @@
-prefix=/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/resources
-
-Name: resources
-Description: Description of resources
-Version: 0.0.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: 

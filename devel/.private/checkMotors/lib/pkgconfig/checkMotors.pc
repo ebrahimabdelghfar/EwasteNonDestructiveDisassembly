@@ -1,8 +1,0 @@
-prefix=/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/checkMotors
-
-Name: checkMotors
-Description: Description of checkMotors
-Version: 0.0.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: 

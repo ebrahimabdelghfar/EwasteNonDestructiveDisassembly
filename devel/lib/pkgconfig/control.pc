@@ -1,1 +1,0 @@
-/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/control/lib/pkgconfig/control.pc

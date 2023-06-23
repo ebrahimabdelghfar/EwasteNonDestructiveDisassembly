@@ -1,1 +1,0 @@
-/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/abb_egm_msgs/share/gennodejs/ros/abb_egm_msgs/msg/EGMChannelState.js
