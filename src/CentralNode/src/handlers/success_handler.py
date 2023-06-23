@@ -19,6 +19,7 @@ def handleSuccess(currentNode, nodeResponse):
 
     if currentNode == unscrewIndex:
             RobotDatabase().addToDB(StorageKeys.CANT_UNSCREW_LIST, nodeResponse.extraMessage)
+            RobotDatabase().addToDB(StorageKeys.SCREW_INDEX, 0)
     elif currentNode == visionIndex:
             RobotDatabase().addToDB(StorageKeys.LIST_OF_SCREWS, nodeResponse.extraMessage)
     elif currentNode in [returnScrewDriverIndex, returnMillingIndex]:
