@@ -25,17 +25,19 @@ returnMillcheckforce = [0 ,0,0,1,0,0,0]
 returnMillAcc = [1,1,0.5,0.01, 0.01,1,1]
 returnMillwaypointstype = [1,2,2,1,1,2,1]
 returnMill = [1.5699650210606284, -3.8667533705605725e-05, -4.348342751326256e-05, 4.468107384448394e-05, 1.5699479768296518, 0.0001020637794930744, 0.0006307839400392428, 0.38105823988288906, 0.199521780663998, -3.120287403614384, 0.028820496570850132, 0.5148439764651114, -0.0892834213815691, 0.38088677212687533, 0.19943805783224047, -3.1203792598410787, 0.028690241896093833, 0.5146654054051913, 1.787729972341699, 0.5087152337932003, 0.3075443393958724, 0.049609514588807364, 0.7429048316231712, 0.8047688653232213, 1.7877403586699505, 0.5087191952453217, 0.3075889806336448, 0.049638280889769425, 0.7428936463465929, 0.8912893099225794, -0.08925380775913684, 0.3809085281558187, 0.24938546348060558, -3.1116776719132644, 0.019618232510452086, 0.8603975893684378, 1.5700814012002648, 7.859958941696199e-05, -7.670702042513673e-05, -9.145971214031179e-05, 1.5699121573129904, 8.672396998875347e-05]
+teast=[[1,2],[3,4],[5,4]]
+# def handle_test(req):
+#     SchedularRes= SchedularResponse()
+#     SchedularRes.velocity = GetMillVel
+#     SchedularRes.acceleration = GetscrewAcc
+#     SchedularRes.waypoint_types = GetMillwaypointstype
+#     SchedularRes.checkTorque = Millcheckforce
+#     SchedularRes.waypoints = getmilling
+#     return SchedularRes
 
-def handle_test(req):
-    SchedularRes= SchedularResponse()
-    SchedularRes.velocity = GetMillVel
-    SchedularRes.acceleration = GetscrewAcc
-    SchedularRes.waypoint_types = GetMillwaypointstype
-    SchedularRes.checkTorque = Millcheckforce
-    SchedularRes.waypoints = getmilling
-    return SchedularRes
-
-rospy.init_node('test_server')
-rospy.Service(Services.SCHEDULAR.value, Schedular, handle_test)
-rospy.spin()
-
+# rospy.init_node('test_server')
+# rospy.Service(Services.SCHEDULAR.value, Schedular, handle_test)
+# rospy.spin()
+import json
+print(type(json.dumps(teast)))
+#print(type(str(returnMill)))
