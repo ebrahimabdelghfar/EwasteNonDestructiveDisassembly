@@ -20,7 +20,8 @@ def handleInProgress(currentNode, nodeResponse, schedule):
         RobotDatabase().addToDB(StorageKeys.SCREW_INDEX, nodeResponse.extraMessage)
     elif(currentNode in findIndices(OPERATIONS, Nodes.CHANGE_TOOL)):
         #TODO change data to integer
-        popFromSchedule()
+        popFromSchedule(schedule)
+        print(f"Schedule {schedule[StorageKeys.WAYPOINTS]}")
         RobotDatabase().addToDB(StorageKeys.CHANGE_TOOL_SCHEDULE_INDEX, nodeResponse.extraMessage)
 
 
