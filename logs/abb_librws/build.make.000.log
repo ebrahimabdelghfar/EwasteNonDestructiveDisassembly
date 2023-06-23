@@ -1,3 +1,4 @@
+[35m[1mScanning dependencies of target abb_librws[0m
 [ 14%] [32mBuilding CXX object CMakeFiles/abb_librws.dir/src/rws_client.cpp.o[0m
 [ 28%] [32mBuilding CXX object CMakeFiles/abb_librws.dir/src/rws_common.cpp.o[0m
 [ 42%] [32mBuilding CXX object CMakeFiles/abb_librws.dir/src/rws_interface.cpp.o[0m

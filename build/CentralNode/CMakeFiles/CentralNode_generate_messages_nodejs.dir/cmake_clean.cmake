@@ -1,7 +1,7 @@
 file(REMOVE_RECURSE
-  "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/CentralNode/share/gennodejs/ros/CentralNode/msg/node_response.js"
-  "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/CentralNode/share/gennodejs/ros/CentralNode/srv/Schedular.js"
-  "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/CentralNode/share/gennodejs/ros/CentralNode/srv/ScrewList.js"
+  "/home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/CentralNode/share/gennodejs/ros/CentralNode/msg/node_response.js"
+  "/home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/CentralNode/share/gennodejs/ros/CentralNode/srv/Schedular.js"
+  "/home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/CentralNode/share/gennodejs/ros/CentralNode/srv/ScrewList.js"
   "CMakeFiles/CentralNode_generate_messages_nodejs"
 )
 

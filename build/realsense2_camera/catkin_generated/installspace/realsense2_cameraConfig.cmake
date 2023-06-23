@@ -67,14 +67,14 @@ set(realsense2_camera_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(realsense2_camera_SOURCE_PREFIX /home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/Perception/realsense-ros-2.3.2/realsense2_camera)
-  set(realsense2_camera_DEVEL_PREFIX /home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/realsense2_camera)
+  set(realsense2_camera_SOURCE_PREFIX /home/himaet23/EwasteNonDestructiveDisassembly/src/Perception/realsense-ros-2.3.2/realsense2_camera)
+  set(realsense2_camera_DEVEL_PREFIX /home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/realsense2_camera)
   set(realsense2_camera_INSTALL_PREFIX "")
   set(realsense2_camera_PREFIX ${realsense2_camera_DEVEL_PREFIX})
 else()
   set(realsense2_camera_SOURCE_PREFIX "")
   set(realsense2_camera_DEVEL_PREFIX "")
-  set(realsense2_camera_INSTALL_PREFIX /home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/install)
+  set(realsense2_camera_INSTALL_PREFIX /home/himaet23/EwasteNonDestructiveDisassembly/install)
   set(realsense2_camera_PREFIX ${realsense2_camera_INSTALL_PREFIX})
 endif()
 
@@ -154,7 +154,7 @@ foreach(library ${libraries})
     set(lib_path "")
     set(lib "${library}-NOTFOUND")
     # since the path where the library is found is returned we have to iterate over the paths manually
-    foreach(path /home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/install/lib;/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/lib;/opt/ros/noetic/lib)
+    foreach(path /home/himaet23/EwasteNonDestructiveDisassembly/install/lib;/home/himaet23/EwasteNonDestructiveDisassembly/devel/lib;/opt/ros/noetic/lib)
       find_library(lib ${library}
         PATHS ${path}
         NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
@@ -177,7 +177,7 @@ foreach(library ${libraries})
   endif()
 endforeach()
 
-set(realsense2_camera_EXPORTED_TARGETS "realsense2_camera_generate_messages_cpp;realsense2_camera_generate_messages_eus;realsense2_camera_generate_messages_lisp;realsense2_camera_generate_messages_nodejs;realsense2_camera_generate_messages_py")
+set(realsense2_camera_EXPORTED_TARGETS "realsense2_camera_generate_messages_cpp;realsense2_camera_generate_messages_eus;realsense2_camera_generate_messages_lisp;realsense2_camera_generate_messages_mypy;realsense2_camera_generate_messages_nodejs;realsense2_camera_generate_messages_py")
 # create dummy targets for exported code generation targets to make life of users easier
 foreach(t ${realsense2_camera_EXPORTED_TARGETS})
   if(NOT TARGET ${t})

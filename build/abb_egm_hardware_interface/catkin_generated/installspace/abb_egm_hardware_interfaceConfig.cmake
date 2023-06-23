@@ -67,14 +67,14 @@ set(abb_egm_hardware_interface_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(abb_egm_hardware_interface_SOURCE_PREFIX /home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/ABB_Dependent/abb_robot_driver/abb_egm_hardware_interface)
-  set(abb_egm_hardware_interface_DEVEL_PREFIX /home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/abb_egm_hardware_interface)
+  set(abb_egm_hardware_interface_SOURCE_PREFIX /home/himaet23/EwasteNonDestructiveDisassembly/src/ABB_Dependent/abb_robot_driver/abb_egm_hardware_interface)
+  set(abb_egm_hardware_interface_DEVEL_PREFIX /home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/abb_egm_hardware_interface)
   set(abb_egm_hardware_interface_INSTALL_PREFIX "")
   set(abb_egm_hardware_interface_PREFIX ${abb_egm_hardware_interface_DEVEL_PREFIX})
 else()
   set(abb_egm_hardware_interface_SOURCE_PREFIX "")
   set(abb_egm_hardware_interface_DEVEL_PREFIX "")
-  set(abb_egm_hardware_interface_INSTALL_PREFIX /home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/install)
+  set(abb_egm_hardware_interface_INSTALL_PREFIX /home/himaet23/EwasteNonDestructiveDisassembly/install)
   set(abb_egm_hardware_interface_PREFIX ${abb_egm_hardware_interface_INSTALL_PREFIX})
 endif()
 
@@ -91,9 +91,9 @@ endif()
 # flag project as catkin-based to distinguish if a find_package()-ed project is a catkin project
 set(abb_egm_hardware_interface_FOUND_CATKIN_PROJECT TRUE)
 
-if(NOT "include;/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/include;/usr/include " STREQUAL " ")
+if(NOT "include;/home/himaet23/EwasteNonDestructiveDisassembly/devel/include;/usr/include " STREQUAL " ")
   set(abb_egm_hardware_interface_INCLUDE_DIRS "")
-  set(_include_dirs "include;/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/include;/usr/include")
+  set(_include_dirs "include;/home/himaet23/EwasteNonDestructiveDisassembly/devel/include;/usr/include")
   if(NOT " " STREQUAL " ")
     set(_report "Check the issue tracker '' and consider creating a ticket if the problem has not been reported yet.")
   elseif(NOT " " STREQUAL " ")
@@ -116,7 +116,7 @@ if(NOT "include;/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/incl
   endforeach()
 endif()
 
-set(libraries "abb_egm_hardware_interface_hardware_interface;abb_egm_hardware_interface_controller_stopper;/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/lib/libabb_egm_rws_managers.so;/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/lib/libabb_libegm.so;/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/lib/libabb_librws.so;/usr/lib/x86_64-linux-gnu/libboost_regex.so.1.71.0;/usr/lib/x86_64-linux-gnu/libboost_system.so.1.71.0;/usr/lib/x86_64-linux-gnu/libboost_thread.so.1.71.0;/usr/lib/x86_64-linux-gnu/libPocoFoundation.so;/usr/lib/x86_64-linux-gnu/libPocoNet.so;/usr/lib/x86_64-linux-gnu/libPocoUtil.so;/usr/lib/x86_64-linux-gnu/libPocoXML.so;dl;/usr/lib/x86_64-linux-gnu/libprotobuf.so;-lpthread")
+set(libraries "abb_egm_hardware_interface_hardware_interface;abb_egm_hardware_interface_controller_stopper;/home/himaet23/EwasteNonDestructiveDisassembly/devel/lib/libabb_egm_rws_managers.so;/home/himaet23/EwasteNonDestructiveDisassembly/devel/lib/libabb_libegm.so;/home/himaet23/EwasteNonDestructiveDisassembly/devel/lib/libabb_librws.so;/usr/lib/x86_64-linux-gnu/libboost_regex.so.1.71.0;/usr/lib/x86_64-linux-gnu/libboost_system.so.1.71.0;/usr/lib/x86_64-linux-gnu/libboost_thread.so.1.71.0;/usr/lib/x86_64-linux-gnu/libPocoFoundation.so;/usr/lib/x86_64-linux-gnu/libPocoNet.so;/usr/lib/x86_64-linux-gnu/libPocoUtil.so;/usr/lib/x86_64-linux-gnu/libPocoXML.so;dl;/usr/lib/x86_64-linux-gnu/libprotobuf.so;-lpthread")
 foreach(library ${libraries})
   # keep build configuration keywords, target names and absolute libraries as-is
   if("${library}" MATCHES "^(debug|optimized|general)$")
@@ -154,7 +154,7 @@ foreach(library ${libraries})
     set(lib_path "")
     set(lib "${library}-NOTFOUND")
     # since the path where the library is found is returned we have to iterate over the paths manually
-    foreach(path /home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/install/lib;/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/lib;/opt/ros/noetic/lib)
+    foreach(path /home/himaet23/EwasteNonDestructiveDisassembly/install/lib;/home/himaet23/EwasteNonDestructiveDisassembly/devel/lib;/opt/ros/noetic/lib)
       find_library(lib ${library}
         PATHS ${path}
         NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)

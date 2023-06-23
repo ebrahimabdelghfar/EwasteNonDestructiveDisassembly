@@ -12,8 +12,8 @@ set_target_properties(abb_librws::abb_librws PROPERTIES
   IMPORTED_SONAME_NOCONFIG "libabb_librws.so"
   )
 
-list(APPEND _cmake_import_check_targets abb_librws::abb_librws )
-list(APPEND _cmake_import_check_files_for_abb_librws::abb_librws "${_IMPORT_PREFIX}/lib/libabb_librws.so" )
+list(APPEND _IMPORT_CHECK_TARGETS abb_librws::abb_librws )
+list(APPEND _IMPORT_CHECK_FILES_FOR_abb_librws::abb_librws "${_IMPORT_PREFIX}/lib/libabb_librws.so" )
 
 # Commands beyond this point should not need to know the version.
 set(CMAKE_IMPORT_FILE_VERSION)

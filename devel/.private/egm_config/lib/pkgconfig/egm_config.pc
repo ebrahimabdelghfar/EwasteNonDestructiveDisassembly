@@ -1,4 +1,4 @@
-prefix=/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/egm_config
+prefix=/home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/egm_config
 
 Name: egm_config
 Description: Description of egm_config

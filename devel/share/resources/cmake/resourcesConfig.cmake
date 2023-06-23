@@ -1,1 +1,1 @@
-/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/resources/share/resources/cmake/resourcesConfig.cmake
+/home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/resources/share/resources/cmake/resourcesConfig.cmake

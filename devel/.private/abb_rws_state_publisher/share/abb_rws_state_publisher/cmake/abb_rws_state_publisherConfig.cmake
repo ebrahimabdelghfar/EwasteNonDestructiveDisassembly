@@ -67,14 +67,14 @@ set(abb_rws_state_publisher_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("TRUE" STREQUAL "TRUE")
-  set(abb_rws_state_publisher_SOURCE_PREFIX /home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/ABB_Dependent/abb_robot_driver/abb_rws_state_publisher)
-  set(abb_rws_state_publisher_DEVEL_PREFIX /home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/abb_rws_state_publisher)
+  set(abb_rws_state_publisher_SOURCE_PREFIX /home/himaet23/EwasteNonDestructiveDisassembly/src/ABB_Dependent/abb_robot_driver/abb_rws_state_publisher)
+  set(abb_rws_state_publisher_DEVEL_PREFIX /home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/abb_rws_state_publisher)
   set(abb_rws_state_publisher_INSTALL_PREFIX "")
   set(abb_rws_state_publisher_PREFIX ${abb_rws_state_publisher_DEVEL_PREFIX})
 else()
   set(abb_rws_state_publisher_SOURCE_PREFIX "")
   set(abb_rws_state_publisher_DEVEL_PREFIX "")
-  set(abb_rws_state_publisher_INSTALL_PREFIX /home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/install)
+  set(abb_rws_state_publisher_INSTALL_PREFIX /home/himaet23/EwasteNonDestructiveDisassembly/install)
   set(abb_rws_state_publisher_PREFIX ${abb_rws_state_publisher_INSTALL_PREFIX})
 endif()
 
@@ -91,9 +91,9 @@ endif()
 # flag project as catkin-based to distinguish if a find_package()-ed project is a catkin project
 set(abb_rws_state_publisher_FOUND_CATKIN_PROJECT TRUE)
 
-if(NOT "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/ABB_Dependent/abb_robot_driver/abb_rws_state_publisher/include " STREQUAL " ")
+if(NOT "/home/himaet23/EwasteNonDestructiveDisassembly/src/ABB_Dependent/abb_robot_driver/abb_rws_state_publisher/include " STREQUAL " ")
   set(abb_rws_state_publisher_INCLUDE_DIRS "")
-  set(_include_dirs "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/ABB_Dependent/abb_robot_driver/abb_rws_state_publisher/include")
+  set(_include_dirs "/home/himaet23/EwasteNonDestructiveDisassembly/src/ABB_Dependent/abb_robot_driver/abb_rws_state_publisher/include")
   if(NOT " " STREQUAL " ")
     set(_report "Check the issue tracker '' and consider creating a ticket if the problem has not been reported yet.")
   elseif(NOT " " STREQUAL " ")
@@ -110,13 +110,13 @@ if(NOT "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/ABB_Dependent/
         message(FATAL_ERROR "Project 'abb_rws_state_publisher' specifies '${idir}' as an include dir, which is not found.  It does not exist in '${include}'.  ${_report}")
       endif()
     else()
-      message(FATAL_ERROR "Project 'abb_rws_state_publisher' specifies '${idir}' as an include dir, which is not found.  It does neither exist as an absolute directory nor in '/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/ABB_Dependent/abb_robot_driver/abb_rws_state_publisher/${idir}'.  ${_report}")
+      message(FATAL_ERROR "Project 'abb_rws_state_publisher' specifies '${idir}' as an include dir, which is not found.  It does neither exist as an absolute directory nor in '/home/himaet23/EwasteNonDestructiveDisassembly/src/ABB_Dependent/abb_robot_driver/abb_rws_state_publisher/${idir}'.  ${_report}")
     endif()
     _list_append_unique(abb_rws_state_publisher_INCLUDE_DIRS ${include})
   endforeach()
 endif()
 
-set(libraries "abb_rws_state_publisher;/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/lib/libabb_egm_rws_managers.so")
+set(libraries "abb_rws_state_publisher;/home/himaet23/EwasteNonDestructiveDisassembly/devel/lib/libabb_egm_rws_managers.so")
 foreach(library ${libraries})
   # keep build configuration keywords, target names and absolute libraries as-is
   if("${library}" MATCHES "^(debug|optimized|general)$")
@@ -154,7 +154,7 @@ foreach(library ${libraries})
     set(lib_path "")
     set(lib "${library}-NOTFOUND")
     # since the path where the library is found is returned we have to iterate over the paths manually
-    foreach(path /home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/abb_rws_state_publisher/lib;/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/lib;/opt/ros/noetic/lib)
+    foreach(path /home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/abb_rws_state_publisher/lib;/home/himaet23/EwasteNonDestructiveDisassembly/devel/lib;/opt/ros/noetic/lib)
       find_library(lib ${library}
         PATHS ${path}
         NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)

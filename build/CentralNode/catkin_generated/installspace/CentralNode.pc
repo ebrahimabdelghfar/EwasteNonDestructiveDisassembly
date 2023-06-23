@@ -1,4 +1,4 @@
-prefix=/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/install
+prefix=/home/himaet23/EwasteNonDestructiveDisassembly/install
 
 Name: CentralNode
 Description: Description of CentralNode

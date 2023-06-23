@@ -7,9 +7,9 @@
 # new environment variables
 
 # modified environment variables
-export CMAKE_PREFIX_PATH="/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/resources:$CMAKE_PREFIX_PATH"
-export LD_LIBRARY_PATH="/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/resources/lib:$LD_LIBRARY_PATH"
-export PWD='/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/build/resources'
-export PYTHONPATH="/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/resources/lib/python3/dist-packages:$PYTHONPATH"
-export ROSLISP_PACKAGE_DIRECTORIES="/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/resources/share/common-lisp:$ROSLISP_PACKAGE_DIRECTORIES"
-export ROS_PACKAGE_PATH="/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/resources:$ROS_PACKAGE_PATH"
+export CMAKE_PREFIX_PATH="/home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/resources:$CMAKE_PREFIX_PATH"
+export LD_LIBRARY_PATH="/home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/resources/lib:$LD_LIBRARY_PATH"
+export PWD='/home/himaet23/EwasteNonDestructiveDisassembly/build/resources'
+export PYTHONPATH="/home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/resources/lib/python3/dist-packages:$PYTHONPATH"
+export ROSLISP_PACKAGE_DIRECTORIES="/home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/resources/share/common-lisp:$ROSLISP_PACKAGE_DIRECTORIES"
+export ROS_PACKAGE_PATH="/home/himaet23/EwasteNonDestructiveDisassembly/src/resources:$ROS_PACKAGE_PATH"

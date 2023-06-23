@@ -1,8 +1,8 @@
-prefix=/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/install
+prefix=/home/himaet23/EwasteNonDestructiveDisassembly/install
 
 Name: abb_robot_cpp_utilities
 Description: Description of abb_robot_cpp_utilities
 Version: 0.5.0
-Cflags: -I${prefix}/include -I/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/include -I/usr/include
-Libs: -L${prefix}/lib -labb_robot_cpp_utilities /home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/lib/libabb_egm_rws_managers.so /home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/lib/libabb_libegm.so /home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/lib/libabb_librws.so /usr/lib/x86_64-linux-gnu/libboost_regex.so.1.71.0 /usr/lib/x86_64-linux-gnu/libboost_system.so.1.71.0 /usr/lib/x86_64-linux-gnu/libboost_thread.so.1.71.0 /usr/lib/x86_64-linux-gnu/libPocoFoundation.so /usr/lib/x86_64-linux-gnu/libPocoNet.so /usr/lib/x86_64-linux-gnu/libPocoUtil.so /usr/lib/x86_64-linux-gnu/libPocoXML.so -ldl /usr/lib/x86_64-linux-gnu/libprotobuf.so -lpthread
+Cflags: -I${prefix}/include -I/home/himaet23/EwasteNonDestructiveDisassembly/devel/include -I/usr/include
+Libs: -L${prefix}/lib -labb_robot_cpp_utilities /home/himaet23/EwasteNonDestructiveDisassembly/devel/lib/libabb_egm_rws_managers.so /home/himaet23/EwasteNonDestructiveDisassembly/devel/lib/libabb_libegm.so /home/himaet23/EwasteNonDestructiveDisassembly/devel/lib/libabb_librws.so /usr/lib/x86_64-linux-gnu/libboost_regex.so.1.71.0 /usr/lib/x86_64-linux-gnu/libboost_system.so.1.71.0 /usr/lib/x86_64-linux-gnu/libboost_thread.so.1.71.0 /usr/lib/x86_64-linux-gnu/libPocoFoundation.so /usr/lib/x86_64-linux-gnu/libPocoNet.so /usr/lib/x86_64-linux-gnu/libPocoUtil.so /usr/lib/x86_64-linux-gnu/libPocoXML.so -ldl /usr/lib/x86_64-linux-gnu/libprotobuf.so -lpthread
 Requires: abb_egm_msgs abb_rapid_msgs abb_rapid_sm_addin_msgs abb_robot_msgs roscpp

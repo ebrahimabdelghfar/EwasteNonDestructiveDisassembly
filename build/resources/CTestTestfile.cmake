@@ -1,6 +1,6 @@
 # CMake generated Testfile for 
-# Source directory: /home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/resources
-# Build directory: /home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/build/resources
+# Source directory: /home/himaet23/EwasteNonDestructiveDisassembly/src/resources
+# Build directory: /home/himaet23/EwasteNonDestructiveDisassembly/build/resources
 # 
 # This file includes the relevant testing commands required for 
 # testing this directory and lists subdirectories to be tested as well.

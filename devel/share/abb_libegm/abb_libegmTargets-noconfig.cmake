@@ -12,8 +12,8 @@ set_target_properties(abb_libegm::abb_libegm PROPERTIES
   IMPORTED_SONAME_NOCONFIG "libabb_libegm.so"
   )
 
-list(APPEND _cmake_import_check_targets abb_libegm::abb_libegm )
-list(APPEND _cmake_import_check_files_for_abb_libegm::abb_libegm "${_IMPORT_PREFIX}/lib/libabb_libegm.so" )
+list(APPEND _IMPORT_CHECK_TARGETS abb_libegm::abb_libegm )
+list(APPEND _IMPORT_CHECK_FILES_FOR_abb_libegm::abb_libegm "${_IMPORT_PREFIX}/lib/libabb_libegm.so" )
 
 # Commands beyond this point should not need to know the version.
 set(CMAKE_IMPORT_FILE_VERSION)

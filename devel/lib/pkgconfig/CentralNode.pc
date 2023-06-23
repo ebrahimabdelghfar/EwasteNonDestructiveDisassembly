@@ -1,1 +1,1 @@
-/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/CentralNode/lib/pkgconfig/CentralNode.pc
+/home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/CentralNode/lib/pkgconfig/CentralNode.pc

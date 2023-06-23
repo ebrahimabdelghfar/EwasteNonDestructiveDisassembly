@@ -1,4 +1,4 @@
-prefix=/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/abb_irb120_moveit_config
+prefix=/home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/abb_irb120_moveit_config
 
 Name: abb_irb120_moveit_config
 Description: Description of abb_irb120_moveit_config

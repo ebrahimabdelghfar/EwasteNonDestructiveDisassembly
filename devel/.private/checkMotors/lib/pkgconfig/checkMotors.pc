@@ -1,4 +1,4 @@
-prefix=/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/checkMotors
+prefix=/home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/checkMotors
 
 Name: checkMotors
 Description: Description of checkMotors

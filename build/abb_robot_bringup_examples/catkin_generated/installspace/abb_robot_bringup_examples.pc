@@ -1,4 +1,4 @@
-prefix=/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/install
+prefix=/home/himaet23/EwasteNonDestructiveDisassembly/install
 
 Name: abb_robot_bringup_examples
 Description: Description of abb_robot_bringup_examples

@@ -1,6 +1,6 @@
-devel_space: /home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel
+devel_space: /home/himaet23/EwasteNonDestructiveDisassembly/devel
 install: false
-install_space: /home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/install
+install_space: /home/himaet23/EwasteNonDestructiveDisassembly/install
 profile: default
-source_space: /home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src
-workspace: /home/omar/Desktop/GP/EwasteNonDestructiveDisassembly
+source_space: /home/himaet23/EwasteNonDestructiveDisassembly/src
+workspace: /home/himaet23/EwasteNonDestructiveDisassembly

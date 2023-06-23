@@ -1,4 +1,4 @@
-prefix=/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/abb_irb120_support
+prefix=/home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/abb_irb120_support
 
 Name: abb_irb120_support
 Description: Description of abb_irb120_support

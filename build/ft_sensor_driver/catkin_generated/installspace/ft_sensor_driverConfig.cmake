@@ -67,14 +67,14 @@ set(ft_sensor_driver_CONFIG_INCLUDED TRUE)
 
 # set variables for source/devel/install prefixes
 if("FALSE" STREQUAL "TRUE")
-  set(ft_sensor_driver_SOURCE_PREFIX /home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/ft_sensor_driver)
-  set(ft_sensor_driver_DEVEL_PREFIX /home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/ft_sensor_driver)
+  set(ft_sensor_driver_SOURCE_PREFIX /home/himaet23/EwasteNonDestructiveDisassembly/src/ft_sensor_driver)
+  set(ft_sensor_driver_DEVEL_PREFIX /home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/ft_sensor_driver)
   set(ft_sensor_driver_INSTALL_PREFIX "")
   set(ft_sensor_driver_PREFIX ${ft_sensor_driver_DEVEL_PREFIX})
 else()
   set(ft_sensor_driver_SOURCE_PREFIX "")
   set(ft_sensor_driver_DEVEL_PREFIX "")
-  set(ft_sensor_driver_INSTALL_PREFIX /home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/install)
+  set(ft_sensor_driver_INSTALL_PREFIX /home/himaet23/EwasteNonDestructiveDisassembly/install)
   set(ft_sensor_driver_PREFIX ${ft_sensor_driver_INSTALL_PREFIX})
 endif()
 
@@ -154,7 +154,7 @@ foreach(library ${libraries})
     set(lib_path "")
     set(lib "${library}-NOTFOUND")
     # since the path where the library is found is returned we have to iterate over the paths manually
-    foreach(path /home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/install/lib;/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/lib;/opt/ros/noetic/lib)
+    foreach(path /home/himaet23/EwasteNonDestructiveDisassembly/install/lib;/home/himaet23/EwasteNonDestructiveDisassembly/devel/lib;/opt/ros/noetic/lib)
       find_library(lib ${library}
         PATHS ${path}
         NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)

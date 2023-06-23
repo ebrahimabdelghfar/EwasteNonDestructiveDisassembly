@@ -1,8 +1,7 @@
 file(REMOVE_RECURSE
-  "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/moveit_calibration_plugins/lib/moveit_calibration_plugins/test_handeye_target_charuco"
-  "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/moveit_calibration_plugins/lib/moveit_calibration_plugins/test_handeye_target_charuco.pdb"
+  "/home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/moveit_calibration_plugins/lib/moveit_calibration_plugins/test_handeye_target_charuco"
+  "/home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/moveit_calibration_plugins/lib/moveit_calibration_plugins/test_handeye_target_charuco.pdb"
   "CMakeFiles/test_handeye_target_charuco.dir/test/handeye_target_charuco_test.cpp.o"
-  "CMakeFiles/test_handeye_target_charuco.dir/test/handeye_target_charuco_test.cpp.o.d"
 )
 
 # Per-language clean rules from dependency scanning.

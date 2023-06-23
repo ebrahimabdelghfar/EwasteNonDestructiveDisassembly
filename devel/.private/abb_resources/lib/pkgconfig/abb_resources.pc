@@ -1,4 +1,4 @@
-prefix=/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/abb_resources
+prefix=/home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/abb_resources
 
 Name: abb_resources
 Description: Description of abb_resources

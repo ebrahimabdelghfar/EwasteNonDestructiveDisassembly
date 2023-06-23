@@ -1,1 +1,1 @@
-/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/resources/lib/pkgconfig/resources.pc
+/home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/resources/lib/pkgconfig/resources.pc

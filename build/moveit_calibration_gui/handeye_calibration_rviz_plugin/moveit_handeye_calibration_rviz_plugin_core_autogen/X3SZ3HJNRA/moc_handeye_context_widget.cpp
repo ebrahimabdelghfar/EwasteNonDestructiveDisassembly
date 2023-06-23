@@ -6,7 +6,7 @@
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
 
-#include "../../../../../src/Perception/moveit_calibration/moveit_calibration_gui/handeye_calibration_rviz_plugin/include/moveit/handeye_calibration_rviz_plugin/handeye_context_widget.h"
+#include "include/moveit/handeye_calibration_rviz_plugin/handeye_context_widget.h"
 #include <QtCore/qbytearray.h>
 #include <QtCore/qmetatype.h>
 #if !defined(Q_MOC_OUTPUT_REVISION)

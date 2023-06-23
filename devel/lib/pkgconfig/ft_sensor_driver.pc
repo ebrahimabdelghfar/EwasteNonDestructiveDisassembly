@@ -1,1 +1,1 @@
-/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/ft_sensor_driver/lib/pkgconfig/ft_sensor_driver.pc
+/home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/ft_sensor_driver/lib/pkgconfig/ft_sensor_driver.pc

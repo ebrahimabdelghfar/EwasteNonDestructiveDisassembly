@@ -7,7 +7,7 @@
 # new environment variables
 
 # modified environment variables
-export CMAKE_PREFIX_PATH="/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/abb_rapid_sm_addin_msgs:$CMAKE_PREFIX_PATH"
-export PWD='/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/build/abb_rapid_sm_addin_msgs'
-export ROSLISP_PACKAGE_DIRECTORIES="/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/abb_rapid_sm_addin_msgs/share/common-lisp:$ROSLISP_PACKAGE_DIRECTORIES"
-export ROS_PACKAGE_PATH="/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/ABB_Dependent/abb_robot_driver_interfaces/abb_rapid_sm_addin_msgs:$ROS_PACKAGE_PATH"
+export CMAKE_PREFIX_PATH="/home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/abb_rapid_sm_addin_msgs:$CMAKE_PREFIX_PATH"
+export PWD='/home/himaet23/EwasteNonDestructiveDisassembly/build/abb_rapid_sm_addin_msgs'
+export ROSLISP_PACKAGE_DIRECTORIES="/home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/abb_rapid_sm_addin_msgs/share/common-lisp:$ROSLISP_PACKAGE_DIRECTORIES"
+export ROS_PACKAGE_PATH="/home/himaet23/EwasteNonDestructiveDisassembly/src/ABB_Dependent/abb_robot_driver_interfaces/abb_rapid_sm_addin_msgs:$ROS_PACKAGE_PATH"

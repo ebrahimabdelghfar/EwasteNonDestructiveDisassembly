@@ -1,4 +1,4 @@
-prefix=/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/abb_robot_bringup_examples
+prefix=/home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/abb_robot_bringup_examples
 
 Name: abb_robot_bringup_examples
 Description: Description of abb_robot_bringup_examples

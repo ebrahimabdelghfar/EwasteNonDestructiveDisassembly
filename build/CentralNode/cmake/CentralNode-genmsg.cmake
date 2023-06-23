@@ -2,12 +2,13 @@
 
 message(STATUS "CentralNode: 1 messages, 2 services")
 
-set(MSG_I_FLAGS "-ICentralNode:/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/CentralNode/msg;-Istd_msgs:/opt/ros/noetic/share/std_msgs/cmake/../msg")
+set(MSG_I_FLAGS "-ICentralNode:/home/himaet23/EwasteNonDestructiveDisassembly/src/CentralNode/msg;-Istd_msgs:/opt/ros/noetic/share/std_msgs/cmake/../msg")
 
 # Find all generators
 find_package(gencpp REQUIRED)
 find_package(geneus REQUIRED)
 find_package(genlisp REQUIRED)
+find_package(genmypy REQUIRED)
 find_package(gennodejs REQUIRED)
 find_package(genpy REQUIRED)
 
@@ -17,29 +18,29 @@ add_custom_target(CentralNode_generate_messages ALL)
 
 
 
-get_filename_component(_filename "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/CentralNode/msg/node_response.msg" NAME_WE)
+get_filename_component(_filename "/home/himaet23/EwasteNonDestructiveDisassembly/src/CentralNode/msg/node_response.msg" NAME_WE)
 add_custom_target(_CentralNode_generate_messages_check_deps_${_filename}
-  COMMAND ${CATKIN_ENV} ${PYTHON_EXECUTABLE} ${GENMSG_CHECK_DEPS_SCRIPT} "CentralNode" "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/CentralNode/msg/node_response.msg" ""
+  COMMAND ${CATKIN_ENV} ${PYTHON_EXECUTABLE} ${GENMSG_CHECK_DEPS_SCRIPT} "CentralNode" "/home/himaet23/EwasteNonDestructiveDisassembly/src/CentralNode/msg/node_response.msg" ""
 )
 
-get_filename_component(_filename "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/CentralNode/srv/Schedular.srv" NAME_WE)
+get_filename_component(_filename "/home/himaet23/EwasteNonDestructiveDisassembly/src/CentralNode/srv/Schedular.srv" NAME_WE)
 add_custom_target(_CentralNode_generate_messages_check_deps_${_filename}
-  COMMAND ${CATKIN_ENV} ${PYTHON_EXECUTABLE} ${GENMSG_CHECK_DEPS_SCRIPT} "CentralNode" "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/CentralNode/srv/Schedular.srv" ""
+  COMMAND ${CATKIN_ENV} ${PYTHON_EXECUTABLE} ${GENMSG_CHECK_DEPS_SCRIPT} "CentralNode" "/home/himaet23/EwasteNonDestructiveDisassembly/src/CentralNode/srv/Schedular.srv" ""
 )
 
-get_filename_component(_filename "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/CentralNode/srv/ScrewList.srv" NAME_WE)
+get_filename_component(_filename "/home/himaet23/EwasteNonDestructiveDisassembly/src/CentralNode/srv/ScrewList.srv" NAME_WE)
 add_custom_target(_CentralNode_generate_messages_check_deps_${_filename}
-  COMMAND ${CATKIN_ENV} ${PYTHON_EXECUTABLE} ${GENMSG_CHECK_DEPS_SCRIPT} "CentralNode" "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/CentralNode/srv/ScrewList.srv" ""
+  COMMAND ${CATKIN_ENV} ${PYTHON_EXECUTABLE} ${GENMSG_CHECK_DEPS_SCRIPT} "CentralNode" "/home/himaet23/EwasteNonDestructiveDisassembly/src/CentralNode/srv/ScrewList.srv" ""
 )
 
 #
-#  langs = gencpp;geneus;genlisp;gennodejs;genpy
+#  langs = gencpp;geneus;genlisp;genmypy;gennodejs;genpy
 #
 
 ### Section generating for lang: gencpp
 ### Generating Messages
 _generate_msg_cpp(CentralNode
-  "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/CentralNode/msg/node_response.msg"
+  "/home/himaet23/EwasteNonDestructiveDisassembly/src/CentralNode/msg/node_response.msg"
   "${MSG_I_FLAGS}"
   ""
   ${CATKIN_DEVEL_PREFIX}/${gencpp_INSTALL_DIR}/CentralNode
@@ -47,13 +48,13 @@ _generate_msg_cpp(CentralNode
 
 ### Generating Services
 _generate_srv_cpp(CentralNode
-  "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/CentralNode/srv/Schedular.srv"
+  "/home/himaet23/EwasteNonDestructiveDisassembly/src/CentralNode/srv/Schedular.srv"
   "${MSG_I_FLAGS}"
   ""
   ${CATKIN_DEVEL_PREFIX}/${gencpp_INSTALL_DIR}/CentralNode
 )
 _generate_srv_cpp(CentralNode
-  "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/CentralNode/srv/ScrewList.srv"
+  "/home/himaet23/EwasteNonDestructiveDisassembly/src/CentralNode/srv/ScrewList.srv"
   "${MSG_I_FLAGS}"
   ""
   ${CATKIN_DEVEL_PREFIX}/${gencpp_INSTALL_DIR}/CentralNode
@@ -71,11 +72,11 @@ add_custom_target(CentralNode_generate_messages_cpp
 add_dependencies(CentralNode_generate_messages CentralNode_generate_messages_cpp)
 
 # add dependencies to all check dependencies targets
-get_filename_component(_filename "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/CentralNode/msg/node_response.msg" NAME_WE)
+get_filename_component(_filename "/home/himaet23/EwasteNonDestructiveDisassembly/src/CentralNode/msg/node_response.msg" NAME_WE)
 add_dependencies(CentralNode_generate_messages_cpp _CentralNode_generate_messages_check_deps_${_filename})
-get_filename_component(_filename "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/CentralNode/srv/Schedular.srv" NAME_WE)
+get_filename_component(_filename "/home/himaet23/EwasteNonDestructiveDisassembly/src/CentralNode/srv/Schedular.srv" NAME_WE)
 add_dependencies(CentralNode_generate_messages_cpp _CentralNode_generate_messages_check_deps_${_filename})
-get_filename_component(_filename "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/CentralNode/srv/ScrewList.srv" NAME_WE)
+get_filename_component(_filename "/home/himaet23/EwasteNonDestructiveDisassembly/src/CentralNode/srv/ScrewList.srv" NAME_WE)
 add_dependencies(CentralNode_generate_messages_cpp _CentralNode_generate_messages_check_deps_${_filename})
 
 # target for backward compatibility
@@ -88,7 +89,7 @@ list(APPEND ${PROJECT_NAME}_EXPORTED_TARGETS CentralNode_generate_messages_cpp)
 ### Section generating for lang: geneus
 ### Generating Messages
 _generate_msg_eus(CentralNode
-  "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/CentralNode/msg/node_response.msg"
+  "/home/himaet23/EwasteNonDestructiveDisassembly/src/CentralNode/msg/node_response.msg"
   "${MSG_I_FLAGS}"
   ""
   ${CATKIN_DEVEL_PREFIX}/${geneus_INSTALL_DIR}/CentralNode
@@ -96,13 +97,13 @@ _generate_msg_eus(CentralNode
 
 ### Generating Services
 _generate_srv_eus(CentralNode
-  "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/CentralNode/srv/Schedular.srv"
+  "/home/himaet23/EwasteNonDestructiveDisassembly/src/CentralNode/srv/Schedular.srv"
   "${MSG_I_FLAGS}"
   ""
   ${CATKIN_DEVEL_PREFIX}/${geneus_INSTALL_DIR}/CentralNode
 )
 _generate_srv_eus(CentralNode
-  "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/CentralNode/srv/ScrewList.srv"
+  "/home/himaet23/EwasteNonDestructiveDisassembly/src/CentralNode/srv/ScrewList.srv"
   "${MSG_I_FLAGS}"
   ""
   ${CATKIN_DEVEL_PREFIX}/${geneus_INSTALL_DIR}/CentralNode
@@ -120,11 +121,11 @@ add_custom_target(CentralNode_generate_messages_eus
 add_dependencies(CentralNode_generate_messages CentralNode_generate_messages_eus)
 
 # add dependencies to all check dependencies targets
-get_filename_component(_filename "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/CentralNode/msg/node_response.msg" NAME_WE)
+get_filename_component(_filename "/home/himaet23/EwasteNonDestructiveDisassembly/src/CentralNode/msg/node_response.msg" NAME_WE)
 add_dependencies(CentralNode_generate_messages_eus _CentralNode_generate_messages_check_deps_${_filename})
-get_filename_component(_filename "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/CentralNode/srv/Schedular.srv" NAME_WE)
+get_filename_component(_filename "/home/himaet23/EwasteNonDestructiveDisassembly/src/CentralNode/srv/Schedular.srv" NAME_WE)
 add_dependencies(CentralNode_generate_messages_eus _CentralNode_generate_messages_check_deps_${_filename})
-get_filename_component(_filename "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/CentralNode/srv/ScrewList.srv" NAME_WE)
+get_filename_component(_filename "/home/himaet23/EwasteNonDestructiveDisassembly/src/CentralNode/srv/ScrewList.srv" NAME_WE)
 add_dependencies(CentralNode_generate_messages_eus _CentralNode_generate_messages_check_deps_${_filename})
 
 # target for backward compatibility
@@ -137,7 +138,7 @@ list(APPEND ${PROJECT_NAME}_EXPORTED_TARGETS CentralNode_generate_messages_eus)
 ### Section generating for lang: genlisp
 ### Generating Messages
 _generate_msg_lisp(CentralNode
-  "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/CentralNode/msg/node_response.msg"
+  "/home/himaet23/EwasteNonDestructiveDisassembly/src/CentralNode/msg/node_response.msg"
   "${MSG_I_FLAGS}"
   ""
   ${CATKIN_DEVEL_PREFIX}/${genlisp_INSTALL_DIR}/CentralNode
@@ -145,13 +146,13 @@ _generate_msg_lisp(CentralNode
 
 ### Generating Services
 _generate_srv_lisp(CentralNode
-  "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/CentralNode/srv/Schedular.srv"
+  "/home/himaet23/EwasteNonDestructiveDisassembly/src/CentralNode/srv/Schedular.srv"
   "${MSG_I_FLAGS}"
   ""
   ${CATKIN_DEVEL_PREFIX}/${genlisp_INSTALL_DIR}/CentralNode
 )
 _generate_srv_lisp(CentralNode
-  "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/CentralNode/srv/ScrewList.srv"
+  "/home/himaet23/EwasteNonDestructiveDisassembly/src/CentralNode/srv/ScrewList.srv"
   "${MSG_I_FLAGS}"
   ""
   ${CATKIN_DEVEL_PREFIX}/${genlisp_INSTALL_DIR}/CentralNode
@@ -169,11 +170,11 @@ add_custom_target(CentralNode_generate_messages_lisp
 add_dependencies(CentralNode_generate_messages CentralNode_generate_messages_lisp)
 
 # add dependencies to all check dependencies targets
-get_filename_component(_filename "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/CentralNode/msg/node_response.msg" NAME_WE)
+get_filename_component(_filename "/home/himaet23/EwasteNonDestructiveDisassembly/src/CentralNode/msg/node_response.msg" NAME_WE)
 add_dependencies(CentralNode_generate_messages_lisp _CentralNode_generate_messages_check_deps_${_filename})
-get_filename_component(_filename "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/CentralNode/srv/Schedular.srv" NAME_WE)
+get_filename_component(_filename "/home/himaet23/EwasteNonDestructiveDisassembly/src/CentralNode/srv/Schedular.srv" NAME_WE)
 add_dependencies(CentralNode_generate_messages_lisp _CentralNode_generate_messages_check_deps_${_filename})
-get_filename_component(_filename "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/CentralNode/srv/ScrewList.srv" NAME_WE)
+get_filename_component(_filename "/home/himaet23/EwasteNonDestructiveDisassembly/src/CentralNode/srv/ScrewList.srv" NAME_WE)
 add_dependencies(CentralNode_generate_messages_lisp _CentralNode_generate_messages_check_deps_${_filename})
 
 # target for backward compatibility
@@ -183,10 +184,59 @@ add_dependencies(CentralNode_genlisp CentralNode_generate_messages_lisp)
 # register target for catkin_package(EXPORTED_TARGETS)
 list(APPEND ${PROJECT_NAME}_EXPORTED_TARGETS CentralNode_generate_messages_lisp)
 
+### Section generating for lang: genmypy
+### Generating Messages
+_generate_msg_mypy(CentralNode
+  "/home/himaet23/EwasteNonDestructiveDisassembly/src/CentralNode/msg/node_response.msg"
+  "${MSG_I_FLAGS}"
+  ""
+  ${CATKIN_DEVEL_PREFIX}/${genmypy_INSTALL_DIR}/CentralNode
+)
+
+### Generating Services
+_generate_srv_mypy(CentralNode
+  "/home/himaet23/EwasteNonDestructiveDisassembly/src/CentralNode/srv/Schedular.srv"
+  "${MSG_I_FLAGS}"
+  ""
+  ${CATKIN_DEVEL_PREFIX}/${genmypy_INSTALL_DIR}/CentralNode
+)
+_generate_srv_mypy(CentralNode
+  "/home/himaet23/EwasteNonDestructiveDisassembly/src/CentralNode/srv/ScrewList.srv"
+  "${MSG_I_FLAGS}"
+  ""
+  ${CATKIN_DEVEL_PREFIX}/${genmypy_INSTALL_DIR}/CentralNode
+)
+
+### Generating Module File
+_generate_module_mypy(CentralNode
+  ${CATKIN_DEVEL_PREFIX}/${genmypy_INSTALL_DIR}/CentralNode
+  "${ALL_GEN_OUTPUT_FILES_mypy}"
+)
+
+add_custom_target(CentralNode_generate_messages_mypy
+  DEPENDS ${ALL_GEN_OUTPUT_FILES_mypy}
+)
+add_dependencies(CentralNode_generate_messages CentralNode_generate_messages_mypy)
+
+# add dependencies to all check dependencies targets
+get_filename_component(_filename "/home/himaet23/EwasteNonDestructiveDisassembly/src/CentralNode/msg/node_response.msg" NAME_WE)
+add_dependencies(CentralNode_generate_messages_mypy _CentralNode_generate_messages_check_deps_${_filename})
+get_filename_component(_filename "/home/himaet23/EwasteNonDestructiveDisassembly/src/CentralNode/srv/Schedular.srv" NAME_WE)
+add_dependencies(CentralNode_generate_messages_mypy _CentralNode_generate_messages_check_deps_${_filename})
+get_filename_component(_filename "/home/himaet23/EwasteNonDestructiveDisassembly/src/CentralNode/srv/ScrewList.srv" NAME_WE)
+add_dependencies(CentralNode_generate_messages_mypy _CentralNode_generate_messages_check_deps_${_filename})
+
+# target for backward compatibility
+add_custom_target(CentralNode_genmypy)
+add_dependencies(CentralNode_genmypy CentralNode_generate_messages_mypy)
+
+# register target for catkin_package(EXPORTED_TARGETS)
+list(APPEND ${PROJECT_NAME}_EXPORTED_TARGETS CentralNode_generate_messages_mypy)
+
 ### Section generating for lang: gennodejs
 ### Generating Messages
 _generate_msg_nodejs(CentralNode
-  "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/CentralNode/msg/node_response.msg"
+  "/home/himaet23/EwasteNonDestructiveDisassembly/src/CentralNode/msg/node_response.msg"
   "${MSG_I_FLAGS}"
   ""
   ${CATKIN_DEVEL_PREFIX}/${gennodejs_INSTALL_DIR}/CentralNode
@@ -194,13 +244,13 @@ _generate_msg_nodejs(CentralNode
 
 ### Generating Services
 _generate_srv_nodejs(CentralNode
-  "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/CentralNode/srv/Schedular.srv"
+  "/home/himaet23/EwasteNonDestructiveDisassembly/src/CentralNode/srv/Schedular.srv"
   "${MSG_I_FLAGS}"
   ""
   ${CATKIN_DEVEL_PREFIX}/${gennodejs_INSTALL_DIR}/CentralNode
 )
 _generate_srv_nodejs(CentralNode
-  "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/CentralNode/srv/ScrewList.srv"
+  "/home/himaet23/EwasteNonDestructiveDisassembly/src/CentralNode/srv/ScrewList.srv"
   "${MSG_I_FLAGS}"
   ""
   ${CATKIN_DEVEL_PREFIX}/${gennodejs_INSTALL_DIR}/CentralNode
@@ -218,11 +268,11 @@ add_custom_target(CentralNode_generate_messages_nodejs
 add_dependencies(CentralNode_generate_messages CentralNode_generate_messages_nodejs)
 
 # add dependencies to all check dependencies targets
-get_filename_component(_filename "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/CentralNode/msg/node_response.msg" NAME_WE)
+get_filename_component(_filename "/home/himaet23/EwasteNonDestructiveDisassembly/src/CentralNode/msg/node_response.msg" NAME_WE)
 add_dependencies(CentralNode_generate_messages_nodejs _CentralNode_generate_messages_check_deps_${_filename})
-get_filename_component(_filename "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/CentralNode/srv/Schedular.srv" NAME_WE)
+get_filename_component(_filename "/home/himaet23/EwasteNonDestructiveDisassembly/src/CentralNode/srv/Schedular.srv" NAME_WE)
 add_dependencies(CentralNode_generate_messages_nodejs _CentralNode_generate_messages_check_deps_${_filename})
-get_filename_component(_filename "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/CentralNode/srv/ScrewList.srv" NAME_WE)
+get_filename_component(_filename "/home/himaet23/EwasteNonDestructiveDisassembly/src/CentralNode/srv/ScrewList.srv" NAME_WE)
 add_dependencies(CentralNode_generate_messages_nodejs _CentralNode_generate_messages_check_deps_${_filename})
 
 # target for backward compatibility
@@ -235,7 +285,7 @@ list(APPEND ${PROJECT_NAME}_EXPORTED_TARGETS CentralNode_generate_messages_nodej
 ### Section generating for lang: genpy
 ### Generating Messages
 _generate_msg_py(CentralNode
-  "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/CentralNode/msg/node_response.msg"
+  "/home/himaet23/EwasteNonDestructiveDisassembly/src/CentralNode/msg/node_response.msg"
   "${MSG_I_FLAGS}"
   ""
   ${CATKIN_DEVEL_PREFIX}/${genpy_INSTALL_DIR}/CentralNode
@@ -243,13 +293,13 @@ _generate_msg_py(CentralNode
 
 ### Generating Services
 _generate_srv_py(CentralNode
-  "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/CentralNode/srv/Schedular.srv"
+  "/home/himaet23/EwasteNonDestructiveDisassembly/src/CentralNode/srv/Schedular.srv"
   "${MSG_I_FLAGS}"
   ""
   ${CATKIN_DEVEL_PREFIX}/${genpy_INSTALL_DIR}/CentralNode
 )
 _generate_srv_py(CentralNode
-  "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/CentralNode/srv/ScrewList.srv"
+  "/home/himaet23/EwasteNonDestructiveDisassembly/src/CentralNode/srv/ScrewList.srv"
   "${MSG_I_FLAGS}"
   ""
   ${CATKIN_DEVEL_PREFIX}/${genpy_INSTALL_DIR}/CentralNode
@@ -267,11 +317,11 @@ add_custom_target(CentralNode_generate_messages_py
 add_dependencies(CentralNode_generate_messages CentralNode_generate_messages_py)
 
 # add dependencies to all check dependencies targets
-get_filename_component(_filename "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/CentralNode/msg/node_response.msg" NAME_WE)
+get_filename_component(_filename "/home/himaet23/EwasteNonDestructiveDisassembly/src/CentralNode/msg/node_response.msg" NAME_WE)
 add_dependencies(CentralNode_generate_messages_py _CentralNode_generate_messages_check_deps_${_filename})
-get_filename_component(_filename "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/CentralNode/srv/Schedular.srv" NAME_WE)
+get_filename_component(_filename "/home/himaet23/EwasteNonDestructiveDisassembly/src/CentralNode/srv/Schedular.srv" NAME_WE)
 add_dependencies(CentralNode_generate_messages_py _CentralNode_generate_messages_check_deps_${_filename})
-get_filename_component(_filename "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/CentralNode/srv/ScrewList.srv" NAME_WE)
+get_filename_component(_filename "/home/himaet23/EwasteNonDestructiveDisassembly/src/CentralNode/srv/ScrewList.srv" NAME_WE)
 add_dependencies(CentralNode_generate_messages_py _CentralNode_generate_messages_check_deps_${_filename})
 
 # target for backward compatibility
@@ -314,6 +364,17 @@ if(genlisp_INSTALL_DIR AND EXISTS ${CATKIN_DEVEL_PREFIX}/${genlisp_INSTALL_DIR}/
 endif()
 if(TARGET std_msgs_generate_messages_lisp)
   add_dependencies(CentralNode_generate_messages_lisp std_msgs_generate_messages_lisp)
+endif()
+
+if(genmypy_INSTALL_DIR AND EXISTS ${CATKIN_DEVEL_PREFIX}/${genmypy_INSTALL_DIR}/CentralNode)
+  # install generated code
+  install(
+    DIRECTORY ${CATKIN_DEVEL_PREFIX}/${genmypy_INSTALL_DIR}/CentralNode
+    DESTINATION ${genmypy_INSTALL_DIR}
+  )
+endif()
+if(TARGET std_msgs_generate_messages_mypy)
+  add_dependencies(CentralNode_generate_messages_mypy std_msgs_generate_messages_mypy)
 endif()
 
 if(gennodejs_INSTALL_DIR AND EXISTS ${CATKIN_DEVEL_PREFIX}/${gennodejs_INSTALL_DIR}/CentralNode)

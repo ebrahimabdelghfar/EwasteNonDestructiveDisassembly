@@ -1,4 +1,4 @@
-prefix=/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/ft_sensor_driver
+prefix=/home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/ft_sensor_driver
 
 Name: ft_sensor_driver
 Description: Description of ft_sensor_driver

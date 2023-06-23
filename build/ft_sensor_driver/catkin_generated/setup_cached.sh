@@ -7,9 +7,9 @@
 # new environment variables
 
 # modified environment variables
-export CMAKE_PREFIX_PATH="/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/ft_sensor_driver:$CMAKE_PREFIX_PATH"
-export LD_LIBRARY_PATH="/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/ft_sensor_driver/lib:$LD_LIBRARY_PATH"
-export PWD='/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/build/ft_sensor_driver'
-export PYTHONPATH="/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/ft_sensor_driver/lib/python3/dist-packages:$PYTHONPATH"
-export ROSLISP_PACKAGE_DIRECTORIES="/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/ft_sensor_driver/share/common-lisp:$ROSLISP_PACKAGE_DIRECTORIES"
-export ROS_PACKAGE_PATH="/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/ft_sensor_driver:$ROS_PACKAGE_PATH"
+export CMAKE_PREFIX_PATH="/home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/ft_sensor_driver:$CMAKE_PREFIX_PATH"
+export LD_LIBRARY_PATH="/home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/ft_sensor_driver/lib:$LD_LIBRARY_PATH"
+export PWD='/home/himaet23/EwasteNonDestructiveDisassembly/build/ft_sensor_driver'
+export PYTHONPATH="/home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/ft_sensor_driver/lib/python3/dist-packages:$PYTHONPATH"
+export ROSLISP_PACKAGE_DIRECTORIES="/home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/ft_sensor_driver/share/common-lisp:$ROSLISP_PACKAGE_DIRECTORIES"
+export ROS_PACKAGE_PATH="/home/himaet23/EwasteNonDestructiveDisassembly/src/ft_sensor_driver:$ROS_PACKAGE_PATH"

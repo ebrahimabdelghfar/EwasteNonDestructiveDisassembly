@@ -4,5 +4,5 @@ PROJECT_PKG_CONFIG_INCLUDE_DIRS = "".split(';') if "" != "" else []
 PROJECT_CATKIN_DEPENDS = "".replace(';', ' ')
 PKG_CONFIG_LIBRARIES_WITH_PREFIX = "".split(';') if "" != "" else []
 PROJECT_NAME = "realsense2_description"
-PROJECT_SPACE_DIR = "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/realsense2_description"
+PROJECT_SPACE_DIR = "/home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/realsense2_description"
 PROJECT_VERSION = "2.3.2"

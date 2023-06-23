@@ -1,10 +1,10 @@
 
 "use strict";
 
-let EGMState = require('./EGMState.js');
 let EGMChannelState = require('./EGMChannelState.js');
+let EGMState = require('./EGMState.js');
 
 module.exports = {
-  EGMState: EGMState,
   EGMChannelState: EGMChannelState,
+  EGMState: EGMState,
 };

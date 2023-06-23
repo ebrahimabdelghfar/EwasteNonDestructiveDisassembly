@@ -1,8 +1,8 @@
 file(REMOVE_RECURSE
-  "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/realsense2_camera/share/gennodejs/ros/realsense2_camera/msg/Extrinsics.js"
-  "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/realsense2_camera/share/gennodejs/ros/realsense2_camera/msg/IMUInfo.js"
-  "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/realsense2_camera/share/gennodejs/ros/realsense2_camera/msg/Metadata.js"
-  "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/realsense2_camera/share/gennodejs/ros/realsense2_camera/srv/DeviceInfo.js"
+  "/home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/realsense2_camera/share/gennodejs/ros/realsense2_camera/msg/Extrinsics.js"
+  "/home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/realsense2_camera/share/gennodejs/ros/realsense2_camera/msg/IMUInfo.js"
+  "/home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/realsense2_camera/share/gennodejs/ros/realsense2_camera/msg/Metadata.js"
+  "/home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/realsense2_camera/share/gennodejs/ros/realsense2_camera/srv/DeviceInfo.js"
   "CMakeFiles/realsense2_camera_generate_messages_nodejs"
 )
 

@@ -4,5 +4,5 @@ PROJECT_PKG_CONFIG_INCLUDE_DIRS = "".split(';') if "" != "" else []
 PROJECT_CATKIN_DEPENDS = "".replace(';', ' ')
 PKG_CONFIG_LIBRARIES_WITH_PREFIX = "".split(';') if "" != "" else []
 PROJECT_NAME = "abb_irb120_moveit_config"
-PROJECT_SPACE_DIR = "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/abb_irb120_moveit_config"
+PROJECT_SPACE_DIR = "/home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/abb_irb120_moveit_config"
 PROJECT_VERSION = "0.2.0"

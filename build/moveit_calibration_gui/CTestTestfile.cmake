@@ -1,6 +1,6 @@
 # CMake generated Testfile for 
-# Source directory: /home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/Perception/moveit_calibration/moveit_calibration_gui
-# Build directory: /home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/build/moveit_calibration_gui
+# Source directory: /home/himaet23/EwasteNonDestructiveDisassembly/src/Perception/moveit_calibration/moveit_calibration_gui
+# Build directory: /home/himaet23/EwasteNonDestructiveDisassembly/build/moveit_calibration_gui
 # 
 # This file includes the relevant testing commands required for 
 # testing this directory and lists subdirectories to be tested as well.
