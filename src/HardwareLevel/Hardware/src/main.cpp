@@ -89,10 +89,5 @@ void setup() {
 }
 
 void loop() {
-  // if(digitalRead(LimitSwitchPin)==HIGH){
-  //   Object.data = 1;
-  //   LimitSwitch.publish(&Object);
-  //   nh.loginfo("Object is detected");
-  // }
   nh.spinOnce();
 }

@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import rospy
 from enums.nodes import Nodes
 from enums.response_status import Response

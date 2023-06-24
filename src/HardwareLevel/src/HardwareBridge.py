@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import rospy
 from enums.topics import Topics
 from enums.nodes import Nodes

@@ -47,7 +47,9 @@ class HeartBeat:
                 Run = roslaunch.core.Node(package=self.NodeInfo[node][0],node_type=self.NodeInfo[node][1],name =self.NodeInfo[node][2])
             else:
                 #if the node has arguments
-                Run = roslaunch.core.Node(package=self.NodeInfo[node][0],node_type=self.NodeInfo[node][1],name =self.NodeInfo[node][2],args=self.NodeInfo[node][3])
+                rospy.set_param(self.NodeInfo[node][3],self.NodeInfo[node][4])
+                rospy.set_param(self.NodeInfo[node][5],self.NodeInfo[node][6])
+                Run = roslaunch.core.Node(package=self.NodeInfo[node][0],node_type=self.NodeInfo[node][1],name =self.NodeInfo[node][2])
             process=self.launch.launch(Run)
             while True:
                 '''ensure that the node is running'''

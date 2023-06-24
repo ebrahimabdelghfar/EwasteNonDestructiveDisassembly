@@ -26,7 +26,8 @@ class Nodes(Enum):
                        CHECK_MOTOR,
                        APPROACH_AND_ENGAGE,
                        UNSCREW,
-                       MILLING]
+                       MILLING,
+                       HardwareInterface]
     #dictionary that contains the information about the nodes [pkgname , executable , node name]
     NodesToBeOperatedInfo = {CHECK_MOTOR : ["checkMotors","checkMotorsNode.py" ,CHECK_MOTOR],
                              HeartBeat : ["CentralNode" , "heartBeat.py" , HeartBeat],
@@ -38,9 +39,10 @@ class Nodes(Enum):
                              APPROACH_AND_ENGAGE : ["control","ApprochAndEngaging.py",APPROACH_AND_ENGAGE],
                              MILLING : ["control","millingNode.py",MILLING],
                              CLAMPING: ["HardwareLevel","HardwareBridge.py",CLAMPING],
-                             HardwareInterface : ["rosserial_python","serial_node.py",HardwareInterface,"_port:=/dev/ttyACM0 _baud:=115200"]
+                             HardwareInterface : ["rosserial_python","serial_node.py",HardwareInterface,"/"+HardwareInterface+"/port","/dev/ttyACM0","/"+HardwareInterface+"/baud","115200"]
                             }
     StartSequance=[CHECK_MOTOR,
+                   HardwareInterface,
                    FORCE,
                    ForceFiltered,
                    VISION,
@@ -51,4 +53,5 @@ class Nodes(Enum):
                    MILLING,
                    COLLISION_DETECTION,
                    CENTRAL,
-                   HeartBeat]
+                   HeartBeat
+                   ]

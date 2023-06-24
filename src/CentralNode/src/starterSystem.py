@@ -3,7 +3,6 @@ import rospy
 import roslaunch
 import rosnode
 from enums.nodes import Nodes
-
 class starterSystem:
     '''
     Objective : this node is repsonsible for starting the Autonmoous system and ensure everything is running
@@ -11,8 +10,10 @@ class starterSystem:
     def __init__(self) -> None:
 
         roslaunch.pmon._init_signal_handlers = self.dummy_function
-        rospy.init_node(Nodes.HeartBeat.value)
+        rospy.init_node("starterSystem")
         #initiate the roslaunch api
+        uuid = roslaunch.rlutil.get_or_generate_uuid(None, False)
+        roslaunch.configure_logging(uuid)
         self.launch = roslaunch.scriptapi.ROSLaunch()
         self.launch.start()
         #list all the runnung nodes
@@ -27,8 +28,9 @@ class starterSystem:
                 #if the node does not have any arguments
                 Run = roslaunch.core.Node(package=self.NodeInfo[node][0],node_type=self.NodeInfo[node][1],name =self.NodeInfo[node][2])
             else:
-                #if the node has arguments
-                Run = roslaunch.core.Node(package=self.NodeInfo[node][0],node_type=self.NodeInfo[node][1],name =self.NodeInfo[node][2],args=self.NodeInfo[node][3])
+                rospy.set_param(self.NodeInfo[node][3],self.NodeInfo[node][4])
+                rospy.set_param(self.NodeInfo[node][5],self.NodeInfo[node][6])
+                Run = roslaunch.core.Node(package=self.NodeInfo[node][0],node_type=self.NodeInfo[node][1],name =self.NodeInfo[node][2])
             process=self.launch.launch(Run)
             while True:
                 '''ensure that the node is running'''
