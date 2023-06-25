@@ -1,3 +1,6 @@
 ---
 float64[] waypoints 
 int32[] waypoint_types
+int32[] checkTorque
+float64[] velocity
+float64[] acceleration 

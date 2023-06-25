@@ -38,12 +38,15 @@ sys.path.append("/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/resou
 from helper.robot_helper import RobotControl, frames_transformations
 import numpy as np
 import tf.transformations
-<<<<<<< HEAD
-=======
+from enums.nodes import Nodes
+from enums.operations import OPERATIONS
+from enums.topics import Topics
+from enums.response_status import Response
+from CentralNode.msg import node_response
+
 
 from path_planning.tsp import PathPlanning
 
->>>>>>> 3e8031fd5ac3e6e6150303f4f5347f87cb67b45b
 #Robot Control imports
 
 class PerceptionNode():
@@ -59,7 +62,7 @@ class PerceptionNode():
         self.yErr=0.013
         self.zErr=-0.02
 
-        self.Controller=RobotControl(node_name="Perception",group_name="ScrewIn")
+        self.Controller=RobotControl(node_name=Nodes.VISION.value,group_name="ScrewIn")
         self.framesTransformer=frames_transformations()
         self.rate = rospy.Rate(200)
         #camera viewing dimensions
@@ -211,17 +214,6 @@ class PerceptionNode():
                 screwlist=self.scan(3)        
                 screwlist=self.identifyScrewsNoRepetitions(screwlist)
                 screwlist=self.resolve_dimensional_errors(screwlist)
-<<<<<<< HEAD
-                print('******************************')
-                print('final screw list is :')
-                print(screwlist)
-                print('******************************')
-
-                for pose in screwlist:
-                    print(pose)
-                    # self.Controller.go_to_pose_goal_cartesian(pose,0.1,0.1,Replanning=True ,WaitFlag=False)
-                self.publishReadings(screwlist)
-=======
                 pathPlanning = PathPlanning(screws=screwlist)
                 optimal_screw_list = pathPlanning.getOptimalPath()
                 currentPose = self.Controller.get_pose()
@@ -230,7 +222,6 @@ class PerceptionNode():
                 if currentToLast < currentToFirst :
                     optimal_screw_list.reverse()
                 self.publishReadings(optimal_screw_list)
->>>>>>> 3e8031fd5ac3e6e6150303f4f5347f87cb67b45b
                 self.rate.sleep()
                 break
     def scan(self, scantimes) -> list:

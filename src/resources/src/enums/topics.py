@@ -12,4 +12,4 @@ class Topics(Enum):
     FINISHED_MILLING = "FINISHED_MILLING"
     ScrewDriverMOTOR_COMMAND = "MOTOR_COMMAND"
     ForceSensorWrench = "ft_sensor_wrench/wrench/raw"
-
+    ForceSensorWrenchWeightedFilter = "ft_sensor_wrench/wrench/weighted_filtered"
