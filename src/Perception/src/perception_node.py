@@ -33,6 +33,8 @@ from robot_helper import RobotControl, frames_transformations
 import numpy as np
 import tf.transformations
 
+from path_planning.tsp import PathPlanning
+
 #Robot Control imports
 
 class PerceptionNode():
@@ -195,7 +197,14 @@ class PerceptionNode():
                 screwlist=self.scan(3)        
                 screwlist=self.identifyScrewsNoRepetitions(screwlist)
                 screwlist=self.resolve_dimensional_errors(screwlist)
-                self.publishReadings(screwlist)
+                pathPlanning = PathPlanning(screws=screwlist)
+                optimal_screw_list = pathPlanning.getOptimalPath()
+                currentPose = self.Controller.get_pose()
+                currentToFirst = np.linalg.norm(optimal_screw_list[0][:3] - currentPose[:3])
+                currentToLast = np.linalg.norm(optimal_screw_list[-1][:3] - currentPose[:3])
+                if currentToLast < currentToFirst :
+                    optimal_screw_list.reverse()
+                self.publishReadings(optimal_screw_list)
                 self.rate.sleep()
                 break
     def scan(self, scantimes) -> list:
@@ -355,4 +364,5 @@ perception.Controller.go_to_pose_goal_cartesian([0.453595495268664+perception.xE
 # pose[1]=-0.006646629530442587+0.013#(-0.14140713919044348+-0.14010437566336098+-0.13901984749554222)/3
 # pose[2]=0.26666028665252534-0.018
 # perception.Controller.go_to_pose_goal_cartesian(pose,0.1,0.1)
+
 
