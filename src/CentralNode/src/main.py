@@ -1,7 +1,8 @@
+#!/usr/bin/env python3
 import rospy
 from enums.nodes import Nodes
 from enums.response_status import Response
-from CentralNode.srv import ScrewList, Schedular, ScrewListResponse, SchedularResponse
+from CentralNode.srv import *
 from enums.nodes import Nodes
 from enums.topics import Topics
 from enums.services import Services
@@ -52,6 +53,7 @@ class CentralNode:
         except:
             screwIndex = 0
         response.screwList = screwList[(screwIndex+1)*6:]
+        print("Service response: ", response.screwList)
         return response
     
     def getSchedular(self,req):
@@ -81,6 +83,7 @@ class CentralNode:
         rate = rospy.Rate(10)
 
         while not rospy.is_shutdown():
+            print("Central node is starting... ", self.currentNode)
             self.publishers[Topics.NODE_TO_OPERATE].publish(self.currentNode)
             rospy.spin()
 
@@ -95,6 +98,9 @@ class CentralNode:
                 
 
     def nodeSuccessCallback(self,nodeResponse:NodeResponse):
+        print("Current node: ", self.currentNode)
+        print("Recieved: ", nodeResponse.status)
+        print("Recieved: ", nodeResponse.extraMessage)
         if nodeResponse.status == Response.IN_PROGRESS.value:
             handleInProgress(self.currentNode, nodeResponse, self.currentSchedule)
         elif nodeResponse.status == Response.SUCCESSFULL.value:

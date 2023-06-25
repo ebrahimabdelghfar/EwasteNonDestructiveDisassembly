@@ -7,7 +7,7 @@ def reshapeList(ListOfscrews)->list:
     ListOfscrews = [ListOfscrews[i:i+6] for i in range(0, len(ListOfscrews), 6)]
 
 rospy.init_node("test")
-rospy.wait_for_service(Services.SCHEDULAR.value)
-test=rospy.ServiceProxy(Services.SCHEDULAR.value,Schedular)
+rospy.wait_for_service("test")
+test=rospy.ServiceProxy("test",Schedular)
 resp:SchedularResponse=test(SchedularRequest())
-reshapeList(resp.waypoints)
+print(list(resp.waypoints))

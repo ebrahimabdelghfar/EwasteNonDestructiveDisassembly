@@ -9,7 +9,7 @@
 #define MotorPinB 9
 #define MotorPinPWM 6
 #define MillingPinA 10
-#define LimitSwitchPin 8
+#define LimitSwitchPin 7
 
 bool state = true;
 // initialize ros node handle
@@ -65,7 +65,7 @@ void MillingCallback(const std_msgs::Int32& msg){
     nh.loginfo("Milling is not working");
   }
 }
-ros::Subscriber<std_msgs::Int32> sub_finishing("/NodeToOperate", &callback);
+ros::Subscriber<std_msgs::Int32> sub_finishing("/NODE_TO_OPERATE", &callback);
 ros::Subscriber<std_msgs::Int32> Motor("/MOTOR_COMMAND", &MotorCallback);
 ros::Subscriber<std_msgs::Int32> Milling("/Milling_COMMAND", &MillingCallback);
 void setup() {
@@ -73,6 +73,7 @@ void setup() {
   pinMode(MillingPinA,OUTPUT);
   pinMode(MotorPinA,OUTPUT);
   pinMode(MotorPinB,OUTPUT);
+  pinMode(MotorPinPWM,OUTPUT);
   pinMode(ClampingPinA,OUTPUT);
   pinMode(ClampingPinB,OUTPUT);
   pinMode(LimitSwitchPin,INPUT);

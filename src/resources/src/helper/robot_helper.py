@@ -59,6 +59,7 @@ class RobotControl:
         # stop the robot
         self.move_group.clear_pose_targets()
         self.move_group.stop()
+        print("stop")
         pass
     def get_joint_state(self)->list:
         '''
