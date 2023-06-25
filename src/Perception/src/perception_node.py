@@ -38,6 +38,12 @@ sys.path.append("/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/resou
 from helper.robot_helper import RobotControl, frames_transformations
 import numpy as np
 import tf.transformations
+<<<<<<< HEAD
+=======
+
+from path_planning.tsp import PathPlanning
+
+>>>>>>> 3e8031fd5ac3e6e6150303f4f5347f87cb67b45b
 #Robot Control imports
 
 class PerceptionNode():
@@ -205,6 +211,7 @@ class PerceptionNode():
                 screwlist=self.scan(3)        
                 screwlist=self.identifyScrewsNoRepetitions(screwlist)
                 screwlist=self.resolve_dimensional_errors(screwlist)
+<<<<<<< HEAD
                 print('******************************')
                 print('final screw list is :')
                 print(screwlist)
@@ -214,6 +221,16 @@ class PerceptionNode():
                     print(pose)
                     # self.Controller.go_to_pose_goal_cartesian(pose,0.1,0.1,Replanning=True ,WaitFlag=False)
                 self.publishReadings(screwlist)
+=======
+                pathPlanning = PathPlanning(screws=screwlist)
+                optimal_screw_list = pathPlanning.getOptimalPath()
+                currentPose = self.Controller.get_pose()
+                currentToFirst = np.linalg.norm(optimal_screw_list[0][:3] - currentPose[:3])
+                currentToLast = np.linalg.norm(optimal_screw_list[-1][:3] - currentPose[:3])
+                if currentToLast < currentToFirst :
+                    optimal_screw_list.reverse()
+                self.publishReadings(optimal_screw_list)
+>>>>>>> 3e8031fd5ac3e6e6150303f4f5347f87cb67b45b
                 self.rate.sleep()
                 break
     def scan(self, scantimes) -> list:
@@ -395,7 +412,10 @@ for pose in [[0.34711396910828807, 0.10621894401154695, 0.22885591235556224, -3.
 # perception.Controller.go_to_pose_goal_cartesian(pose,0.1,0.1)
 
 
+<<<<<<< HEAD
 
 
 ########
 
+=======
+>>>>>>> 3e8031fd5ac3e6e6150303f4f5347f87cb67b45b
