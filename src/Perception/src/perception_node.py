@@ -45,7 +45,7 @@ from enums.response_status import Response
 from CentralNode.msg import node_response
 
 
-from path_planning.tsp import PathPlanning
+from tsp import PathPlanning
 
 #Robot Control imports
 
@@ -58,7 +58,7 @@ class PerceptionNode():
        
         #CAD related parameters
         self.start_position=[0.3162318772410906, 0.00527568967887596, 0.37, -3.1415189863509134, 0.007510451851129454, 1.7006139777966402e-05]
-        self.xErr=0.00
+        self.xErr=0.06
         self.yErr=0.013
         self.zErr=-0.02
 
@@ -214,14 +214,21 @@ class PerceptionNode():
                 screwlist=self.scan(3)        
                 screwlist=self.identifyScrewsNoRepetitions(screwlist)
                 screwlist=self.resolve_dimensional_errors(screwlist)
-                pathPlanning = PathPlanning(screws=screwlist)
-                optimal_screw_list = pathPlanning.getOptimalPath()
-                currentPose = self.Controller.get_pose()
-                currentToFirst = np.linalg.norm(optimal_screw_list[0][:3] - currentPose[:3])
-                currentToLast = np.linalg.norm(optimal_screw_list[-1][:3] - currentPose[:3])
-                if currentToLast < currentToFirst :
-                    optimal_screw_list.reverse()
-                self.publishReadings(optimal_screw_list)
+                if len(screwlist) != 0:
+                    pathPlanning = PathPlanning(screws=screwlist)
+                    optimal_screw_list = pathPlanning.getOptimalPath()
+                    currentPose = self.Controller.get_pose()
+                    currentToFirst = np.linalg.norm(np.array(optimal_screw_list[0][:3]) - np.array(currentPose[:3]))
+                    currentToLast = np.linalg.norm(np.array(optimal_screw_list[-1][:3]) - np.array(currentPose[:3]))
+                    if currentToLast < currentToFirst :
+                        optimal_screw_list.reverse()
+                    screwlist = optimal_screw_list
+                    print('ctf')
+                    print(currentToFirst)
+                    print('ctl')
+                    print(currentToLast)
+                print(screwlist)
+                self.publishReadings(screwlist)
                 self.rate.sleep()
                 break
     def scan(self, scantimes) -> list:
@@ -373,40 +380,24 @@ class PerceptionNode():
     def flatten_list(screwList):
         return np.ndarray.flatten(screwList).tolist()
 perception=PerceptionNode()
-print('going')
-poses=[[[-0.3891096361720125, -0.14140713919044348, 0.2658808782237093, -3.124602683849082, -0.03132426481035682, 0.07162559637905236]], [[0.3918651429926565, -0.14010437566336098, 0.2661601810433043, -3.1245015720859857, -0.031367289757117625, 0.07170965843847281]], [], [[0.39608204451047097, -0.13901984749554222, 0.2647303779937681, -3.1245849122485696, -0.03135253569258669, 0.07163470980541461]], [], [], []]
-# print('before filtering:')
-# for pose in poses:
-#     print(pose)
-# print('filtered positions are:')
-# print(perception.identifyScrewsNoRepetitions(poses))
+
 print('robot pose now is' )
-# print(perception.Controller.get_pose())
+
 # perception.launchNode()
 
-perception.Controller.go_to_pose_goal_cartesian(perception.start_position)
-for pose in [[0.34711396910828807, 0.10621894401154695, 0.22885591235556224, -3.1234219376433163, -0.019679874207329185, 0.07187405654710521], [0.40780587973352156, 0.01093116080164376, 0.23322380448934996, -3.1234508738028617, -0.019749587089634583, 0.07186512207527078], [0.4797201531101193, 0.11281772950247299, 0.22395172103126423, -3.123443542718829, -0.01972674249810746, 0.07185099583728045], [0.4940959682266605, -0.1782892343819768, 0.12268609233677506, -3.123422181507349, -0.01964091502558812, 0.07185900665258996]]:
-    perception.Controller.go_to_pose_goal_cartesian(pose,velocity=0.1,acceleration=0.1,WaitFlag=True)
+
+# perception.Controller.go_to_pose_goal_cartesian(perception.start_position,WaitFlag=False,Replanning=True)
+for pose in [[0.47710400520641366, -0.11046797353563607, 0.23023100100252616, -3.1233748584275256, -0.019575713281744633, 0.07179860539280118], [0.4702945002682796, 0.09184156196357364, 0.22757841108337573, -3.123469054634896, -0.019434265072632448, 0.07172652965307563], [0.6141845673484798, 0.08566545395489601, 0.230585793964198, -3.123383589047141, -0.019602182239684737, 0.07181443359027312]]:#, [0.4789581585009405, 0.08734039397262694, 0.2281115995843613, -3.123353463786254, -0.019752707064285564, 0.0719479255017568], [0.6144489532198474, 0.08569876785154842, 0.2304276471193916, -3.1233582483873383, -0.019690564834239834, 0.07178573224334173]]:
+    
+    # perception.Controller.go_to_pose_goal_cartesian(pose,velocity=0.1,acceleration=0.1,WaitFlag=False,Replanning=True)
     time.sleep(0.5)
     curpos=perception.Controller.get_pose()
     curpos[2]+=0.02
-    perception.Controller.go_to_pose_goal_cartesian(curpos,velocity=0.1,acceleration=0.1,WaitFlag=True)
+    # perception.Controller.go_to_pose_goal_cartesian(curpos,velocity=0.1,acceleration=0.1,WaitFlag=True)
 # perception.Controller.go_to_pose_goal_cartesian(perception.start_position,1)
-# time.sleep(4)
-# perception.Controller.go_to_pose_goal_cartesian([0.4237, -0.0047, 0.2493+perception.zErr, -3.1232772777964883, -0.019748814102031206, 0.0718451779134633],1)
-# pose=poses[0][0].copy()
-# print('final pose is')
-# print(pose)
-# pose[0]=0.4467591172735064+0.006#(0.3891096361720125+0.3918651429926565+0.39608204451047097)/3
-# pose[1]=-0.006646629530442587+0.013#(-0.14140713919044348+-0.14010437566336098+-0.13901984749554222)/3
-# pose[2]=0.26666028665252534-0.018
-# perception.Controller.go_to_pose_goal_cartesian(pose,0.1,0.1)
 
 
-<<<<<<< HEAD
 
 
 ########
 
-=======
->>>>>>> 3e8031fd5ac3e6e6150303f4f5347f87cb67b45b
