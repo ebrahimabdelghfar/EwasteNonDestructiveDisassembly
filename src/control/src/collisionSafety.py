@@ -1,39 +1,36 @@
 #!/usr/bin/env python
-
 import rospy
-from std_msgs.msg import String
-from std_msgs.msg import Int64
 from std_msgs.msg import Bool
-# Replace with the appropriate message type for your topic
-from std_msgs.msg import Float32
-
-from geometry_msgs.msg import Wrench, WrenchStamped
+from geometry_msgs.msg import  WrenchStamped
 from enums.nodes import Nodes
 from enums.topics import Topics
 # Intial values for torque and force variables
-fx = 0
-fy = 0
-fz = 0
-tx = 0
-ty = 0
-tz = 0
+class Collision:
+    def __init__(self,forceCollisionLimit,tourqeCollisionLimit) -> None:
+        rospy.init_node(Nodes.COLLISION_DETECTION.value)
+        rospy.Subscriber(Topics.START_COLLISION_DETECTED.value,Bool, startCollisionCallback)
+        rospy.Subscriber(Topics.ForceSensorWrench.value,WrenchStamped, ftCallback)
+        self.fx = 0
+        self.fy = 0
+        self.fz = 0
+        self.tx = 0
+        self.ty = 0
+        self.tz = 0
+        # Collision Detection Start flag
+        self.startCollisionDetection_Flag = 0
+        # Measured limits for force and torque
+        self.forceCollisionLimit = forceCollisionLimit
+        self.torqueCollisionLimit = tourqeCollisionLimit
+        # .data for publishing
+        self.False_data = Bool()
+        self.True_data = Bool()
+        self.True_data.data = True
+        self.False_data.data = False
+        pass
 
-# Collision Detection Start flag
-startCollisionDetection_Flag = 0
 
-# Variables to be plotted
-x_data = []
-y_data = []
 
-# .data for publishing
-False_data = Bool()
-True_data = Bool()
-True_data.data = True
-False_data.data = False
 
-# Measured limits for force and torque
-forceCollisionLimit = 14
-torqueCollisionLimit = 0.5
 
 # Force sensor reading and plotting
 def ftCallback(ftSensor_incomingReading):
@@ -84,10 +81,7 @@ def startCollisionCallback(startCollisionDetection_data):
 
 if __name__ == '__main__':
     try:
-        rospy.init_node('collisionDetection', anonymous=True)
-        collisionDetectedPub = rospy.Publisher(Topics.COLLISION_DETECTED.value, Bool, queue_size=1)
-        rospy.Subscriber(Topics.START_COLLISION_DETECTION.value,Bool, startCollisionCallback)
-        rospy.Subscriber(Topics.ForceSensorWrench.value,WrenchStamped, ftCallback)
+
         while not rospy.is_shutdown():
 
             # plt.figure()

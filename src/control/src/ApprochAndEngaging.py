@@ -15,8 +15,8 @@ import numpy as np
 from CentralNode.srv import ScrewList
 class ApprochAndEngaging:
     def __init__(self,tourqeToStop) -> None:
-        # self.RobotJoystick = RobotControl(node_name=Nodes.APPROACH_AND_ENGAGE.value,group_name="ScrewIn")
-        # self.TransformCalculator = frames_transformations()
+        self.RobotJoystick = RobotControl(node_name=Nodes.APPROACH_AND_ENGAGE.value,group_name="ScrewIn")
+        self.TransformCalculator = frames_transformations()
         #editabel parameters
         rospy.init_node(Nodes.APPROACH_AND_ENGAGE.value)
         self.unscrewNo = OPERATIONS.index(Nodes.APPROACH_AND_ENGAGE)
@@ -52,6 +52,11 @@ class ApprochAndEngaging:
         @type Pose: list [x,y,z,roll,pitch,yaw]
         '''
         self.RobotJoystick.go_to_pose_goal_cartesian(Pose,velocity=velocity,acceleration=acceleration,Replanning=True,WaitFlag=False)
+        while True:
+            print(f"the force is in {self.SensorRead.wrench.force.z}")
+            if math.ceil(self.SensorRead.wrench.force.z)==3.01:
+                break
+            pass
         pass
 
     def engage(self,timeStep,NowScrew,PostionTolerance)->None:
@@ -195,9 +200,9 @@ class ApprochAndEngaging:
                 self.NodeSuccess.publish(state)  
             
 
-test=ApprochAndEngaging(0.5)
+test=ApprochAndEngaging(-0.15)
 waysTest= [0.3935, -0.1186, 0.2469-0.005, -3.1232910411003725, -0.019481121950260524, 0.07178239976862723]
 
 # test.Approach(waysTest,velocity=0.1,acceleration=0.1)
-# # test.Spiralshape(0.01)
-test.main()
+test.engage(0.01)
+# test.main()

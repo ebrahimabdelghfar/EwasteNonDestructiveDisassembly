@@ -2,7 +2,7 @@ import rospy
 from enums.nodes import Nodes
 from enums.response_status import Response
 from CentralNode.srv import ScrewList, Schedular, ScrewListResponse, SchedularResponse
-#from enums.nodes import Nodes
+from enums.nodes import Nodes
 from enums.topics import Topics
 from enums.services import Services
 from std_msgs.msg import Int32, Bool

@@ -38,7 +38,7 @@ void MotorCallback(const std_msgs::Int32& msg){
   if(msg.data==1){
     digitalWrite(MotorPinA,HIGH);
     digitalWrite(MotorPinB,LOW);
-    analogWrite(MotorPinPWM,150);
+    analogWrite(MotorPinPWM,250);
     nh.loginfo("Motor is cc working");
   }
   else if(msg.data==0){
@@ -50,7 +50,7 @@ void MotorCallback(const std_msgs::Int32& msg){
   else if(msg.data==2){
     digitalWrite(MotorPinA,LOW);
     digitalWrite(MotorPinB,HIGH);
-    analogWrite(MotorPinPWM,150);
+    analogWrite(MotorPinPWM,250);
     nh.loginfo("Motor is cw working");
   }
 }

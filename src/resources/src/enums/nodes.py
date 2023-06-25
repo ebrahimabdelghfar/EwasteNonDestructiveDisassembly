@@ -14,7 +14,7 @@ class Nodes(Enum):
     MILLING = "MILLING"
     HeartBeat = "HeartBeat"
     ForceFiltered="ForceFiltered"
-    HardwareInterface="Arduino"
+    HardwareInterface="Arduino1"
     #list that contains all the nodes that always should be running
     NodesToBeOperated=[FORCE,
                        ForceFiltered,
@@ -41,14 +41,12 @@ class Nodes(Enum):
                              HardwareInterface : ["rosserial_python","serial_node.py",HardwareInterface,"_port:=/dev/ttyACM0 _baud:=115200"]
                             }
     StartSequance=[CHECK_MOTOR,
-                   FORCE,
-                   ForceFiltered,
-                   VISION,
-                   CLAMPING,
-                   CHANGE_TOOL,
-                   APPROACH_AND_ENGAGE,
-                   UNSCREW,
-                   MILLING,
-                   COLLISION_DETECTION,
-                   CENTRAL,
-                   HeartBeat]
+                   HardwareInterface,
+                   #CLAMPING,
+                   #CHANGE_TOOL,
+                   #APPROACH_AND_ENGAGE,
+                   #UNSCREW,
+                   #MILLING,
+                   #CENTRAL,
+                   #HeartBeat
+                   ]
