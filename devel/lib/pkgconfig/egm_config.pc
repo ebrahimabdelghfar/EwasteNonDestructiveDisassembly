@@ -1,0 +1,1 @@
+/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/egm_config/lib/pkgconfig/egm_config.pc

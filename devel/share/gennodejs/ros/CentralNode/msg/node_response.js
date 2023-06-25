@@ -1,0 +1,1 @@
+/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/CentralNode/share/gennodejs/ros/CentralNode/msg/node_response.js

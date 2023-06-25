@@ -1,0 +1,7 @@
+set(resources_SETUP_PY_SETUP_MODULE "distutils.core")
+set(resources_SETUP_PY_VERSION "0.0.0")
+set(resources_SETUP_PY_SCRIPTS "")
+set(resources_SETUP_PY_PACKAGES "enums;helper")
+set(resources_SETUP_PY_PACKAGE_DIRS "src/enums;src/helper")
+set(resources_SETUP_PY_MODULES "")
+set(resources_SETUP_PY_MODULE_DIRS "")
