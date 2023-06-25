@@ -16,6 +16,12 @@ import cv2
 import numpy as np
 
 sys.path.append("/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/yolov7")
+from CentralNode.msg import node_response
+from enums.response_status import Response
+from enums.nodes import Nodes
+from enums.operations import OPERATIONS
+from enums.topics import Topics
+
 from models.experimental import attempt_load
 from utils.datasets import LoadImages, letterbox
 from utils.torch_utils import TracedModel,select_device
@@ -29,24 +35,23 @@ import time
 
 # importing robot helper for coordinates view transformation 
 sys.path.append("/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/resources/src/helper")
-from robot_helper import RobotControl, frames_transformations
+from helper.robot_helper import RobotControl, frames_transformations
 import numpy as np
 import tf.transformations
-
 #Robot Control imports
 
 class PerceptionNode():
     
-    def __init__(self, width=1280, height=720) -> None:
+    def __init__(self, width=1280, height=720,useTemporalFilter=True,useHoleFilling=False) -> None:
         # self.perceptionNode = rospy.init_node("Perception") # Need to change this to the enum values 
-        self.perceptionPublisher = rospy.Publisher('ListOfScrews', Float64MultiArray, queue_size=50) # Need to change this to the enum values
-        self.nodeToOperateListener = rospy.Subscriber("NodeToOperate",Int32,self.nodeToOperateCallback)
+        self.perceptionPublisher = rospy.Publisher(Topics.SCREW_LIST.value, node_response, queue_size=50) # Need to change this to the enum values
+        self.nodeToOperateListener = rospy.Subscriber(Topics.NODE_TO_OPERATE.value,Int32,self.nodeToOperateCallback)
        
         #CAD related parameters
-        self.start_position=[0.3162318772410906, 0.00527568967887596, 0.41920871874099996, -3.1415189863509134, 0.007510451851129454, 1.7006139777966402e-05]
-        self.xErr=0.006
+        self.start_position=[0.3162318772410906, 0.00527568967887596, 0.37, -3.1415189863509134, 0.007510451851129454, 1.7006139777966402e-05]
+        self.xErr=0.00
         self.yErr=0.013
-        self.zErr=-0.015
+        self.zErr=-0.02
 
         self.Controller=RobotControl(node_name="Perception",group_name="ScrewIn")
         self.framesTransformer=frames_transformations()
@@ -56,6 +61,12 @@ class PerceptionNode():
         self.Height = height
         self.operate = False
         self.model = None
+
+
+        #configuring filters usage
+        self.useTemporalFilter=useTemporalFilter
+        self.useHoleFilling=useHoleFilling
+
     def nodeToOperateCallback(self,data):
         if data==1:
             self.operate = True
@@ -78,8 +89,10 @@ class PerceptionNode():
         self.point_cloud = rs.pointcloud()
 
         ## Configure Camera Filters:
+        
         self.temporalFilter = rs.temporal_filter()
         self.holeFillingFilter = rs.hole_filling_filter()
+        
 
     def imagePreprocess(self):
         frames = self.pipeline.wait_for_frames()
@@ -91,8 +104,10 @@ class PerceptionNode():
         depth_frame = frames.get_depth_frame()
 
         ## depth enhancement using temporal filtering and hole filling
-        # depth_frame = self.temporalFilter.process(depth_frame)
-        # depth_frame = self.holeFillingFilter.process(depth_frame)
+        if self.useTemporalFilter:
+            depth_frame = self.temporalFilter.process(depth_frame)
+        if self.useHoleFilling:
+            depth_frame = self.holeFillingFilter.process(depth_frame)
         ####
         df = np.asarray(depth_frame.get_data()) # Not used ?
         points = self.point_cloud.calculate(depth_frame)
@@ -157,8 +172,10 @@ class PerceptionNode():
         return relative_transformations
     
     def publishReadings(self, Data):
-        my_msg = Float64MultiArray()
-        my_msg.data = Data
+        my_msg = node_response()
+        my_msg.nodeId=OPERATIONS.index(Nodes.VISION)
+        my_msg.status=Response.SUCCESSFULL.value
+        my_msg.extraMessage = json.dumps(Data)
         self.perceptionPublisher.publish(my_msg)
 
     def launchNode(self):
@@ -169,10 +186,6 @@ class PerceptionNode():
             if self.operate:
                 ## Camera Readings
                 ImageData, verts = self.imagePreprocess()
-                # print('image data is ')
-                # print(ImageData)
-                # print('verts are ')
-                # print(verts)
                 ## Model inference on image data
                 predictions = self.modelInference(ImageData)
                 ## Get Positions in the space of camera
@@ -183,14 +196,10 @@ class PerceptionNode():
                 for screwPosition in screwPositionsToCamera:
                     alignedScrewPosition = self.swap(screwPosition)
                     screwPositions.append(self.camToWorldPositions(alignedScrewPosition[0], alignedScrewPosition[1], alignedScrewPosition[2]))
-                    
                 # Publish readings
                 
                 print('positions are')
                 print(screwPositions)
-
-
-
             else:
 
                 screwlist=self.scan(3)        
@@ -204,7 +213,7 @@ class PerceptionNode():
                 for pose in screwlist:
                     print(pose)
                     # self.Controller.go_to_pose_goal_cartesian(pose,0.1,0.1,Replanning=True ,WaitFlag=False)
-                # self.publishReadings(screwlist)
+                self.publishReadings(screwlist)
                 self.rate.sleep()
                 break
     def scan(self, scantimes) -> list:
@@ -212,7 +221,7 @@ class PerceptionNode():
         pose = self.Controller.get_pose()
         #limits and steps
         limit = 0.1
-        xlimit = 0.25
+        xlimit = 0.30
         step = (2 * limit) / scantimes
         xstep = 0.05
         waypoints = []
@@ -220,22 +229,27 @@ class PerceptionNode():
         y = limit
         x = xlimit
         # generate waypoints for scanning
+        second_diagonal=[]
         for i in range(scantimes):
             newpose = pose.copy()  # Create a copy of the pose list
             newpose[1] = round(y,2)
             newpose[0] = round(x,3)
+            newposey=newpose.copy()
+            newposey[1] = round(-y,2)
+            second_diagonal.append(newposey)
             print('pose generated before is {}'.format(newpose))
             waypoints.append(newpose)
             print('pose generated after is {}'.format(newpose))
             y+= step
             x+= xstep
+        waypoints.extend(second_diagonal)
         # predictions from each pose will be in format of list of lists of predictions for poses
         predictions = []
         for pose in waypoints:
             # for each pose make a predictions list 
             screwPositions = []
             # move to the desired pose
-            self.Controller.go_to_pose_goal_cartesian(pose,0.1,0.1,Replanning=False,WaitFlag=True)
+            self.Controller.go_to_pose_goal_cartesian(pose,1,0.5,Replanning=False,WaitFlag=True)
             # capture the image and its point cloud
             image, verts = self.imagePreprocess()
             # take the model inference output of the image
@@ -260,9 +274,9 @@ class PerceptionNode():
             pose[0]+=self.xErr
             pose[1]+=self.yErr
             pose[2]+=self.zErr
-            pose[0]=round(pose[0],4)
-            pose[1]=round(pose[1],4)
-            pose[2]=round(pose[2],4)
+            pose[0]=pose[0]#round(pose[0],4)
+            pose[1]=pose[1]#round(pose[1],4)
+            pose[2]=pose[2]#round(pose[2],4)
             newlist.append(pose)
         return newlist
     def identifyScrewsNoRepetitions2(self,predictions: list,tolerance=0.02) -> list:
@@ -359,9 +373,19 @@ poses=[[[-0.3891096361720125, -0.14140713919044348, 0.2658808782237093, -3.12460
 # print('filtered positions are:')
 # print(perception.identifyScrewsNoRepetitions(poses))
 print('robot pose now is' )
-print(perception.Controller.get_pose())
-perception.launchNode()
-# perception.Controller.go_to_pose_goal_cartesian([0.453595495268664+perception.xErr, -0.08863000495787196+perception.yErr, 0.2484750388757343+perception.zErr, -3.1232772777964883, -0.019748814102031206, 0.0718451779134633])
+# print(perception.Controller.get_pose())
+# perception.launchNode()
+
+perception.Controller.go_to_pose_goal_cartesian(perception.start_position)
+for pose in [[0.34711396910828807, 0.10621894401154695, 0.22885591235556224, -3.1234219376433163, -0.019679874207329185, 0.07187405654710521], [0.40780587973352156, 0.01093116080164376, 0.23322380448934996, -3.1234508738028617, -0.019749587089634583, 0.07186512207527078], [0.4797201531101193, 0.11281772950247299, 0.22395172103126423, -3.123443542718829, -0.01972674249810746, 0.07185099583728045], [0.4940959682266605, -0.1782892343819768, 0.12268609233677506, -3.123422181507349, -0.01964091502558812, 0.07185900665258996]]:
+    perception.Controller.go_to_pose_goal_cartesian(pose,velocity=0.1,acceleration=0.1,WaitFlag=True)
+    time.sleep(0.5)
+    curpos=perception.Controller.get_pose()
+    curpos[2]+=0.02
+    perception.Controller.go_to_pose_goal_cartesian(curpos,velocity=0.1,acceleration=0.1,WaitFlag=True)
+# perception.Controller.go_to_pose_goal_cartesian(perception.start_position,1)
+# time.sleep(4)
+# perception.Controller.go_to_pose_goal_cartesian([0.4237, -0.0047, 0.2493+perception.zErr, -3.1232772777964883, -0.019748814102031206, 0.0718451779134633],1)
 # pose=poses[0][0].copy()
 # print('final pose is')
 # print(pose)
@@ -369,4 +393,9 @@ perception.launchNode()
 # pose[1]=-0.006646629530442587+0.013#(-0.14140713919044348+-0.14010437566336098+-0.13901984749554222)/3
 # pose[2]=0.26666028665252534-0.018
 # perception.Controller.go_to_pose_goal_cartesian(pose,0.1,0.1)
+
+
+
+
+########
 

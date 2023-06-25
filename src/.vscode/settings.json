@@ -1,16 +1,12 @@
 {
     "python.analysis.extraPaths": [
-<<<<<<< HEAD
         "./control/src",
-        "./resources/src"
-=======
-        "/home/himaet23/EwasteNonDestructiveDisassembly/devel/lib/python3/dist-packages",
+        "./resources/src",        
+        "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/lib/python3/dist-packages",
         "/opt/ros/noetic/lib/python3/dist-packages",
-        "./resources/src"
     ],
     "python.autoComplete.extraPaths": [
-        "/home/himaet23/EwasteNonDestructiveDisassembly/devel/lib/python3/dist-packages",
+        "/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/lib/python3/dist-packages",
         "/opt/ros/noetic/lib/python3/dist-packages"
->>>>>>> Central_Node
     ]
 }
