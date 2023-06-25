@@ -12,14 +12,16 @@ from enums.services import Services
 from CentralNode.srv import ScrewList, ScrewListResponse, ScrewListRequest
 import json
 import numpy as np
-
+from CentralNode.srv import ScrewList
 class ApprochAndEngaging:
     def __init__(self,tourqeToStop) -> None:
-        self.RobotJoystick = RobotControl(node_name=Nodes.APPROACH_AND_ENGAGE.value,group_name="ScrewIn")
-        self.TransformCalculator = frames_transformations()
+        # self.RobotJoystick = RobotControl(node_name=Nodes.APPROACH_AND_ENGAGE.value,group_name="ScrewIn")
+        # self.TransformCalculator = frames_transformations()
         #editabel parameters
-        self.unscrewNo = OPERATIONS.index(Nodes.UNSCREW)
-        self.millingNo = OPERATIONS.index(Nodes.MILLING)
+        rospy.init_node(Nodes.APPROACH_AND_ENGAGE.value)
+        self.unscrewNo = OPERATIONS.index(Nodes.APPROACH_AND_ENGAGE)
+        self.millingNo = OPERATIONS.index(Nodes.APPROACH_AND_ENGAGE, self.unscrewNo + 1)
+        print(f"unscrewNo: {self.unscrewNo}, millingNo: {self.millingNo}")
         self.UnscrewFlag = False
         self.engageFlag  = False
         self.SensorRead = WrenchStamped()
@@ -123,6 +125,7 @@ class ApprochAndEngaging:
         self.Motor.publish(self.motorCommands)
 
     def NodeToOperateCallback(self,msg):
+        print("node to operate: ",msg.data)
         self.NodeToOperate = msg.data
 
     def unscrew(self, truePos ,index):
@@ -147,11 +150,11 @@ class ApprochAndEngaging:
         states.extraMessage=str(index)
         self.NodeSuccess.publish(states)
 
-
     def goUpScrews(self,upthersold=0.02):
         pose=self.RobotJoystick.get_pose()
         self.RobotJoystick.go_to_pose_goal_cartesian([pose[0],pose[1],pose[2]+upthersold,pose[3],pose[4],pose[5]],velocity=0.1,acceleration=0.1,Replanning=True,WaitFlag=False)
         pass
+   
     def main(self):
         while not rospy.is_shutdown():
             if self.NodeToOperate == self.unscrewNo:
@@ -192,9 +195,9 @@ class ApprochAndEngaging:
                 self.NodeSuccess.publish(state)  
             
 
-test=ApprochAndEngaging()
+test=ApprochAndEngaging(0.5)
 waysTest= [0.3935, -0.1186, 0.2469-0.005, -3.1232910411003725, -0.019481121950260524, 0.07178239976862723]
 
 # test.Approach(waysTest,velocity=0.1,acceleration=0.1)
 # # test.Spiralshape(0.01)
-test.OperateMotor()
+test.main()

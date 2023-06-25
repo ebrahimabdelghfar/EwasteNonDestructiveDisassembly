@@ -43,8 +43,8 @@
     <rosparam file="$(find abb_robot_bringup_examples)/config/ex2_controllers.yaml" command="load"/>
 
     <!-- Two 'ros_control' controller spawners (stopped for the controller that command motions) -->
-    <node pkg="controller_manager" type="spawner" name="started" args="egm_state_controller joint_state_controller joint_trajectory_controller"/>
-    <node pkg="controller_manager" type="spawner" name="stopped" args="--stopped joint_group_position_controller"/>
+    <node pkg="controller_manager" type="spawner" name="started" args="egm_state_controller joint_state_controller joint_trajectory_controller" respawn="true"/>
+    <node pkg="controller_manager" type="spawner" name="stopped" args="--stopped joint_group_position_controller" respawn="true"/>
 
   </group>
 </launch>

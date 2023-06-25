@@ -1,9 +1,7 @@
-<<<<<<< HEAD
 # for checkpoint files
 *.pt
 *.pth
-=======
-*.pt
-*.pth
+build/
+devel/
+log/
 
->>>>>>> Central_Node

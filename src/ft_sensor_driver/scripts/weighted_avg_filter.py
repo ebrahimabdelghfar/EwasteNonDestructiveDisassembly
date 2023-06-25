@@ -9,7 +9,8 @@ from enums.topics import Topics
 import matplotlib.pyplot as plt
 import math
 
-
+from enums.nodes import Nodes
+from enums.topics import Topics
 weightMultplier = 0.01
 
 FxFiltered = 0
@@ -48,7 +49,7 @@ def raw_wrench_sub(wrench_msg):
     weighted_filtered_pub.publish(wrench_msg)
 
 
-rospy.init_node("ft_lpr")
-rospy.Subscriber("ft_sensor_wrench/wrench/raw", WrenchStamped, raw_wrench_sub)
+rospy.init_node(Nodes.ForceFiltered.value)
+rospy.Subscriber(Topics.ForceSensorWrench.value, WrenchStamped, raw_wrench_sub)
 weighted_filtered_pub = rospy.Publisher(Topics.ForceSensorWrenchWeightedFilter.value, WrenchStamped, queue_size=1)
 rospy.spin()
