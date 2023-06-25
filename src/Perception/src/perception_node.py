@@ -58,11 +58,11 @@ class PerceptionNode():
        
         #CAD related parameters
         self.start_position=[0.3162318772410906, 0.00527568967887596, 0.37, -3.1415189863509134, 0.007510451851129454, 1.7006139777966402e-05]
-        self.xErr=0.06
+        self.xErr=0#0.06
         self.yErr=0.013
         self.zErr=-0.02
 
-        self.Controller=RobotControl(node_name=Nodes.VISION.value,group_name="ScrewIn")
+        self.Controller=RobotControl(node_name=Nodes.VISION.value,group_name="ScrewIn",PositionTolerance=0.00001,OrientationTolerance=0.00001)
         self.framesTransformer=frames_transformations()
         self.rate = rospy.Rate(200)
         #camera viewing dimensions
@@ -76,12 +76,15 @@ class PerceptionNode():
         self.useTemporalFilter=useTemporalFilter
         self.useHoleFilling=useHoleFilling
 
+        #screws
+        self.scrws = []
+
     def nodeToOperateCallback(self,data):
         if data==1:
             self.operate = True
         else: 
             self.operate = False
-    def loadModel(self, location="/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/Perception/src/epoch_480.pt"): 
+    def loadModel(self, location="/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/Perception/src/epoch_599.pt"): 
         #load model 
         intialModel = attempt_load(location, "cpu")
         self.model = TracedModel(intialModel, "cpu", 640)
@@ -214,6 +217,8 @@ class PerceptionNode():
                 screwlist=self.scan(3)        
                 screwlist=self.identifyScrewsNoRepetitions(screwlist)
                 screwlist=self.resolve_dimensional_errors(screwlist)
+                print("Before path planning: ")
+                print(screwlist)
                 if len(screwlist) != 0:
                     pathPlanning = PathPlanning(screws=screwlist)
                     optimal_screw_list = pathPlanning.getOptimalPath()
@@ -227,7 +232,9 @@ class PerceptionNode():
                     print(currentToFirst)
                     print('ctl')
                     print(currentToLast)
+                print("After path planning: ")
                 print(screwlist)
+                self.scrws = screwlist
                 self.publishReadings(screwlist)
                 self.rate.sleep()
                 break
@@ -383,17 +390,21 @@ perception=PerceptionNode()
 
 print('robot pose now is' )
 
-# perception.launchNode()
+perception.launchNode()
 
 
+
+# perception.Controller.go_to_pose_goal_cartesian(ps, Replanning=False, WaitFlag=True)
 # perception.Controller.go_to_pose_goal_cartesian(perception.start_position,WaitFlag=False,Replanning=True)
-for pose in [[0.47710400520641366, -0.11046797353563607, 0.23023100100252616, -3.1233748584275256, -0.019575713281744633, 0.07179860539280118], [0.4702945002682796, 0.09184156196357364, 0.22757841108337573, -3.123469054634896, -0.019434265072632448, 0.07172652965307563], [0.6141845673484798, 0.08566545395489601, 0.230585793964198, -3.123383589047141, -0.019602182239684737, 0.07181443359027312]]:#, [0.4789581585009405, 0.08734039397262694, 0.2281115995843613, -3.123353463786254, -0.019752707064285564, 0.0719479255017568], [0.6144489532198474, 0.08569876785154842, 0.2304276471193916, -3.1233582483873383, -0.019690564834239834, 0.07178573224334173]]:
+
+for pose in perception.scrws:
     
-    # perception.Controller.go_to_pose_goal_cartesian(pose,velocity=0.1,acceleration=0.1,WaitFlag=False,Replanning=True)
+    perception.Controller.go_to_pose_goal_cartesian(pose,velocity=0.1,acceleration=0.1,WaitFlag=False,Replanning=True)
+    
     time.sleep(0.5)
     curpos=perception.Controller.get_pose()
     curpos[2]+=0.02
-    # perception.Controller.go_to_pose_goal_cartesian(curpos,velocity=0.1,acceleration=0.1,WaitFlag=True)
+    perception.Controller.go_to_pose_goal_cartesian(curpos,velocity=0.1,acceleration=0.1,WaitFlag=True)
 # perception.Controller.go_to_pose_goal_cartesian(perception.start_position,1)
 
 
