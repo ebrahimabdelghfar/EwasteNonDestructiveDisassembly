@@ -51,16 +51,20 @@ from tsp import PathPlanning
 
 class PerceptionNode():
     
-    def __init__(self, width=1280, height=720,useTemporalFilter=True,useHoleFilling=False) -> None:
+    def __init__(self, width=1280, height=720,useTemporalFilter=True,useHoleFilling=False,debug=True) -> None:
         # self.perceptionNode = rospy.init_node("Perception") # Need to change this to the enum values 
         self.perceptionPublisher = rospy.Publisher(Topics.SCREW_LIST.value, node_response, queue_size=50) # Need to change this to the enum values
         self.nodeToOperateListener = rospy.Subscriber(Topics.NODE_TO_OPERATE.value,Int32,self.nodeToOperateCallback)
        
         #CAD related parameters
-        self.start_position=[0.3162318772410906, 0.00527568967887596, 0.37, -3.1415189863509134, 0.007510451851129454, 1.7006139777966402e-05]
+        # self.start_position=[0.3162318772410906, 0.00527568967887596, 0.37, -3.1415189863509134, 0.007510451851129454, 1.7006139777966402e-05]
+
+        # angles start position
+        self.start_position=[0.01648382282055959, 0.1419052570385976, -0.3540636716585631, 0.00021150149509256689, 1.7903750239363658, 0.016529081994928727]
         self.xErr=0#0.06
         self.yErr=0.013
         self.zErr=-0.02
+        self.debuging=debug
 
         self.Controller=RobotControl(node_name=Nodes.VISION.value,group_name="ScrewIn",PositionTolerance=0.00001,OrientationTolerance=0.00001)
         self.framesTransformer=frames_transformations()
@@ -195,26 +199,9 @@ class PerceptionNode():
         self.InitializeCamera()
 
         while not rospy.is_shutdown():
-            if self.operate:
-                ## Camera Readings
-                ImageData, verts = self.imagePreprocess()
-                ## Model inference on image data
-                predictions = self.modelInference(ImageData)
-                ## Get Positions in the space of camera
-                screwPositionsToCamera = self.pixelToSpace(predictions, verts,debug=True)
-                ## Get Positions relative to the base link
-                screwPositions = list()
-                
-                for screwPosition in screwPositionsToCamera:
-                    alignedScrewPosition = self.swap(screwPosition)
-                    screwPositions.append(self.camToWorldPositions(alignedScrewPosition[0], alignedScrewPosition[1], alignedScrewPosition[2]))
-                # Publish readings
-                
-                print('positions are')
-                print(screwPositions)
-            else:
+            if self.operate or self.debuging:
 
-                screwlist=self.scan(3)        
+                screwlist=self.scan(6)        
                 screwlist=self.identifyScrewsNoRepetitions(screwlist)
                 screwlist=self.resolve_dimensional_errors(screwlist)
                 print("Before path planning: ")
@@ -236,16 +223,18 @@ class PerceptionNode():
                 print(screwlist)
                 self.scrws = screwlist
                 self.publishReadings(screwlist)
-                self.rate.sleep()
+                self.operate=False
                 break
+            self.rate.sleep()
     def scan(self, scantimes) -> list:
-        self.Controller.go_to_pose_goal_cartesian(self.start_position,0.1,0.1,Replanning=False,WaitFlag=True)
+        # self.Controller.go_to_pose_goal_cartesian(self.start_position,0.1,0.1,Replanning=False,WaitFlag=True)
+        self.Controller.go_by_joint_angle(self.start_position, velocity=0.5,acceleration=0.5,WaitFlag=False, Replanning=True)
         pose = self.Controller.get_pose()
         #limits and steps
-        limit = 0.1
-        xlimit = 0.30
+        limit = 0.12
+        xlimit = 0.20
         step = (2 * limit) / scantimes
-        xstep = 0.05
+        xstep = xlimit/scantimes
         waypoints = []
         limit = -limit
         y = limit
@@ -271,13 +260,14 @@ class PerceptionNode():
             # for each pose make a predictions list 
             screwPositions = []
             # move to the desired pose
-            self.Controller.go_to_pose_goal_cartesian(pose,1,0.5,Replanning=False,WaitFlag=True)
+            self.Controller.go_to_pose_goal_cartesian(pose,1,0.5,Replanning=True,WaitFlag=False)
             # capture the image and its point cloud
             image, verts = self.imagePreprocess()
             # take the model inference output of the image
             localpredictions=self.modelInference(image)
             # get positions relative to camera
             screwPositionsToCamera = self.pixelToSpace(localpredictions, verts,debug=True)
+            time.sleep(2)
             # for each screw in predections
             for screwPosition in screwPositionsToCamera:
                 # swap axis according to the cad frame
@@ -395,7 +385,7 @@ perception.launchNode()
 
 
 # perception.Controller.go_to_pose_goal_cartesian(ps, Replanning=False, WaitFlag=True)
-# perception.Controller.go_to_pose_goal_cartesian(perception.start_position,WaitFlag=False,Replanning=True)
+perception.Controller.go_by_joint_angle(perception.start_position,velocity=0.5,acceleration=0.5, WaitFlag=False, Replanning=True)
 
 for pose in perception.scrws:
     
