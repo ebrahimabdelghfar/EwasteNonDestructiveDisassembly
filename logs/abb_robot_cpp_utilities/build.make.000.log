@@ -1,6 +1,0 @@
-[ 40%] [32mBuilding CXX object CMakeFiles/abb_robot_cpp_utilities.dir/src/initialization.cpp.o[0m
-[ 40%] [32mBuilding CXX object CMakeFiles/abb_robot_cpp_utilities.dir/src/mapping.cpp.o[0m
-[ 60%] [32mBuilding CXX object CMakeFiles/abb_robot_cpp_utilities.dir/src/parameters.cpp.o[0m
-[ 80%] [32mBuilding CXX object CMakeFiles/abb_robot_cpp_utilities.dir/src/verification.cpp.o[0m
-[100%] [32m[1mLinking CXX shared library /home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/abb_robot_cpp_utilities/lib/libabb_robot_cpp_utilities.so[0m
-[100%] Built target abb_robot_cpp_utilities

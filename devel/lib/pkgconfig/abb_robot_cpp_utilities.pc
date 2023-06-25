@@ -1,1 +1,0 @@
-/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/abb_robot_cpp_utilities/lib/pkgconfig/abb_robot_cpp_utilities.pc

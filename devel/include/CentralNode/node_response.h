@@ -1,1 +1,0 @@
-/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/CentralNode/include/CentralNode/node_response.h

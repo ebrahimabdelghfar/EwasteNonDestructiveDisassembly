@@ -1,1 +1,0 @@
-/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/moveit_calibration_gui/lib/pkgconfig/moveit_calibration_gui.pc

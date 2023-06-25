@@ -1,1 +1,0 @@
-/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/realsense2_camera/include/realsense2_camera/DeviceInfoResponse.h

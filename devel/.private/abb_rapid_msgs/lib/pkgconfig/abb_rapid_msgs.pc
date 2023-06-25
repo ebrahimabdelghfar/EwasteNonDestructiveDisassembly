@@ -1,8 +1,0 @@
-prefix=/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/abb_rapid_msgs
-
-Name: abb_rapid_msgs
-Description: Description of abb_rapid_msgs
-Version: 0.5.0
-Cflags: -I/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/abb_rapid_msgs/include
-Libs: -L${prefix}/lib 
-Requires: message_runtime

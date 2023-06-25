@@ -1,1 +1,0 @@
-/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/CentralNode/lib/pkgconfig/CentralNode.pc
