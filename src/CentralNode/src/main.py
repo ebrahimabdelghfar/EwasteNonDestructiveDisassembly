@@ -24,6 +24,7 @@ class CentralNode:
         self.objectExists = False
         self.getScrewIndex, self.returnScrewIndex, self.getMillingIndex, self.returnMillingIndex = getChangeToolIndices()
         self.currentSchedule = {}
+        RobotDatabase().resetWholeFile()
 
     def initPublishers(self):
         self.publishers = {}
@@ -50,9 +51,11 @@ class CentralNode:
         try:
             screwIndex = RobotDatabase().readFromDB(StorageKeys.SCREW_INDEX)
             screwIndex=json.loads(screwIndex)
+            print("screwindex after load",screwIndex)
+
         except:
             screwIndex = 0
-        response.screwList = screwList[(screwIndex+1)*6:]
+        response.screwList = screwList[(screwIndex)*6:]
         print("Service response: ", response.screwList)
         return response
     

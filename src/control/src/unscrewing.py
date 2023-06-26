@@ -7,7 +7,7 @@ from enums.nodes import Nodes
 from enums.topics import Topics
 
 class Unscrewing:
-    def __init__(self,Epsilon=0.1,delay=1) -> None:
+    def __init__(self,Epsilon=0.7,delay=1) -> None:
         rospy.init_node(Nodes.UNSCREW.value)
         self.unscrewingPub = rospy.Publisher(Topics.UNSCREW_DONE.value, Bool, queue_size=1)
         self.motorPub = rospy.Publisher(Topics.ScrewDriverMOTOR_COMMAND.value, Int32, queue_size=1)
@@ -53,8 +53,9 @@ class Unscrewing:
         rospy.sleep(self.ftSensor_delay)
         self.unscrewingFailure_counter += 1
         # If the difference between readings is < epsilon then the bolt isn't going upwards anymore and unscrewing is done
-        if abs(self.ftSensor_currentReading-self.ftSensor_previousReading) < self.ftSensor_epsilon:
+        if abs(self.ftSensor_currentReading-self.ftSensor_previousReading) <= self.ftSensor_epsilon:
             rospy.loginfo("Finished Unscrewing <3")
+            self.startUnscrewing_Flag=False
             self.motorPub.publish(0)
             self.unscrewingPub.publish(self.True_data)
         else:
@@ -70,8 +71,7 @@ class Unscrewing:
 
     def main(self):
         while not rospy.is_shutdown():
-            screwingFLag:Bool = rospy.wait_for_message(Topics.UNSCREW_START_FLAG.value, Bool)
-            if screwingFLag.data:
+            if self.startUnscrewing_Flag:
                 self.checkReadings()
             else:
                 pass                

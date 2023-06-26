@@ -63,7 +63,7 @@ joint_trajectory_controller:
 
   constraints:
     goal_time: 0.6
-    stopped_velocity_tolerance: 0.1
+    stopped_velocity_tolerance: 1
     # joint_1: {trajectory: 0.004, goal: 0.002}
     # joint_2: {trajectory: 0.004, goal: 0.002}
     # joint_3: {trajectory: 0.004, goal: 0.002}

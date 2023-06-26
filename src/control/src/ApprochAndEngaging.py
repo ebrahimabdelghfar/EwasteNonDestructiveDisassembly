@@ -71,13 +71,12 @@ class ApprochAndEngaging:
         @type step: float
         '''
         #constant parameters for spiral shape for M5 cross screw
+        print("entered")
         recess=0.005
         fs=2*recess
         N_s=60
-        fixederror=0.002 #(mm)
         #end
         waypoints = []
-        PostionTolerance = 0.001
         #calculate the parameters of the spiral
         tmax=int(((10*math.pi)/N_s)*(math.ceil(N_s/2)))
         #generate a list of screws in spiral shape
@@ -85,7 +84,7 @@ class ApprochAndEngaging:
         xlast,ylast=pose[0],pose[1]
         for i in np.arange(timeStep,tmax,timeStep):
             t=i
-            x,y=pose[0]+(((fs/math.pi)*math.sqrt(((8*math.pi*N_s*t)/15))*math.cos(math.sqrt(((8*math.pi*N_s*t)/15))))*0.05),pose[1]+(((fs/math.pi)*math.sqrt(((8*math.pi*N_s*t)/15))*math.sin(math.sqrt(((8*math.pi*N_s*t)/15))))*0.05)
+            x,y=pose[0]+(((fs/math.pi)*math.sqrt(((8*math.pi*N_s*t)/15))*math.cos(math.sqrt(((8*math.pi*N_s*t)/15))))*0.08),pose[1]+(((fs/math.pi)*math.sqrt(((8*math.pi*N_s*t)/15))*math.sin(math.sqrt(((8*math.pi*N_s*t)/15))))*0.08)
             if (math.sqrt(((x-xlast)**2)+((y-ylast)**2)))>=PostionTolerance:
                 waypoints.append([x,y,pose[2],pose[3],pose[4],pose[5]])
                 xlast,ylast=x,y
@@ -96,6 +95,7 @@ class ApprochAndEngaging:
             if self.SensorRead.wrench.torque.z <= self.EngageTourqe and self.SensorRead.wrench.torque.z != 0.0 :
                 self.stopMotor()
                 self.RobotJoystick.Stop()
+                rospy.sleep(1)
                 self.engageFlag = True
                 print("engaged")
                 break
@@ -142,7 +142,7 @@ class ApprochAndEngaging:
 
     def unscrew(self, truePos ,index):
         self.startUnscrewing.publish(True)
-        receivedFlag = rospy.wait_for_message(Topics.UNSCREW_DONE.value, Bool)
+        receivedFlag :Bool = rospy.wait_for_message(Topics.UNSCREW_DONE.value, Bool)
         self.UnscrewFlag = receivedFlag.data
         if not receivedFlag.data:
             self.BadScrews.append(truePos)
@@ -174,19 +174,22 @@ class ApprochAndEngaging:
                 rospy.wait_for_service(Services.GET_SCREW_LIST.value)
                 Screwclient = rospy.ServiceProxy(Services.GET_SCREW_LIST.value,ScrewList)
                 ScrewResponse:ScrewListResponse = Screwclient(ScrewListRequest())
-                print("Before reshape: ", ScrewResponse.screwList)
+                print("point's in:",len(list(ScrewResponse.screwList)))
                 self.listOfScrews=self.reshapeList(list(ScrewResponse.screwList))
-                print("After reshape: ", self.listOfScrews)
+                print("After reshape: ", len(self.listOfScrews))
                 for index,screw in enumerate(self.listOfScrews):
+                    print("next")
                     #sequance of approching
                     screw[2]+=0.02
-                    self.Approach(screw,velocity=0.1,acceleration=0.1,forceToSense=5.2,forceToCheck=False)
+                    self.Approach(screw,velocity=0.1,acceleration=0.1,forceToSense=5.6,forceToCheck=False)
                     screw[2]-=0.03
-                    self.Approach(screw,velocity=0.1,acceleration=0.1,forceToSense=5.2,forceToCheck=True)
+                    self.Approach(screw,velocity=0.1,acceleration=0.1,forceToSense=6,forceToCheck=True)
                     screw[2]+=0.005
-                    self.Approach(screw,velocity=0.1,acceleration=0.1,forceToSense=5.2,forceToCheck=False)
+                    self.Approach(screw,velocity=0.1,acceleration=0.1,forceToSense=5.6,forceToCheck=False)
                     #end
-                    self.engage(timeStep=0.01,NowScrew=screw,PostionTolerance=0.001)
+                    print("before",self.engageFlag)
+                    self.engage(timeStep=0.001,NowScrew=screw,PostionTolerance=0.001)
+                    print("arfter",self.engageFlag)
                     #end
                     if (self.engageFlag):
                         TrueScrewPosition=self.RobotJoystick.get_pose()
@@ -217,4 +220,4 @@ class ApprochAndEngaging:
                 state.status=Response.SUCCESSFULL.value
                 self.NodeSuccess.publish(state)  
 
-ApprochAndEngaging(0.015).main()
+ApprochAndEngaging(-0.01).main()

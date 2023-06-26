@@ -13,10 +13,10 @@ OPERATIONS = [
 ]
 
 def getChangeToolIndices():
-    returnScrewDriverIndex = OPERATIONS.index(Nodes.CHANGE_TOOL)
-    getMillingIndex = returnScrewDriverIndex + 1
-    returnMillingIndex = OPERATIONS.index(Nodes.CHANGE_TOOL, getMillingIndex + 1)
-    getScrewDriverIndex = returnMillingIndex + 1
+    getScrewDriverIndex = OPERATIONS.index(Nodes.CHANGE_TOOL)
+    returnScrewDriverIndex = OPERATIONS.index(Nodes.CHANGE_TOOL, getScrewDriverIndex)
+    getMillingIndex = OPERATIONS.index(Nodes.CHANGE_TOOL, returnScrewDriverIndex)
+    returnMillingIndex = OPERATIONS.index(Nodes.CHANGE_TOOL, getMillingIndex)
 
     return getScrewDriverIndex, returnScrewDriverIndex, getMillingIndex, returnMillingIndex
 

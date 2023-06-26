@@ -25,7 +25,7 @@ class starterSystem:
         for node in self.Sequance:
             if len(self.NodeInfo[node])==3 :
                 #if the node does not have any arguments
-                Run = roslaunch.core.Node(package=self.NodeInfo[node][0],node_type=self.NodeInfo[node][1],name =self.NodeInfo[node][2])
+                Run = roslaunch.core.Node(package=self.NodeInfo[node][0],node_type=self.NodeInfo[node][1],name =self.NodeInfo[node][2],output="screen")
             else:
                 #if the node has arguments
                 Run = roslaunch.core.Node(package=self.NodeInfo[node][0],node_type=self.NodeInfo[node][1],name =self.NodeInfo[node][2],args=self.NodeInfo[node][3])
@@ -36,7 +36,7 @@ class starterSystem:
                 if flag:
                     print("Node ["+node+"] is running")
                     break
-                rospy.sleep(0.5)
+                rospy.sleep(1)
 
     def dummy_function(self):
         pass

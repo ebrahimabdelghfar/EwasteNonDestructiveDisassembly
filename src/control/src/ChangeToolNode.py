@@ -8,12 +8,12 @@ from enums.topics import Topics
 from enums.schedular import schedulars
 from enums.services import Services
 from enums.response_status import Response
-from enums.operations import OPERATIONS
+from enums.operations import OPERATIONS, getChangeToolIndices
 from CentralNode.msg import node_response
 from CentralNode.srv import Schedular , SchedularResponse , SchedularRequest
 class GetToolNode:
     def __init__(self, group_name_1:str="NoTool", StopTourqeThershold1:float=0.5):
-        self.RobotController = RobotControl(node_name=Nodes.CHANGE_TOOL.value,group_name=group_name_1)
+        self.RobotController = RobotControl(node_name=Nodes.CHANGE_TOOL.value,group_name=group_name_1,PositionTolerance=0.001,OrientationTolerance=0.001,PlanningId="PRMkConfigDefault")
         self.TransformationCalculator = frames_transformations()
         # list of the last pose of the robot after getting the tool
         self.LastPoseScrew = []
@@ -50,13 +50,17 @@ class GetToolNode:
         self.Velocity=[]
         self.Acceleration=[]
         #end
-
+        self.getScrewDriverIndex, self.returnScrewDriverIndex, self.getMillingIndex, self.returnMillingIndex = getChangeToolIndices()
         self.unscrewIndex = OPERATIONS.index(Nodes.APPROACH_AND_ENGAGE)
         self.visionIndex = OPERATIONS.index(Nodes.VISION)
-        self.returnScrewDriverIndex = OPERATIONS.index(Nodes.CHANGE_TOOL)
-        self.getMillingIndex = self.returnScrewDriverIndex + 1
-        self.returnMillingIndex = OPERATIONS.index(Nodes.CHANGE_TOOL, self.getMillingIndex + 1)
-        self.getScrewDriverIndex = self.returnMillingIndex + 1
+        # self.getScrewDriverIndex = OPERATIONS.index(Nodes.CHANGE_TOOL)
+        # self.getMillingIndex = self.returnScrewDriverIndex + 1
+        # self.returnMillingIndex = OPERATIONS.index(Nodes.CHANGE_TOOL, self.getMillingIndex + 1)
+        # self.returnScrewDriverIndex = OPERATIONS.index(Nodes.CHANGE_TOOL)
+        # self.getMillingIndex = self.returnScrewDriverIndex + 1
+        # self.returnMillingIndex = OPERATIONS.index(Nodes.CHANGE_TOOL, self.getMillingIndex + 1)
+        # self.getScrewDriverIndex = self.returnMillingIndex + 1
+        print(f"the screw no : {self.getMillingIndex} , the return screw index :{self.returnMillingIndex}")
 
     def FTReadingCallBack(self, data: WrenchStamped) -> None:
         '''
@@ -110,6 +114,7 @@ class GetToolNode:
                     self.CheckToolTourqe()              
                     pass
                 else:
+                    print
                     self.RobotController.go_by_joint_angle(ways, self.Velocity[self.waypoints.index(ways)], self.Acceleration[self.waypoints.index(ways)], Replanning=True,WaitFlag=False)
                     pass
                 pass
@@ -145,7 +150,7 @@ class GetToolNode:
         list_of_poses = []
         # rotate the robot by 90o for safely get the tool
         self.RobotController.go_by_joint_angle(
-            [-1.57, 0.0, 0.0, 0.0, 1.57, 0.0], 1, 1, Replanning=True)
+            [-1.57, 0.0, 0.0, 0.0, 1.57, 0.0], 0.1, 0.1, Replanning=True,WaitFlag=False)
         
         self.schedulecollectorofgettingTool.append(self.RobotController.get_joint_state())
         # # go above the tool
@@ -154,7 +159,7 @@ class GetToolNode:
         pose = self.TransformationCalculator.transform(
             parent_id="base_link", child_frame_id="tool0")
         self.RobotController.go_to_pose_goal_cartesian(
-            pose, 1, 1, Replanning=True,WaitFlag=False)
+            pose, 0.1, 0.1, Replanning=True,WaitFlag=False)
         
         self.schedulecollectorofgettingTool.append(self.RobotController.get_pose())
         # go to Holder
@@ -197,13 +202,13 @@ class GetToolNode:
                                                              NowPose[0]+self.XtoleranceOutHolder, NowPose[1], NowPose[2], NowPose[3], NowPose[4], NowPose[5]])
         pose = self.TransformationCalculator.transform(
              parent_id="base_link", child_frame_id="tool1")
-        self.RobotController.go_to_pose_goal_cartesian(pose, 1, 1,Replanning=True,WaitFlag=False)
+        self.RobotController.go_to_pose_goal_cartesian(pose, 0.1, 0.1,Replanning=True,WaitFlag=False)
 
         self.schedulecollectorofgettingTool.append(self.RobotController.get_pose())
         
         # go to save position
         self.RobotController.go_by_joint_angle(
-            [-1.57, 0.0, 0.0, 0.0, 1.57, 0.0], 1, 1, Replanning=True, WaitFlag=False)
+            [-1.57, 0.0, 0.0, 0.0, 1.57, 0.0], 0.1, 0.1, Replanning=True, WaitFlag=False)
         
         self.schedulecollectorofgettingTool.append(self.RobotController.get_joint_state())
         #flatten the list
@@ -225,7 +230,7 @@ class GetToolNode:
 
        # rotate the robot by 90o for safely get the tool
         self.RobotController.go_by_joint_angle(
-            [-1.57, 0.0, 0.0, 0.0, 1.57, 0.0], 1, 1, Replanning=True)
+            [-1.57, 0.0, 0.0, 0.0, 1.57, 0.0], 0.1, 0.1, Replanning=True)
         
         self.LastPoseScrew= [-0.008646758616481053, -0.3815806593735198, 0.19797902752280033, -3.141458694563271, -3.532326355302995e-05, -0.8195031142692732]
         self.TransformationCalculator.put_frame_static_frame(parent_frame_name="base_link", child_frame_name="tool0", frame_coordinate=[
@@ -344,6 +349,7 @@ class GetToolNode:
         pass
 
     def Operation(self,OperationNo:int)->None:
+        print("Operation Number ",OperationNo)
         '''
         objective: this function as switch case for the operations manily used to see how to check force sensor
         input: OperationNo:int -----> the number of the operation
@@ -373,10 +379,33 @@ class GetToolNode:
                 self.ToolChangePub.publish(self.State)
                 print("ReturningScrewFailed")
             pass
+        elif self.getMillingIndex == OperationNo:
+            self.ChangeTool()
+            if self.ForceZReading >= self.thresholdForToolWeightForceZ: 
+                self.State.status=Response.SUCCESSFULL.value
+                self.ToolChangePub.publish(self.State)
+                print("GettingMillingSuccess")
+            else:
+                self.State.status=Response.FAILED.value
+                self.ToolChangePub.publish(self.State)
+                print("GettingMillingFailed")
+                pass
+            pass
+        elif self.returnMillingIndex == OperationNo:
+            self.ChangeTool()
+            if self.ForceZReading <= self.thresholdForToolWeightForceZ:
+                self.State.status=Response.SUCCESSFULL.value
+                self.ToolChangePub.publish(self.State)
+                print("ReturningMillingSuccess")
 
+            else:
+                self.State.status=Response.FAILED.value
+                self.ToolChangePub.publish(self.State)
+                print("ReturningMillingFailed")
+            pass
     def Main(self)->None:
         '''
-        objective: this function is the main function of the node
+        objective: t his function is the main function of the node
         input: None
         output: None
         '''
@@ -385,5 +414,6 @@ class GetToolNode:
             self.Operation(RecievedOpertaion.data)
         pass             
 changeTool=GetToolNode(group_name_1="NoTool")
-changeTool.ChangeTool()
+changeTool.GetScrewTool()
+
 

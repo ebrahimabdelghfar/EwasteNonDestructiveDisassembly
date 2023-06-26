@@ -1,5 +1,4 @@
 from enum import Enum
-
 # Enum that contains the information about the nodes
 class Nodes(Enum):
     FORCE="FORCE"
@@ -14,19 +13,20 @@ class Nodes(Enum):
     MILLING = "MILLING"
     HeartBeat = "HeartBeat"
     ForceFiltered="ForceFiltered"
-    HardwareInterface="Arduino1"
+    HardwareInterface="Arduino11"
     #list that contains all the nodes that always should be running
-    NodesToBeOperated=[FORCE,
-                       ForceFiltered,
-                       COLLISION_DETECTION,
+    NodesToBeOperated=[#FORCE,
+                       #ForceFiltered,
+                       #COLLISION_DETECTION,
                        CENTRAL,
-                       VISION,
+                       #VISION,
                        CLAMPING,
                        CHANGE_TOOL,
                        CHECK_MOTOR,
                        APPROACH_AND_ENGAGE,
                        UNSCREW,
-                       MILLING]
+                       #MILLING
+                       ]
     #dictionary that contains the information about the nodes [pkgname , executable , node name]
     NodesToBeOperatedInfo = {CHECK_MOTOR : ["checkMotors","checkMotorsNode.py" ,CHECK_MOTOR],
                              HeartBeat : ["CentralNode" , "heartBeat.py" , HeartBeat],
@@ -38,15 +38,16 @@ class Nodes(Enum):
                              APPROACH_AND_ENGAGE : ["control","ApprochAndEngaging.py",APPROACH_AND_ENGAGE],
                              MILLING : ["control","millingNode.py",MILLING],
                              CLAMPING: ["HardwareLevel","HardwareBridge.py",CLAMPING],
-                             HardwareInterface : ["rosserial_python","serial_node.py",HardwareInterface,"_port:=/dev/ttyACM0 _baud:=115200"]
+                             #HardwareInterface : ["rosserial_python","serial_node.py",HardwareInterface,"_port:=/dev/ttyACM0 _baud:=115200"],
+                             VISION : ["Perception","vision.py",VISION],
                             }
-    StartSequance=[CHECK_MOTOR,
-                   HardwareInterface,
-                   #CLAMPING,
-                   #CHANGE_TOOL,
-                   #APPROACH_AND_ENGAGE,
-                   #UNSCREW,
+    StartSequance=[#CHECK_MOTOR,
+                   #HardwareInterface,
+                   CLAMPING,
+                   CHANGE_TOOL,
+                   APPROACH_AND_ENGAGE,
+                   UNSCREW,
                    #MILLING,
-                   #CENTRAL,
+                   CENTRAL,
                    #HeartBeat
                    ]
