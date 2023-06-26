@@ -49,7 +49,7 @@ def ftCallback(ftSensor_incomingReading):
     fx = ftSensor_incomingReading.wrench.force.x
     fy = ftSensor_incomingReading.wrench.force.y
     fz = ftSensor_incomingReading.wrench.force.z
-
+ 
     # get the torques
     tx = ftSensor_incomingReading.wrench.torque.x
     ty = ftSensor_incomingReading.wrench.torque.y
