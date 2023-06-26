@@ -11,3 +11,13 @@ OPERATIONS = [
     Nodes.CHANGE_TOOL, #Get screw
     Nodes.CLAMPING, #Unclamp
 ]
+
+def getChangeToolIndices():
+    returnScrewDriverIndex = OPERATIONS.index(Nodes.CHANGE_TOOL)
+    getMillingIndex = returnScrewDriverIndex + 1
+    returnMillingIndex = OPERATIONS.index(Nodes.CHANGE_TOOL, getMillingIndex + 1)
+    getScrewDriverIndex = returnMillingIndex + 1
+
+    return getScrewDriverIndex, returnScrewDriverIndex, getMillingIndex, returnMillingIndex
+
+

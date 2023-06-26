@@ -1,3 +1,7 @@
+# for checkpoint files
 *.pt
 *.pth
+build/
+devel/
+log/
 

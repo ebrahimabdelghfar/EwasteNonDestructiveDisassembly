@@ -37,25 +37,29 @@ class HeartBeat:
         #remove the '/' from the node name
         for node in Operated:
             Operated[Operated.index(node)] = node.replace("/","")
-        print("Nodes that are running {}".format(Operated))
         #see the which nodes are not running
         not_running = list(set(self.NodesExist).difference(Operated))
-        print("Nodes that are not running {}".format(not_running))
+        print("Nodes that are running {} ,are not running {}".format(Operated,not_running))
         #start the nodes that are not running by looping through the list
         for node in not_running:
-            print("Node {} is not running".format(node))
-            node = roslaunch.core.Node(package=self.NodeInfo[node][0],node_type=self.NodeInfo[node][1],name =self.NodeInfo[node][2])
-            process=self.launch.launch(node)
-            print("Node {} is started".format(node))
+            if len(self.NodeInfo[node])==3 :
+                #if the node does not have any arguments
+                Run = roslaunch.core.Node(package=self.NodeInfo[node][0],node_type=self.NodeInfo[node][1],name =self.NodeInfo[node][2])
+            else:
+                #if the node has arguments
+                Run = roslaunch.core.Node(package=self.NodeInfo[node][0],node_type=self.NodeInfo[node][1],name =self.NodeInfo[node][2],args=self.NodeInfo[node][3])
+            process=self.launch.launch(Run)
+            while True:
+                '''ensure that the node is running'''
+                flag=rosnode.rosnode_ping("/"+node,max_count=2,skip_cache=True)
+                if flag:
+                    print("Node "+node+" is running")
+                    break
+                rospy.sleep(0.5)
     def dummy_function(self)->None: 
         '''
         Objective : This is a dummy function to disable the rossignal handler
         '''
         pass
-HeartBeat=HeartBeat(heartRate = 10)#heartRate in seconds
-rospy.spin() 
-Heart=HeartBeat(heartRate = 10)#heartRate in seconds
-while not rospy.is_shutdown():
-    rospy.sleep(1)
-    pass
-
+HeartBeat=HeartBeat(heartRate = 2)#heartRate in seconds
+rospy.spin()  #keeps the node alive

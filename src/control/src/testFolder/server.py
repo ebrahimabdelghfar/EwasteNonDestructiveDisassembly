@@ -8,5 +8,5 @@ def callback(req:SchedularRequest):
     test.waypoints=[2,3,4,5,6,7,8,8,5,6,7,8]
     return test
 
-server=rospy.Service(Services.SCHEDULAR.value,Schedular,callback)
+server=rospy.Service("test",Schedular,callback)
 rospy.spin()
