@@ -1,5 +1,5 @@
-#!/usr/bin/env python
-
+#!/usr/bin/env python3
+# license removed for brevity
 import rospy
 from std_msgs.msg import String
 from std_msgs.msg import Int64
@@ -10,6 +10,12 @@ from std_msgs.msg import Float32
 from geometry_msgs.msg import Wrench, WrenchStamped
 from enums.nodes import Nodes
 from enums.topics import Topics
+
+from helper.robot_helper import *
+
+
+robotCollision = RobotControl(group_name_1="manipulator")
+
 # Intial values for torque and force variables
 fx = 0
 fy = 0
@@ -59,12 +65,13 @@ def detectCollisions():
     # Limits checking
     if (fx or fy or fz) > forceCollisionLimit:
         collisionDetectedPub.publish(True_data)
+        robotCollision.Stop()
         rospy.loginfo("Force collision detected")
     else:
         collisionDetectedPub.publish(False_data)
         # rospy.loginfo("No force collision detected")
     # rospy.sleep(1)    
-        
+
     if (tx or ty or tz) > torqueCollisionLimit:
         collisionDetectedPub.publish(True_data)
         rospy.loginfo("Torque collision detected")
@@ -72,11 +79,11 @@ def detectCollisions():
         collisionDetectedPub.publish(False_data)
         # rospy.loginfo("No torque collision detected")
     # rospy.sleep(1)
-    
+
 # Collision detection enable flag 
 def startCollisionCallback(startCollisionDetection_data):
     global startCollisionDetection_Flag
-    
+
     # assigning .data to gobal varaible startCollisionDetection_Flag
     startCollisionDetection_Flag = startCollisionDetection_data.data
     # rospy.loginfo(startCollisionDetection_Flag)
