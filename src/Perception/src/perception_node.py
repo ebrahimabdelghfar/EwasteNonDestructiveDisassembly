@@ -35,7 +35,6 @@ import numpy as np
 import time
 
 # importing robot helper for coordinates view transformation 
-sys.path.append("/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/src/resources/src/helper")
 from helper.robot_helper import RobotControl, frames_transformations
 import numpy as np
 import tf.transformations
@@ -52,9 +51,9 @@ from tsp import PathPlanning
 
 class PerceptionNode():
     
-    def __init__(self, width=1280, height=720,useTemporalFilter=True,useHoleFilling=False,debug=True) -> None:
+    def __init__(self, width=1280, height=720,useTemporalFilter=True,useHoleFilling=False,debug=False) -> None:
         # self.perceptionNode = rospy.init_node("Perception") # Need to change this to the enum values 
-        self.perceptionPublisher = rospy.Publisher(Topics.SCREW_LIST.value, node_response, queue_size=50) # Need to change this to the enum values
+        self.perceptionPublisher = rospy.Publisher(Topics.NODE_SUCCESS.value, node_response, queue_size=50) # Need to change this to the enum values
         self.nodeToOperateListener = rospy.Subscriber(Topics.NODE_TO_OPERATE.value,Int32,self.nodeToOperateCallback)
        
         #CAD related parameters
@@ -62,8 +61,8 @@ class PerceptionNode():
 
         # angles start position
         self.start_position=[0.01648382282055959, 0.1419052570385976, -0.3540636716585631, 0.00021150149509256689, 1.7903750239363658, 0.016529081994928727]
-        self.xErr=0#0.06
-        self.yErr=0.013
+        self.xErr=0.005#0.003#0.06
+        self.yErr=0.012#0.003
         self.zErr=-0.02
         self.debuging=debug
 
@@ -85,7 +84,8 @@ class PerceptionNode():
         self.scrws = []
 
     def nodeToOperateCallback(self,data):
-        if data==1:
+        print("Recieved data: ", data.data)
+        if data.data == OPERATIONS.index(Nodes.VISION):
             self.operate = True
         else: 
             self.operate = False
@@ -131,6 +131,8 @@ class PerceptionNode():
         verts = np.asanyarray(points.get_vertices()).view(np.float32).reshape(-1, self.Width, 3)  # xyz
 
         image = self.color_image
+        cv2.imshow('myimg', self.color_image)
+        cv2.waitKey(1)
         #preprocesses the image and makes the image size a multiple of the stride size,resizes the image
         image = letterbox(image)[0]
 
@@ -188,11 +190,15 @@ class PerceptionNode():
         
         return relative_transformations
     
+    def flatten(self,screwlist):
+        return np.ndarray.flatten(np.array(screwlist)).tolist()
+    
     def publishReadings(self, Data):
         my_msg = node_response()
         my_msg.nodeId=OPERATIONS.index(Nodes.VISION)
         my_msg.status=Response.SUCCESSFULL.value
         my_msg.extraMessage = json.dumps(Data)
+        print("Sending my_msg: ", my_msg.extraMessage )
         self.perceptionPublisher.publish(my_msg)
 
     def launchNode(self):
@@ -223,19 +229,24 @@ class PerceptionNode():
                 print("After path planning: ")
                 print(screwlist)
                 self.scrws = screwlist
+                screwlist=self.flatten(screwlist)
                 self.publishReadings(screwlist)
                 self.operate=False
-                break
-            self.rate.sleep()
+                cv2.destroyAllWindows()
+                if self.debuging:
+                    print('will approach now')
+                    self.demoApproach()
+                # break
+            # rospy.spin()
     def scan(self, scantimes) -> list:
         # self.Controller.go_to_pose_goal_cartesian(self.start_position,0.1,0.1,Replanning=False,WaitFlag=True)
         self.Controller.go_by_joint_angle(self.start_position, velocity=0.5,acceleration=0.5,WaitFlag=False, Replanning=True)
         pose = self.Controller.get_pose()
         #limits and steps
-        limit = 0.12
-        xlimit = 0.20
+        limit = 0.10
+        xlimit = 0.15
         step = (2 * limit) / scantimes
-        xstep = xlimit/scantimes
+        xstep = (1.8*xlimit)/scantimes
         waypoints = []
         limit = -limit
         y = limit
@@ -244,8 +255,8 @@ class PerceptionNode():
         second_diagonal=[]
         for i in range(scantimes):
             newpose = pose.copy()  # Create a copy of the pose list
-            newpose[1] = round(y,2)
-            newpose[0] = round(x,3)
+            newpose[1] = round(y,6)
+            newpose[0] = round(x,6)
             newposey=newpose.copy()
             newposey[1] = round(-y,2)
             second_diagonal.append(newposey)
@@ -364,6 +375,7 @@ class PerceptionNode():
             else :
                 data.append(item)
         return data
+    
     def calculateDistance(self, pos1, pos2):
 
         x1, y1, z1 =  pos1[0:3]
@@ -377,25 +389,31 @@ class PerceptionNode():
         return[position[2],-position[0],-position[1]]
     def flatten_list(screwList):
         return np.ndarray.flatten(screwList).tolist()
-perception=PerceptionNode()
+    
+    def demoApproach(self):
+        for position in self.scrws:
+            self.Controller.go_to_pose_goal_cartesian(position,WaitFlag=False,Replanning=True)
+if __name__ == "__main__":
 
-print('robot pose now is' )
+    perception=PerceptionNode()
 
-perception.launchNode()
+    print('robot pose now is' )
+
+    perception.launchNode()
 
 
 
 # perception.Controller.go_to_pose_goal_cartesian(ps, Replanning=False, WaitFlag=True)
-perception.Controller.go_by_joint_angle(perception.start_position,velocity=0.5,acceleration=0.5, WaitFlag=False, Replanning=True)
+# perception.Controller.go_by_joint_angle(perception.start_position,velocity=0.5,acceleration=0.5, WaitFlag=False, Replanning=True)
 
-for pose in perception.scrws:
+# for pose in perception.scrws:
     
-    perception.Controller.go_to_pose_goal_cartesian(pose,velocity=0.1,acceleration=0.1,WaitFlag=False,Replanning=True)
+#     perception.Controller.go_to_pose_goal_cartesian(pose,velocity=0.1,acceleration=0.1,WaitFlag=False,Replanning=True)
     
-    time.sleep(0.5)
-    curpos=perception.Controller.get_pose()
-    curpos[2]+=0.02
-    perception.Controller.go_to_pose_goal_cartesian(curpos,velocity=0.1,acceleration=0.1,WaitFlag=True)
+#     time.sleep(0.5)
+#     curpos=perception.Controller.get_pose()
+#     curpos[2]+=0.02
+#     perception.Controller.go_to_pose_goal_cartesian(curpos,velocity=0.1,acceleration=0.1,WaitFlag=True)
 # perception.Controller.go_to_pose_goal_cartesian(perception.start_position,1)
 
 

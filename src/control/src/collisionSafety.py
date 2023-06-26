@@ -1,9 +1,16 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
+# license removed for brevity
 import rospy
 from std_msgs.msg import Bool
 from geometry_msgs.msg import  WrenchStamped
 from enums.nodes import Nodes
 from enums.topics import Topics
+
+from helper.robot_helper import *
+
+
+robotCollision = RobotControl(group_name_1="manipulator")
+
 # Intial values for torque and force variables
 class Collision:
     def __init__(self,forceCollisionLimit,tourqeCollisionLimit) -> None:
@@ -31,51 +38,55 @@ class Collision:
         pass
 
 
-    # Force sensor reading and plotting
-    def ftCallback(ftSensor_incomingReading):
-        global fx, fy, fz, tx, ty, tz
-        # Update sensor readings
-        # get the forces
-        fx = ftSensor_incomingReading.wrench.force.x
-        fy = ftSensor_incomingReading.wrench.force.y
-        fz = ftSensor_incomingReading.wrench.force.z
 
-        # get the torques
-        tx = ftSensor_incomingReading.wrench.torque.x
-        ty = ftSensor_incomingReading.wrench.torque.y
-        tz = ftSensor_incomingReading.wrench.torque.z
+
+
+# Force sensor reading and plotting
+def ftCallback(ftSensor_incomingReading):
+    global fx, fy, fz, tx, ty, tz
+    # Update sensor readings
+    # get the forces
+    fx = ftSensor_incomingReading.wrench.force.x
+    fy = ftSensor_incomingReading.wrench.force.y
+    fz = ftSensor_incomingReading.wrench.force.z
+ 
+    # get the torques
+    tx = ftSensor_incomingReading.wrench.torque.x
+    ty = ftSensor_incomingReading.wrench.torque.y
+    tz = ftSensor_incomingReading.wrench.torque.z
 
         # Varaibles appending for plotting
         x_data.append(rospy.Time.now().to_sec())
         y_data.append(tz)
 
-    # Checking and publishing collision detection flag
-    def detectCollisions():
-        global forceCollisionLimit, torqueCollisionLimit, False_data, True_data
-        # Limits checking
-        if (fx or fy or fz) > forceCollisionLimit:
-            self.collisionDetectedPub.publish(True_data)
-            rospy.loginfo("Force collision detected")
-        else:
-            self.collisionDetectedPub.publish(False_data)
-            # rospy.loginfo("No force collision detected")
-        # rospy.sleep(1)    
-            
-        if (tx or ty or tz) > torqueCollisionLimit:
-            collisionDetectedPub.publish(True_data)
-            rospy.loginfo("Torque collision detected")
-        else:
-            collisionDetectedPub.publish(False_data)
-            # rospy.loginfo("No torque collision detected")
-        # rospy.sleep(1)
+# Checking and publishing collision detection flag
+def detectCollisions():
+    global forceCollisionLimit, torqueCollisionLimit, False_data, True_data
+    # Limits checking
+    if (fx or fy or fz) > forceCollisionLimit:
+        collisionDetectedPub.publish(True_data)
+        robotCollision.Stop()
+        rospy.loginfo("Force collision detected")
+    else:
+        collisionDetectedPub.publish(False_data)
+        # rospy.loginfo("No force collision detected")
+    # rospy.sleep(1)    
         
-    # Collision detection enable flag 
-    def startCollisionCallback(startCollisionDetection_data):
-        global startCollisionDetection_Flag
-        
-        # assigning .data to gobal varaible startCollisionDetection_Flag
-        startCollisionDetection_Flag = startCollisionDetection_data.data
-        # rospy.loginfo(startCollisionDetection_Flag)
+    if (tx or ty or tz) > torqueCollisionLimit:
+        collisionDetectedPub.publish(True_data)
+        rospy.loginfo("Torque collision detected")
+    else:
+        collisionDetectedPub.publish(False_data)
+        # rospy.loginfo("No torque collision detected")
+    # rospy.sleep(1)
+    
+# Collision detection enable flag 
+def startCollisionCallback(startCollisionDetection_data):
+    global startCollisionDetection_Flag
+    
+    # assigning .data to gobal varaible startCollisionDetection_Flag
+    startCollisionDetection_Flag = startCollisionDetection_data.data
+    # rospy.loginfo(startCollisionDetection_Flag)
 
 
 if __name__ == '__main__':
