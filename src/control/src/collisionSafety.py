@@ -15,8 +15,8 @@ robotCollision = RobotControl(group_name_1="manipulator")
 class Collision:
     def __init__(self,forceCollisionLimit,tourqeCollisionLimit) -> None:
         rospy.init_node(Nodes.COLLISION_DETECTION.value)
-        rospy.Subscriber(Topics.START_COLLISION_DETECTED.value,Bool, startCollisionCallback)
-        rospy.Subscriber(Topics.ForceSensorWrench.value,WrenchStamped, ftCallback)
+        rospy.Subscriber(Topics.START_COLLISION_DETECTED.value,Bool, self.startCollisionCallback)
+        rospy.Subscriber(Topics.ForceSensorWrench.value,WrenchStamped, self.ftCallback)
 
         self.collisionDetectedPub = rospy.Publisher(Topics.COLLISION_DETECTED.value, Bool, queue_size=1)
         self.fx = 0
@@ -37,76 +37,51 @@ class Collision:
         self.False_data.data = False
         pass
 
+    # Force sensor reading and plotting
+    def ftCallback(self,ftSensor_incomingReading:WrenchStamped):
+        # Update sensor readings
+        # get the forces
+        self.fx = ftSensor_incomingReading.wrench.force.x
+        self.fy = ftSensor_incomingReading.wrench.force.y
+        self.fz = ftSensor_incomingReading.wrench.force.z
+    
+        # get the torques
+        self.tx = ftSensor_incomingReading.wrench.torque.x
+        self.ty = ftSensor_incomingReading.wrench.torque.y
+        self.tz = ftSensor_incomingReading.wrench.torque.z
 
-
-
-
-# Force sensor reading and plotting
-def ftCallback(ftSensor_incomingReading):
-    global fx, fy, fz, tx, ty, tz
-    # Update sensor readings
-    # get the forces
-    fx = ftSensor_incomingReading.wrench.force.x
-    fy = ftSensor_incomingReading.wrench.force.y
-    fz = ftSensor_incomingReading.wrench.force.z
- 
-    # get the torques
-    tx = ftSensor_incomingReading.wrench.torque.x
-    ty = ftSensor_incomingReading.wrench.torque.y
-    tz = ftSensor_incomingReading.wrench.torque.z
-
-        # Varaibles appending for plotting
-        x_data.append(rospy.Time.now().to_sec())
-        y_data.append(tz)
-
-# Checking and publishing collision detection flag
-def detectCollisions():
-    global forceCollisionLimit, torqueCollisionLimit, False_data, True_data
-    # Limits checking
-    if (fx or fy or fz) > forceCollisionLimit:
-        collisionDetectedPub.publish(True_data)
-        robotCollision.Stop()
-        rospy.loginfo("Force collision detected")
-    else:
-        collisionDetectedPub.publish(False_data)
-        # rospy.loginfo("No force collision detected")
-    # rospy.sleep(1)    
+    # Checking and publishing collision detection flag
+    def detectCollisions(self):
         
-    if (tx or ty or tz) > torqueCollisionLimit:
-        collisionDetectedPub.publish(True_data)
-        rospy.loginfo("Torque collision detected")
-    else:
-        collisionDetectedPub.publish(False_data)
-        # rospy.loginfo("No torque collision detected")
-    # rospy.sleep(1)
-    
-# Collision detection enable flag 
-def startCollisionCallback(startCollisionDetection_data):
-    global startCollisionDetection_Flag
-    
-    # assigning .data to gobal varaible startCollisionDetection_Flag
-    startCollisionDetection_Flag = startCollisionDetection_data.data
-    # rospy.loginfo(startCollisionDetection_Flag)
-
+        # Limits checking
+        if (self.fx or self.fy or self.fz) > self.forceCollisionLimit:
+            self.collisionDetectedPub.publish(self.True_data)
+            robotCollision.Stop()
+            rospy.loginfo("Force collision detected")
+        else:
+            self.collisionDetectedPub.publish(self.False_data)
+            # rospy.loginfo("No force collision detected")
+        # rospy.sleep(1)    
+            
+        if (self.tx or self.ty or self.tz) > self.torqueCollisionLimit:
+            self.collisionDetectedPub.publish(self.True_data)
+            rospy.loginfo("Torque collision detected")
+        else:
+            self.collisionDetectedPub.publish(self.False_data)
+            # rospy.loginfo("No torque collision detected")
+        # rospy.sleep(1)
+        
+    # Collision detection enable flag 
+    def startCollisionCallback(self,startCollisionDetection_data):
+        # assigning .data to gobal varaible startCollisionDetection_Flag
+        self.startCollisionDetection_Flag = startCollisionDetection_data.data
+        # rospy.loginfo(startCollisionDetection_Flag)
+    def main(self):
+        while not rospy.is_shutdown():
+            # Checking the collision detection enable flag 
+            if self.startCollisionDetection_Flag is True:
+                self.detectCollisions()
 
 if __name__ == '__main__':
-    try:
-
-        while not rospy.is_shutdown():
-
-            # plt.figure()
-            # plt.plot(x_data, y_data)
-            # plt.xlabel('Time')  # Customize the x-axis label
-            # plt.ylabel('Data')  # Customize the y-axis label
-            # plt.title('Topic Graph')  # Customize the plot title
-            # plt.ylim((-20, 20))
-            # plt.show()
-
-            # Checking the collision detection enable flag 
-            if startCollisionDetection_Flag is True:
-                detectCollisions()
-            # else:
-            #     rospy.loginfo("Collision detection flag NOT enabled")
-
-    except rospy.ROSInterruptException:
-        pass
+    safety = Collision(forceCollisionLimit=10,tourqeCollisionLimit=10)
+    safety.main()

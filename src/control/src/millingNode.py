@@ -37,7 +37,7 @@ class Milling:
     def main(self):
         while not rospy.is_shutdown():
             print ("Waiting for Start Milling Flag")
-            StartMillingFlag=rospy.wait_for_message(Topics.START_MILLING.value,Bool)
+            StartMillingFlag:Bool=rospy.wait_for_message(Topics.START_MILLING.value,Bool)
             if StartMillingFlag.data:
                 self.Cut()
                 self.finishMillingFlag.publish(True)
