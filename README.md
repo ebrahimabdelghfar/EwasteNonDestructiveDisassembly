@@ -7,6 +7,10 @@
 </p>
 
 # Introdution
+# Project Cycle
+<p align="center">
+ <img src="https://github.com/ebrahimabdelghfar/EwasteNonDestructiveDisassembly/assets/81301684/fdc5c255-99f7-43f3-8536-2a72fc1e7f8f" />  
+</p>
 # Requirements
 - Operating system
    -  Ubuntu 20.04 Focal Fossal
