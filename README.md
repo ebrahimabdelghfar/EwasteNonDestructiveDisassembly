@@ -54,4 +54,4 @@ https://github.com/ebrahimabdelghfar/EwasteNonDestructiveDisassembly/assets/8130
 
 # Resources 
 
-[<img align="center" src="https://github.com/ebrahimabdelghfar/EwasteNonDestructiveDisassembly/assets/81301684/9f4551af-32a1-4df1-8719-abc87daf2bc5" alt="https://www.linkedin.com/in/ebrahim-abdelghafar/" width="150"/>] : https://www.linkedin.com/in/ebrahim-abdelghafar/
+<img align="center" src="https://github.com/ebrahimabdelghfar/EwasteNonDestructiveDisassembly/assets/81301684/9f4551af-32a1-4df1-8719-abc87daf2bc5" alt="https://www.linkedin.com/in/ebrahim-abdelghafar/" width="150"/> :  [All Project Resources](https://engasuedu-my.sharepoint.com/:f:/g/personal/18p2187_eng_asu_edu_eg/EhhmfK2uarxNuSgLD824AL8BBW_xkY51RF4FKOA_jGJPSg?e=DFBrxT )
