@@ -1,6 +1,6 @@
 # EwasteNonDestructiveDisassembly
 <p align="center">
-<img src="https://img.shields.io/badge/ros-%230A0FF9.svg?style=for-the-badge&logo=ros&logoColor=white" />
+<img src="https://img.shields.io/badge/ros-%230A0FF9.svg?style=for-the-badge&logo=ros&logoColor=white" width="75" />
 <img src="https://img.shields.io/badge/PyTorch-%23EE4C2C.svg?style=for-the-badge&logo=PyTorch&logoColor=white" />
 <img src="https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white" /> 
 <img src="https://img.shields.io/badge/-Arduino-00979D?style=for-the-badge&logo=Arduino&logoColor=white" /> 
@@ -48,6 +48,8 @@ The project aims to contribute to sustainable e-waste management by offering an 
    - PyTorch
 # How To
 # Integration
+![GP drawio](https://github.com/ebrahimabdelghfar/EwasteNonDestructiveDisassembly/assets/81301684/19acd6ee-6b94-4af5-b320-a5827037b2bb)
+
 # Full video
 
 https://github.com/ebrahimabdelghfar/EwasteNonDestructiveDisassembly/assets/81301684/bd3405e8-a57e-409f-bd26-478e25d90be8
