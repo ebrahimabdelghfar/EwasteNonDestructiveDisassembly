@@ -14,19 +14,29 @@ The "E-waste Non-Destructive Disassembly Robot" project is a cutting-edge endeav
 
 Key Features:
 
-- Utilizes the ABB IRB120 robotic manipulator as the core hardware platform.
-- Implements a pure mechanical tool-changing mechanism for the seamless switching of specialized tools.
-- Utilizes the Intel RealSense D435 camera and a custom vision algorithm for precise component localization.
-- Develops algorithms for approaching, engaging, and unfastening screws with high accuracy.
-- Incorporates a central node for supervision, coordination, and fault tolerance.
-- Comprehensive documentation is provided in a detailed thesis and accompanying video.
+* Utilizes the ABB IRB120 robotic manipulator as the core hardware platform.
+* Implements a pure mechanical tool-changing mechanism for the seamless switching of specialized tools.
+* Utilizes the Intel RealSense D435 camera and a custom vision algorithm for precise component localization.
+* Develops algorithms for approaching, engaging, and unfastening screws with high accuracy.
+* Incorporates a central node for supervision, coordination, and fault tolerance.
+* Comprehensive documentation is provided in a detailed thesis and accompanying video.
 
 The project aims to contribute to sustainable e-waste management by offering an environmentally friendly and efficient solution for disassembling electronic devices. By enabling the safe extraction of valuable components, it promotes recycling and reduces the environmental impact of e-waste.
+
+# Feature
+* Pure Mechanical Tool changing algorithm
+* Detect screws and locate their position precisely.
+* Tool-changing algorithm that has 100% success in getting and returning tools.
+* Central node that coordinates and determines the order of operation.
+* Successfully approach and engage with screws.
+* Unscrewing algorithm that can predict precisely when the screw is completely out.
 
 # Project Cycle
 <p align="center">
  <img src="https://github.com/ebrahimabdelghfar/EwasteNonDestructiveDisassembly/assets/81301684/fdc5c255-99f7-43f3-8536-2a72fc1e7f8f" />  
 </p>
+
+
 
 # Requirements
 - Operating system
@@ -35,6 +45,7 @@ The project aims to contribute to sustainable e-waste management by offering an 
    - Ros1 Noetic
    - Python 3.8 or above
    - Moveit 1
+   - PyTorch
 # How To
 # Integration
 # Full video
