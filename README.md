@@ -4,6 +4,8 @@
 <img src="https://img.shields.io/badge/PyTorch-%23EE4C2C.svg?style=for-the-badge&logo=PyTorch&logoColor=white" />
 <img src="https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white" /> 
 <img src="https://img.shields.io/badge/-Arduino-00979D?style=for-the-badge&logo=Arduino&logoColor=white" /> 
+<img src="https://github.com/ebrahimabdelghfar/EwasteNonDestructiveDisassembly/assets/81301684/fbd98431-8832-479f-a85d-9c57664589c8" width="140"/> 
+
 </p>
 
 # Description
