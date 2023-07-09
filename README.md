@@ -51,3 +51,6 @@ The project aims to contribute to sustainable e-waste management by offering an 
 # Full video
 
 https://github.com/ebrahimabdelghfar/EwasteNonDestructiveDisassembly/assets/81301684/bd3405e8-a57e-409f-bd26-478e25d90be8
+
+# Resources 
+Onelink drive : 
