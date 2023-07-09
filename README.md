@@ -53,6 +53,5 @@ The project aims to contribute to sustainable e-waste management by offering an 
 https://github.com/ebrahimabdelghfar/EwasteNonDestructiveDisassembly/assets/81301684/bd3405e8-a57e-409f-bd26-478e25d90be8
 
 # Resources 
-![image](https://github.com/ebrahimabdelghfar/EwasteNonDestructiveDisassembly/assets/81301684/9f4551af-32a1-4df1-8719-abc87daf2bc5)
 
-<img align="center" src="https://github.com/ebrahimabdelghfar/EwasteNonDestructiveDisassembly/assets/81301684/9f4551af-32a1-4df1-8719-abc87daf2bc5" alt="https://www.linkedin.com/in/ebrahim-abdelghafar/" height="30" width="40" />
+[<img align="center" src="https://github.com/ebrahimabdelghfar/EwasteNonDestructiveDisassembly/assets/81301684/9f4551af-32a1-4df1-8719-abc87daf2bc5" alt="https://www.linkedin.com/in/ebrahim-abdelghafar/" width="150"/>](https://www.linkedin.com/in/ebrahim-abdelghafar/)
