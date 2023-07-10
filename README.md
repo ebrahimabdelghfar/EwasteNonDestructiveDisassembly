@@ -52,6 +52,7 @@ The project aims to contribute to sustainable e-waste management by offering an 
    - Moveit 1
    - PyTorch
 # How To
+## Install ROS dependencies 
 # Integration
 ![GP drawio](https://github.com/ebrahimabdelghfar/EwasteNonDestructiveDisassembly/assets/81301684/19acd6ee-6b94-4af5-b320-a5827037b2bb)
 
