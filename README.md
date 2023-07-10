@@ -61,6 +61,15 @@ sudo apt-get install ros-noetic-trac-ik-kinematics-plugin
 sudo apt-get install ros-noetic-joint*
 sudo apt-get install ros-noetic-control*
 ```
+## Python Libraries
+```
+pip3 install numpy
+pip3 install opencv-python
+pip3 install open3d
+pip3 install seaborn
+pip3 install torch
+pip3 install torchvision
+```
 ## Build the workspace
 ```
 cd ~/EwasteNonDestructiveDisassembly
