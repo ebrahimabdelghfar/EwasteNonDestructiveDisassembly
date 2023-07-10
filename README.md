@@ -61,6 +61,34 @@ sudo apt-get install ros-noetic-trac-ik-kinematics-plugin
 sudo apt-get install ros-noetic-joint*
 sudo apt-get install ros-noetic-control*
 ```
+## Build the workspace
+```
+cd ~/EwasteNonDestructiveDisassembly
+rosdep install --from-paths src --ignore-src --rosdistro=noetic -y
+catkin build
+```
+🚨 This step must be done in both master and slave PC
+## Run the system
+### In the Master PC
+#### Terminal 1
+```
+roslaunch ft_sensor_driver force_filtered.launch
+```
+#### Terminal 2
+```
+ls /dev/tty* #select the tty that contain the ACM
+rosrun rosserial_python serial_node.py _port:=/dev/ttyACM0 _baud:=115200
+```
+### In the slave PC
+#### Terminal 1
+```
+roscore
+```
+#### Terminal 2
+```
+#adjust the starter file to see which file should start first
+rosrun CentralNode starterSystem.py
+```
 # Integration
 ![GP drawio](https://github.com/ebrahimabdelghfar/EwasteNonDestructiveDisassembly/assets/81301684/19acd6ee-6b94-4af5-b320-a5827037b2bb)
 
