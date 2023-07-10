@@ -59,7 +59,7 @@ sudo apt-get install ros-noetic-abb*
 sudo apt-get install ros-noetic-industrial*
 sudo apt-get install ros-noetic-trac-ik-kinematics-plugin
 sudo apt-get install ros-noetic-joint*
-
+sudo apt-get install ros-noetic-control*
 ```
 # Integration
 ![GP drawio](https://github.com/ebrahimabdelghfar/EwasteNonDestructiveDisassembly/assets/81301684/19acd6ee-6b94-4af5-b320-a5827037b2bb)
