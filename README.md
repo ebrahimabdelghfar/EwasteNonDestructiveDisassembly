@@ -30,6 +30,11 @@ The project aims to contribute to sustainable e-waste management by offering an 
 * Central node that coordinates and determines the order of operation.
 * Successfully approach and engage with screws.
 * Unscrewing algorithm that can predict precisely when the screw is completely out.
+# Connection Diagram 
+<p align="center">
+ <img src="https://github.com/ebrahimabdelghfar/EwasteNonDestructiveDisassembly/assets/81301684/9aa98e2a-7c94-41ed-ad66-d2009ca91bca" /> 
+
+</p>
 
 # Project Cycle
 <p align="center">
