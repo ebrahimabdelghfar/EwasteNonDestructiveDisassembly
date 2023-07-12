@@ -1,5 +1,0 @@
-ABB_Dependent/abb/abb_resources
-/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/abb_resources/cmake.lock /home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/./cmake.lock
-/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/abb_resources/share/abb_resources/cmake/abb_resourcesConfig.cmake /home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/share/abb_resources/cmake/abb_resourcesConfig.cmake
-/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/abb_resources/share/abb_resources/cmake/abb_resourcesConfig-version.cmake /home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/share/abb_resources/cmake/abb_resourcesConfig-version.cmake
-/home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/.private/abb_resources/lib/pkgconfig/abb_resources.pc /home/omar/Desktop/GP/EwasteNonDestructiveDisassembly/devel/lib/pkgconfig/abb_resources.pc
