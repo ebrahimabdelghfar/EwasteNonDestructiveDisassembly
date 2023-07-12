@@ -52,6 +52,14 @@ The project aims to contribute to sustainable e-waste management by offering an 
    - Moveit 1
    - PyTorch
 # How To
+# First Run the robot to start the connection
+```
+roslaunch control start.launch robot_ip:=<robot_ip>
+```
+# Second start the system
+```
+rosrun Central_node starterSystem.py
+```
 ## Install ROS dependencies 
 ```
 sudo apt-get install ros-noetic-moveit*
