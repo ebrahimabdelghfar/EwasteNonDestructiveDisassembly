@@ -8,4 +8,5 @@
 	<node name="motors_on" pkg="egm_config" type="start_robot.bash"/>
 	<!-- publish the location of the camera frame -->
 	<include file="$(find control)/launch/camera_calibration.launch" />
+	<node name="speedMeasure" pkg="control" type="SpeedMeasure.py" respawn="true"/>
 </launch>

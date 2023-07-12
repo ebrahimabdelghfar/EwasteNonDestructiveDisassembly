@@ -9,6 +9,7 @@ import math
 from std_msgs.msg import Bool
 from tf.transformations import euler_from_quaternion, quaternion_from_euler
 import time
+from std_msgs.msg import Float64MultiArray
 class RobotControl:
     '''
     This class contain module that facilitate the controll of the robot using moveit 
@@ -98,7 +99,7 @@ class RobotControl:
         EulerAngles = tf.transformations.euler_from_quaternion([pose.orientation.x,pose.orientation.y,pose.orientation.z,pose.orientation.w])
         EndEffectorPose = [pose.position.x,pose.position.y,pose.position.z,EulerAngles[0],EulerAngles[1],EulerAngles[2]]
         return EndEffectorPose
-    def go_by_joint_angle(self, joint_goal_list,velocity=0.1,acceleration=0.1,Replanning=True,WaitFlag=True)->None:
+    def go_by_joint_angle(self, joint_goal_list,velocity=0.1,acceleration=0.1,Replanning=False,WaitFlag=False,planningattempts=5)->None:
         '''
         --------------------
         This function is used to move the robot to the desired joint state
@@ -116,16 +117,25 @@ class RobotControl:
         self.move_group.set_max_acceleration_scaling_factor(acceleration)
         #re-execute if doesn't reach the goal
         if Replanning==True:
+            planning_counter=0
             state=self.move_group.go(joint_goal_list,wait=False)
-            start=time.time()
-            last_joint_state=[0,0,0,0,0,0]
             while not rospy.is_shutdown() and state==True:
                 # stop any residual movement
                 current_joints = self.get_joint_state()
+                current_speed= rospy.wait_for_message("/speed",Float64MultiArray)
                 if all(abs(current_joints[i]-joint_goal_list[i])<self.PostionTolerance for i in range(len(current_joints))):
                     self.Stop()
                     print ("reached")
                     break
+                elif all(current_speed.data[i]<0.0001 for i in range(len(current_speed.data))):
+                    planning_counter+=1
+                    print ("re-execute")
+                    if planning_counter>planningattempts:
+                        self.Stop()
+                        print ("planning failed")
+                        break
+                    else:
+                        self.move_group.go(joint_goal_list,wait=False)
             pass
         else:
             if WaitFlag==True:
@@ -136,7 +146,7 @@ class RobotControl:
             pass
 #function that calculate the velocity and acceleration of the robot durning the movement
 
-    def go_to_pose_goal_cartesian(self, pose_goal,velocity=0.1,acceleration=0.1,Replanning=False,WaitFlag=False)->None:
+    def go_to_pose_goal_cartesian(self, pose_goal,velocity=0.1,acceleration=0.1,Replanning=False,WaitFlag=False,planningattempts=4)->None:
         '''
         --------------------
         This function is used to move the robot to the desired pose by cartesian path
@@ -156,15 +166,24 @@ class RobotControl:
         self.move_group.set_pose_target(pose_goal)
         if Replanning==True:
             plan = self.move_group.go(wait=False)
-            start=time.time()
-            last_pose=[0,0,0,0,0,0]
+            planning_counter=0
             while not rospy.is_shutdown() and plan==True:
                 current_pose = self.get_pose()
+                current_speed = rospy.wait_for_message("/speed",Float64MultiArray)
                 if all(abs(current_pose[i]-pose_goal[i])<self.PostionTolerance for i in range(len(current_pose))):
                     self.Stop()
                     print ("reached")
                     break
-                # print ("re-execute")
+                elif all(current_speed.data[i]<0.0001 for i in range(len(current_speed.data))):
+                    planning_counter+=1
+                    print ("re-execute")
+                    if planning_counter>planningattempts:
+                        self.Stop()
+                        print ("planning failed")
+                        break
+                    else:
+                        self.move_group.set_pose_target(pose_goal)
+                        plan = self.move_group.go(wait=False)
             pass
         else:
             if WaitFlag==True:
@@ -312,3 +331,9 @@ class frames_transformations:
         self.static_broadcaster.sendTransform(frames_msg)
         rospy.sleep(0.5)
         pass
+if __name__ == "__main__":
+    #instantiate the class
+    Robot=RobotControl(group_name="ScrewIn")
+    test=[-0.09868947696839801, -0.38160183758005417, 0.1959320787026243+0.005, -3.141268865426805,0, -0.35668452629565967]
+    Robot.go_to_pose_goal_cartesian(pose_goal=test,velocity=0.1,acceleration=0.1,Replanning=True,WaitFlag=False)
+    pass
