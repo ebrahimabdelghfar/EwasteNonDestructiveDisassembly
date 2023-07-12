@@ -52,9 +52,13 @@ The project aims to contribute to sustainable e-waste management by offering an 
    - Moveit 1
    - PyTorch
 # How To
-# Run the robot to start the connection
+# First Run the robot to start the connection
 ```
 roslaunch control start.launch robot_ip:=<robot_ip>
+```
+# Second start the system
+```
+rosrun Central_node starterSystem.py
 ```
 ## Install ROS dependencies 
 ```
