@@ -126,14 +126,6 @@ class RobotControl:
                     self.Stop()
                     print ("reached")
                     break
-                if time.time()-start>2:
-                    if all(abs(last_joint_state[i]-current_joints[i])>self.PostionTolerance for i in range(len(current_joints))):
-                        pass
-                    else:
-                        break
-                    last_joint_state=self.get_joint_state()
-                    start=time.time()
-
             pass
         else:
             if WaitFlag==True:
@@ -172,14 +164,6 @@ class RobotControl:
                     self.Stop()
                     print ("reached")
                     break
-                if time.time()-start>2:
-                    if any(abs(last_pose[i]-current_pose[i])>0.01 for i in range(len(current_pose))):
-                        pass
-                    else:
-                        print("stucked")
-                        break
-                    last_pose=self.get_pose()
-                    start=time.time()
                 # print ("re-execute")
             pass
         else:

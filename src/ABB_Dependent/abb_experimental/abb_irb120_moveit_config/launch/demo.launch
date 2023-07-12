@@ -39,5 +39,9 @@
 <arg name="moveit_warehouse_database_path" value="$(arg db_path)"/>
 </include>
 
-<include file="$(find abb_robot_bringup_examples)/launch/ex2_rws_and_egm_6axis_robot.launch"/>
+<arg name="robot_ip" doc="The robot controller's IP address" default="192.168.1.100"/>
+<include file="$(find abb_robot_bringup_examples)/launch/ex2_rws_and_egm_6axis_robot.launch">
+<arg name="robot_ip" value="$(arg robot_ip)"/>
+</include>
+
 </launch>
