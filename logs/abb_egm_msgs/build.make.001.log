@@ -1,0 +1,14 @@
+[  0%] Built target std_msgs_generate_messages_cpp
+[  0%] Built target std_msgs_generate_messages_py
+[  0%] Built target std_msgs_generate_messages_eus
+[  0%] Built target std_msgs_generate_messages_lisp
+[  0%] Built target std_msgs_generate_messages_nodejs
+[  0%] Built target _abb_egm_msgs_generate_messages_check_deps_EGMChannelState
+[  0%] Built target _abb_egm_msgs_generate_messages_check_deps_EGMState
+[ 20%] Built target abb_egm_msgs_generate_messages_py
+[ 33%] Built target abb_egm_msgs_generate_messages_lisp
+[ 53%] Built target abb_egm_msgs_generate_messages_eus
+[ 66%] Built target abb_egm_msgs_generate_messages_cpp
+[ 80%] Built target abb_egm_msgs_generate_messages_nodejs
+[100%] Built target abb_egm_msgs_generate_messages_mypy
+[100%] Built target abb_egm_msgs_generate_messages

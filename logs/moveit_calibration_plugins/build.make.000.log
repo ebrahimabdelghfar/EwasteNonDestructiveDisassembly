@@ -1,0 +1,17 @@
+[35m[1mScanning dependencies of target moveit_handeye_calibration_solver_core[0m
+[35m[1mScanning dependencies of target moveit_handeye_calibration_target_core[0m
+[ 11%] [32mBuilding CXX object handeye_calibration_solver/CMakeFiles/moveit_handeye_calibration_solver_core.dir/src/handeye_solver_default.cpp.o[0m
+[ 22%] [32mBuilding CXX object handeye_calibration_target/CMakeFiles/moveit_handeye_calibration_target_core.dir/src/handeye_target_charuco.cpp.o[0m
+[ 33%] [32mBuilding CXX object handeye_calibration_target/CMakeFiles/moveit_handeye_calibration_target_core.dir/src/handeye_target_aruco.cpp.o[0m
+[ 44%] [32m[1mLinking CXX shared library /home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/moveit_calibration_plugins/lib/libmoveit_handeye_calibration_solver_core.so[0m
+[ 44%] Built target moveit_handeye_calibration_solver_core
+[35m[1mScanning dependencies of target moveit_handeye_calibration_solver[0m
+[ 55%] [32mBuilding CXX object handeye_calibration_solver/CMakeFiles/moveit_handeye_calibration_solver.dir/src/plugin_init.cpp.o[0m
+[ 66%] [32m[1mLinking CXX shared library /home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/moveit_calibration_plugins/lib/libmoveit_handeye_calibration_target_core.so[0m
+[ 66%] Built target moveit_handeye_calibration_target_core
+[35m[1mScanning dependencies of target moveit_handeye_calibration_target[0m
+[ 77%] [32mBuilding CXX object handeye_calibration_target/CMakeFiles/moveit_handeye_calibration_target.dir/src/plugin_init.cpp.o[0m
+[ 88%] [32m[1mLinking CXX shared library /home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/moveit_calibration_plugins/lib/libmoveit_handeye_calibration_solver.so[0m
+[ 88%] Built target moveit_handeye_calibration_solver
+[100%] [32m[1mLinking CXX shared library /home/himaet23/EwasteNonDestructiveDisassembly/devel/.private/moveit_calibration_plugins/lib/libmoveit_handeye_calibration_target.so[0m
+[100%] Built target moveit_handeye_calibration_target

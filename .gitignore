@@ -1,4 +1,7 @@
 # for checkpoint files
+.vscode/
+.catkin_tools/
+.__pycache__/
 *.pt
 *.pth
 build/

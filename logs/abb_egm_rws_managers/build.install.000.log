@@ -1,0 +1,20 @@
+[100%] Built target abb_egm_rws_managers
+[36mInstall the project...[0m
+-- Install configuration: "RelWithDebInfo"
+-- Up-to-date: /home/himaet23/EwasteNonDestructiveDisassembly/devel/include
+-- Installing: /home/himaet23/EwasteNonDestructiveDisassembly/devel/include/abb_egm_rws_managers
+-- Installing: /home/himaet23/EwasteNonDestructiveDisassembly/devel/include/abb_egm_rws_managers/rws_manager.h
+-- Installing: /home/himaet23/EwasteNonDestructiveDisassembly/devel/include/abb_egm_rws_managers/system_data_parser.h
+-- Installing: /home/himaet23/EwasteNonDestructiveDisassembly/devel/include/abb_egm_rws_managers/data_containers.h
+-- Installing: /home/himaet23/EwasteNonDestructiveDisassembly/devel/include/abb_egm_rws_managers/egm_manager.h
+-- Installing: /home/himaet23/EwasteNonDestructiveDisassembly/devel/include/abb_egm_rws_managers/utilities.h
+-- Installing: /home/himaet23/EwasteNonDestructiveDisassembly/devel/include/abb_egm_rws_managers/robot_controller_description.proto
+-- Installing: /home/himaet23/EwasteNonDestructiveDisassembly/devel/include/abb_egm_rws_managers/robot_controller_description.pb.h
+-- Installing: /home/himaet23/EwasteNonDestructiveDisassembly/devel/include/abb_egm_rws_managers/abb_egm_rws_managers_export.h
+-- Installing: /home/himaet23/EwasteNonDestructiveDisassembly/devel/share/abb_egm_rws_managers/abb_egm_rws_managersConfig.cmake
+-- Installing: /home/himaet23/EwasteNonDestructiveDisassembly/devel/share/abb_egm_rws_managers/abb_egm_rws_managersConfigVersion.cmake
+-- Installing: /home/himaet23/EwasteNonDestructiveDisassembly/devel/share/abb_egm_rws_managers/package.xml
+-- Installing: /home/himaet23/EwasteNonDestructiveDisassembly/devel/lib/libabb_egm_rws_managers.so
+-- Set runtime path of "/home/himaet23/EwasteNonDestructiveDisassembly/devel/lib/libabb_egm_rws_managers.so" to ""
+-- Installing: /home/himaet23/EwasteNonDestructiveDisassembly/devel/share/abb_egm_rws_managers/abb_egm_rws_managersTargets.cmake
+-- Installing: /home/himaet23/EwasteNonDestructiveDisassembly/devel/share/abb_egm_rws_managers/abb_egm_rws_managersTargets-relwithdebinfo.cmake

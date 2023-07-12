@@ -1,0 +1,49 @@
+[35m[1mScanning dependencies of target _abb_egm_msgs_generate_messages_check_deps_EGMState[0m
+[  0%] Built target _abb_egm_msgs_generate_messages_check_deps_EGMState
+[35m[1mScanning dependencies of target _abb_egm_msgs_generate_messages_check_deps_EGMChannelState[0m
+[  0%] Built target _abb_egm_msgs_generate_messages_check_deps_EGMChannelState
+[35m[1mScanning dependencies of target std_msgs_generate_messages_py[0m
+[  0%] Built target std_msgs_generate_messages_py
+[35m[1mScanning dependencies of target std_msgs_generate_messages_cpp[0m
+[  0%] Built target std_msgs_generate_messages_cpp
+[35m[1mScanning dependencies of target std_msgs_generate_messages_eus[0m
+[  0%] Built target std_msgs_generate_messages_eus
+[35m[1mScanning dependencies of target std_msgs_generate_messages_nodejs[0m
+[  0%] Built target std_msgs_generate_messages_nodejs
+[35m[1mScanning dependencies of target std_msgs_generate_messages_lisp[0m
+[  0%] Built target std_msgs_generate_messages_lisp
+[35m[1mScanning dependencies of target abb_egm_msgs_generate_messages_py[0m
+[  6%] [34m[1mGenerating Python from MSG abb_egm_msgs/EGMChannelState[0m
+[ 13%] [34m[1mGenerating Python from MSG abb_egm_msgs/EGMState[0m
+[ 20%] [34m[1mGenerating Python msg __init__.py for abb_egm_msgs[0m
+[ 20%] Built target abb_egm_msgs_generate_messages_py
+[35m[1mScanning dependencies of target abb_egm_msgs_generate_messages_cpp[0m
+[ 26%] [34m[1mGenerating C++ code from abb_egm_msgs/EGMChannelState.msg[0m
+[ 33%] [34m[1mGenerating C++ code from abb_egm_msgs/EGMState.msg[0m
+[ 33%] Built target abb_egm_msgs_generate_messages_cpp
+[35m[1mScanning dependencies of target abb_egm_msgs_generate_messages_eus[0m
+[ 40%] [34m[1mGenerating EusLisp code from abb_egm_msgs/EGMChannelState.msg[0m
+[ 46%] [34m[1mGenerating EusLisp code from abb_egm_msgs/EGMState.msg[0m
+[ 53%] [34m[1mGenerating EusLisp manifest code for abb_egm_msgs[0m
+WARNING: Package name "CentralNode" does not follow the naming conventions. It should start with a lower case letter and only contain lower case letters, digits, underscores, and dashes.
+WARNING: Package name "HardwareLevel" does not follow the naming conventions. It should start with a lower case letter and only contain lower case letters, digits, underscores, and dashes.
+WARNING: Package name "checkMotors" does not follow the naming conventions. It should start with a lower case letter and only contain lower case letters, digits, underscores, and dashes.
+WARNING: Package name "CentralNode" does not follow the naming conventions. It should start with a lower case letter and only contain lower case letters, digits, underscores, and dashes.
+WARNING: Package name "HardwareLevel" does not follow the naming conventions. It should start with a lower case letter and only contain lower case letters, digits, underscores, and dashes.
+WARNING: Package name "checkMotors" does not follow the naming conventions. It should start with a lower case letter and only contain lower case letters, digits, underscores, and dashes.
+[ 53%] Built target abb_egm_msgs_generate_messages_eus
+[35m[1mScanning dependencies of target abb_egm_msgs_generate_messages_nodejs[0m
+[ 60%] [34m[1mGenerating Javascript code from abb_egm_msgs/EGMChannelState.msg[0m
+[ 66%] [34m[1mGenerating Javascript code from abb_egm_msgs/EGMState.msg[0m
+[ 66%] Built target abb_egm_msgs_generate_messages_nodejs
+[35m[1mScanning dependencies of target abb_egm_msgs_generate_messages_lisp[0m
+[ 73%] [34m[1mGenerating Lisp code from abb_egm_msgs/EGMChannelState.msg[0m
+[ 80%] [34m[1mGenerating Lisp code from abb_egm_msgs/EGMState.msg[0m
+[ 80%] Built target abb_egm_msgs_generate_messages_lisp
+[35m[1mScanning dependencies of target abb_egm_msgs_generate_messages_mypy[0m
+[ 86%] [34m[1mGenerating Python Stub from abb_egm_msgs/EGMChannelState[0m
+[ 93%] [34m[1mGenerating Python Stub from abb_egm_msgs/EGMState[0m
+[100%] [34m[1mGenerating Python Stub msg __init__.pyi for abb_egm_msgs[0m
+[100%] Built target abb_egm_msgs_generate_messages_mypy
+[35m[1mScanning dependencies of target abb_egm_msgs_generate_messages[0m
+[100%] Built target abb_egm_msgs_generate_messages
